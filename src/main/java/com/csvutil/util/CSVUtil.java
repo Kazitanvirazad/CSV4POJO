@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import com.csvutil.annotation.FieldType;
@@ -18,8 +19,11 @@ import com.csvutil.exception.FieldNotMatchedException;
 
 public class CSVUtil {
 
-	public CSVUtil() {
+	private final String fileExtension;
+
+	private CSVUtil() {
 		super();
+		this.fileExtension = ".csv";
 	}
 
 	public static CSVUtil getInstance() {
@@ -31,7 +35,7 @@ public class CSVUtil {
 		try {
 			for (Field field : clazz.getDeclaredFields()) {
 				if (field.isAnnotationPresent(FieldType.class)) {
-					if (field.getAnnotation(FieldType.class).value() == Type.CLASS) {
+					if (field.getAnnotation(FieldType.class).value() == Type.CLASSTYPE) {
 						fieldNames.addAll(getClassFields(field.getType()));
 					} else {
 						fieldNames.add(field.getName());
@@ -50,7 +54,7 @@ public class CSVUtil {
 			for (Field field : bean.getClass().getDeclaredFields()) {
 				if (field.isAnnotationPresent(FieldType.class)) {
 					field.setAccessible(true);
-					if (field.getAnnotation(FieldType.class).value() == Type.CLASS) {
+					if (field.getAnnotation(FieldType.class).value() == Type.CLASSTYPE) {
 						fieldValues.addAll(getClassFieldValues(field.get(bean)));
 					} else {
 						String val = String.valueOf(field.get(bean));
@@ -64,14 +68,10 @@ public class CSVUtil {
 		return fieldValues;
 	}
 
-	public <T> void writeBeansToCSV(Class<T> clazz, List<T> beanList, String path, String fileName,
-			String fileExtension) {
+	public <T> void writeBeansToCSV(Class<T> clazz, List<T> beanList, String path, String fileName) {
 		if (beanList != null && beanList.size() > 0) {
 			if (path == null) {
 				path = System.getProperty("user.dir") + "//";
-			}
-			if (fileExtension == null) {
-				fileExtension = ".csv";
 			}
 			if (fileName == null) {
 				fileName = clazz.getSimpleName() + fileExtension;
@@ -91,12 +91,9 @@ public class CSVUtil {
 		}
 	}
 
-	public <T> void createEmptyCSVFromClass(Class<T> clazz, String path, String fileName, String fileExtension) {
+	public <T> void createEmptyCSVFromClass(Class<T> clazz, String path, String fileName) {
 		if (path == null) {
 			path = System.getProperty("user.dir") + "//";
-		}
-		if (fileExtension == null) {
-			fileExtension = ".csv";
 		}
 		if (fileName == null) {
 			fileName = clazz.getSimpleName() + fileExtension;
@@ -122,14 +119,14 @@ public class CSVUtil {
 		return flag;
 	}
 
-	public <T> List<T> createBeansFromCSV(Class<?> clazz, String path, String fileName, String fileExtension) {
+	public <T> List<T> createBeansFromCSV(Class<?> clazz, String path, String fileName) {
 		List<T> beans = new ArrayList<>();
 		try (BufferedReader reader = new BufferedReader(new FileReader(path + fileName + fileExtension))) {
 			List<String> beanFieldList = getClassFields(clazz);
 			if (validateFields(beanFieldList, reader.readLine().split(","))) {
 				reader.lines().forEach((line) -> {
-					String[] values = line.split(",");
-					beans.add(createBeanFromCSVdata(values, clazz));
+					List<String> valueList = Arrays.asList(line.split(","));
+					beans.add(createBeanFromCSVdata(valueList, clazz));
 				});
 			} else {
 				throw new FieldNotMatchedException("Fields does not match with input csv file");
@@ -148,7 +145,7 @@ public class CSVUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <T> T createBeanFromCSVdata(String[] values, Class<?> clazz) {
+	private <T> T createBeanFromCSVdata(List<String> valueList, Class<?> clazz) {
 		T beanInstance = null;
 		try {
 			beanInstance = (T) clazz.getDeclaredConstructor().newInstance();
@@ -158,9 +155,11 @@ public class CSVUtil {
 		}
 
 		Field[] fields = clazz.getDeclaredFields();
-		for (int i = 0; i < fields.length && fields.length <= values.length; i++) {
+		int i = 0;
+		int fieldIndex = 0;
+		while (fieldIndex < fields.length && fields.length <= valueList.size()) {
 			try {
-				Field field = fields[i];
+				Field field = fields[fieldIndex];
 				if (beanInstance != null) {
 					if (field.isAnnotationPresent(FieldType.class)) {
 						field.setAccessible(true);
@@ -168,50 +167,61 @@ public class CSVUtil {
 						if (type != null) {
 							switch (type.value()) {
 							case INTEGER:
-								int intVal = Integer.valueOf(values[i]).intValue();
-								field.set(beanInstance, intVal);
+								int intVal = Integer.valueOf(valueList.get(i)).intValue();
+								field.setInt(beanInstance, intVal);
 								break;
 							case CHAR:
-								char charVal = values[i].length() == 1 ? values[i].charAt(0) : '\000';
+								char charVal = valueList.get(i).length() == 1 ? (Character) valueList.get(i).charAt(0)
+										: '\000';
 								field.set(beanInstance, charVal);
 								break;
 							case BOOLEAN:
-								boolean booleanVal = Boolean.valueOf(values[i]);
+								boolean booleanVal = Boolean.valueOf(String.valueOf(valueList.get(i)));
 								field.set(beanInstance, booleanVal);
 								break;
 							case FLOAT:
-								float floatVal = Float.valueOf(values[i]);
-								field.set(beanInstance, floatVal);
+								float floatVal = Float.valueOf(valueList.get(i));
+								field.setFloat(beanInstance, floatVal);
 								break;
 							case LONG:
-								long longVal = Long.valueOf(values[i]);
+								long longVal = Long.valueOf(valueList.get(i));
 								field.set(beanInstance, longVal);
 								break;
 							case DOUBLE:
-								double doubleVal = Double.valueOf(values[i]);
+								double doubleVal = Double.valueOf(valueList.get(i));
 								field.set(beanInstance, doubleVal);
 								break;
 							case STRING:
-								String stringVal = String.valueOf(values[i]);
+								String stringVal = valueList.get(i);
 								field.set(beanInstance, stringVal);
 								break;
-							case CLASS:
-								field.set(beanInstance, createBeanFromCSVdata(values, field.getType()));
+							case CLASSTYPE:
+								field.set(beanInstance,
+										createBeanFromCSVdata(valueList.subList(i, valueList.size()), field.getType()));
+								i += getAnnotatedFieldCount(field.getType()) - 1;
 								break;
 							default:
 								break;
 							}
-						} else {
-							if (field.getType() == String.class)
-								field.set(beanInstance, null);
 						}
+						i++;
 					}
 				}
 			} catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
 				e.printStackTrace();
 			}
+			fieldIndex++;
 		}
 		return beanInstance;
+	}
+
+	private int getAnnotatedFieldCount(Class<?> clazz) {
+		int count = 0;
+		for (Field field : clazz.getDeclaredFields()) {
+			if (field.isAnnotationPresent(FieldType.class))
+				count++;
+		}
+		return count;
 	}
 
 	private void writeLinesToCSVFile(List<String> contents, BufferedWriter writer) throws IOException {

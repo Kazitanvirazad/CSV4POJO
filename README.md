@@ -62,7 +62,8 @@ return:
 Reads the given file and returns a list of beans with csv data.
 </pre>
 <h4>Configuring Java class instance variables with CSVUtil FieldType annotations</h4>
-<span><b>**Any field with missing @FieldType annotation will be ignored by CSVUtil</b></span>
+<span><b>**Any field with missing @FieldType annotation will be ignored by CSVUtil</b></span></br>
+<span><b>**For any field with missing optional attribute 'csvColumnName' of @FieldType annotation, original field name will be used in CSV column name</b></span>
 <ul>
 <li><span>Vehicle.java</span>
 <pre>
@@ -71,13 +72,13 @@ import com.csvutil.annotation.Type;
 
 public class Vehicle {
 
-	@FieldType(Type.STRING)
+	@FieldType(dataType = Type.STRING, csvColumnName = "vahicle_name")
 	private String name;
 
-	@FieldType(Type.BOOLEAN)
+	@FieldType(dataType = Type.BOOLEAN)
 	private boolean isElectric;
 
-	@FieldType(Type.CLASSTYPE)
+	@FieldType(dataType = Type.CLASSTYPE)
 	private Byke byke;
 
 	public Vehicle(String name, boolean isElectric, Byke byke) {
@@ -106,22 +107,22 @@ import com.csvutil.annotation.Type;
 
 public class Byke {
 
-	@FieldType(Type.STRING)
+	@FieldType(dataType = Type.STRING, csvColumnName = "byke_brandName")
 	private String brandName;
 
-	@FieldType(Type.STRING)
+	@FieldType(dataType = Type.STRING, csvColumnName = "byke_modelName")
 	private String modelName;
 
-	@FieldType(Type.STRING)
+	@FieldType(dataType = Type.STRING, csvColumnName = "byke_color")
 	private String color;
 
-	@FieldType(Type.CLASSTYPE)
+	@FieldType(dataType = Type.CLASSTYPE)
 	private Tyre tyre;
 
-	@FieldType(Type.CLASSTYPE)
+	@FieldType(dataType = Type.CLASSTYPE)
 	private Engine engine;
 
-	@FieldType(Type.INTEGER)
+	@FieldType(dataType = Type.INTEGER)
 	private int kerbWeight;
 
 	private float price;
@@ -158,14 +159,14 @@ import com.csvutil.annotation.Type;
 
 public class Tyre {
 
-	@FieldType(Type.STRING)
+	@FieldType(dataType = Type.STRING, csvColumnName = "tyre_brandName")
 	private String tyreBrand;
 
 	private int tyreWidth;
 
 	private int tyreBreadth;
 
-	@FieldType(Type.INTEGER)
+	@FieldType(dataType = Type.INTEGER, csvColumnName = "tyre_selfLife")
 	private int selfLife;
 
 	public Tyre(String tyreBrand, int tyreWidth, int tyreBreadth, int selfLife) {
@@ -196,13 +197,13 @@ import com.csvutil.annotation.Type;
 
 public class Engine {
 
-	@FieldType(Type.FLOAT)
+	@FieldType(dataType = Type.FLOAT)
 	private float cc;
 
-	@FieldType(Type.FLOAT)
+	@FieldType(dataType = Type.FLOAT, csvColumnName = "engine_horsepower")
 	private float bhp;
 
-	@FieldType(Type.INTEGER)
+	@FieldType(dataType = Type.INTEGER, csvColumnName = "engine_cylinders")
 	private int cylinders;
 
 	public Engine() {
@@ -236,21 +237,19 @@ CSVUtil csvUtil = CSVUtil.getInstance();
 <pre>
 List<Vehicle> vehicles = new ArrayList<>() {
 	{
-		add(new Vehicle("Motor Cycle", false, new Byke("KTM", "Duke 250", "Ebony Black", new Tyre("MRF", 150, 60, 5), new Engine(250, 28, 1), 170, 292000)));
-		add(new Vehicle("Motor Cycle", false, new Byke("Kawasaki", "z900", "Green", new Tyre("Pirelli", 170, 70, 3), new Engine(900, 125, 4), 190, 1092000)));
-		add(new Vehicle("Motor Cycle", false, new Byke("KTM", "RC 390", "White", new Tyre("Metzeller", 150, 60, 4), new Engine(372.9f, 43.5f, 1), 170, 348500.0f)));
-		add(new Vehicle("Motor Cycle", false, new Byke("Yamaha", "mt09", "White", new Tyre("Bridgestone", 170, 70, 3), new Engine(900, 120, 4), 185, 1192000)));
+		add(new Vehicle("KTM MotorCycle", false, new Byke("KTM", "Duke 250", "Ebony Black", new Tyre("MRF", 150, 70, 5), new Engine(249.9f, 28, 1), 170, 292000f)));
+		add(new Vehicle("Kawasaki MotorCycle", false, new Byke("Kawasaki", "z900", "Ninja green", new Tyre("Bridgestone", 180, 90, 2), new Engine(899.9f, 128, 4), 190, 1092000f)));	
+		add(new Vehicle("Yamaha MotorCycle", false, new Byke("Yamaha", "mt09", "White", new Tyre("Pirelli", 180, 90, 2), new Engine(900.0f, 120, 4), 180, 1192000f)));	
 	}
 };
 csvUtil.writeBeansToCSV(Vehicle.class, vehicles, System.getProperty("user.dir"), "Vehicles");
 </pre>
 <h4>CSV output file data:</h4>
 <pre>
-name,isElectric,brandName,modelName,color,tyreBrand,selfLife,cc,bhp,cylinders,kerbWeight
-Motor Cycle,false,KTM,Duke 250,Ebony Black,MRF,5,250.0,28.0,1,170
-Motor Cycle,false,Kawasaki,z900,Green,Pirelli,3,900.0,125.0,4,190
-Motor Cycle,false,KTM,RC 390,White,Metzeller,4,372.9,43.5,1,170
-Motor Cycle,false,Yamaha,mt09,White,Bridgestone,3,900.0,120.0,4,185
+vahicle_name,isElectric,byke_brandName,byke_modelName,byke_color,tyre_brandName,tyre_selfLife,cc,engine_horsepower,engine_cylinders,kerbWeight
+KTM MotorCycle,false,KTM,Duke 250,Ebony Black,MRF,5,249.9,28.0,1,170
+Kawasaki MotorCycle,false,Kawasaki,z900,Ninja green,Bridgestone,2,899.9,128.0,4,190
+Yamaha MotorCycle,false,Yamaha,mt09,White,Pirelli,2,900.0,120.0,4,180
 </pre>
 </li>
 <li><span>Creating an empty CSV file with Java bean definition</span>
@@ -259,7 +258,7 @@ csvUtil.createEmptyCSVFromClass(Vehicle.class, System.getProperty("user.dir"), "
 </pre>
 <h4>CSV output file data:</h4>
 <pre>
-name,isElectric,brandName,modelName,color,tyreBrand,selfLife,cc,bhp,cylinders,kerbWeight
+vahicle_name,isElectric,byke_brandName,byke_modelName,byke_color,tyre_brandName,tyre_selfLife,cc,engine_horsepower,engine_cylinders,kerbWeight
 </pre>
 </li>
 <li><span>Create list of Java beans from CSV file data</span>
@@ -270,10 +269,9 @@ csvUtil.createBeansFromCSV(Vehicle.class, System.getProperty("user.dir"), "Vehic
 </pre>
 <h4>Output data:</h4>
 <pre>
-Vehicle [name=Motor Cycle, isElectric=false, byke=Byke [brandName=KTM, modelName=Duke 250, color=Ebony Black, tyre=Tyre [tyreBrand=MRF, tyreWidth=0, tyreBreadth=0, selfLife=5], engine=Engine [cc=250.0, bhp=28.0, cylinders=1], kerbWeight=170, price=0.0]]
-Vehicle [name=Motor Cycle, isElectric=false, byke=Byke [brandName=Kawasaki, modelName=z900, color=Green, tyre=Tyre [tyreBrand=Pirelli, tyreWidth=0, tyreBreadth=0, selfLife=3], engine=Engine [cc=900.0, bhp=125.0, cylinders=4], kerbWeight=190, price=0.0]]
-Vehicle [name=Motor Cycle, isElectric=false, byke=Byke [brandName=KTM, modelName=RC 390, color=White, tyre=Tyre [tyreBrand=Metzeller, tyreWidth=0, tyreBreadth=0, selfLife=4], engine=Engine [cc=372.9, bhp=43.5, cylinders=1], kerbWeight=170, price=0.0]]
-Vehicle [name=Motor Cycle, isElectric=false, byke=Byke [brandName=Yamaha, modelName=mt09, color=White, tyre=Tyre [tyreBrand=Bridgestone, tyreWidth=0, tyreBreadth=0, selfLife=3], engine=Engine [cc=900.0, bhp=120.0, cylinders=4], kerbWeight=185, price=0.0]]
+Vehicle [name=KTM MotorCycle, isElectric=false, byke=Byke [brandName=KTM, modelName=Duke 250, color=Ebony Black, tyre=Tyre [tyreBrand=MRF, tyreWidth=0, tyreBreadth=0, selfLife=5], engine=Engine [cc=249.9, bhp=28.0, cylinders=1], kerbWeight=170, price=0.0]]
+Vehicle [name=Kawasaki MotorCycle, isElectric=false, byke=Byke [brandName=Kawasaki, modelName=z900, color=Ninja green, tyre=Tyre [tyreBrand=Bridgestone, tyreWidth=0, tyreBreadth=0, selfLife=2], engine=Engine [cc=899.9, bhp=128.0, cylinders=4], kerbWeight=190, price=0.0]]
+Vehicle [name=Yamaha MotorCycle, isElectric=false, byke=Byke [brandName=Yamaha, modelName=mt09, color=White, tyre=Tyre [tyreBrand=Pirelli, tyreWidth=0, tyreBreadth=0, selfLife=2], engine=Engine [cc=900.0, bhp=120.0, cylinders=4], kerbWeight=180, price=0.0]]
 </pre>
 </li>
 </ol>

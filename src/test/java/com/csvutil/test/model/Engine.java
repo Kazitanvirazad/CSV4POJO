@@ -5,13 +5,13 @@ import com.csvutil.annotation.Type;
 
 public class Engine {
 
-	@FieldType(Type.FLOAT)
+	@FieldType(dataType = Type.FLOAT)
 	private float cc;
 
-	@FieldType(Type.FLOAT)
+	@FieldType(dataType = Type.FLOAT, csvColumnName = "engine_horsepower")
 	private float bhp;
 
-	@FieldType(Type.INTEGER)
+	@FieldType(dataType = Type.INTEGER, csvColumnName = "engine_cylinders")
 	private int cylinders;
 
 	public Engine() {

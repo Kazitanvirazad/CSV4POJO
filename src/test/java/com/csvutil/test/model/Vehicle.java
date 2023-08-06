@@ -5,13 +5,13 @@ import com.csvutil.annotation.Type;
 
 public class Vehicle {
 
-	@FieldType(Type.STRING)
+	@FieldType(dataType = Type.STRING, csvColumnName = "vahicle_name")
 	private String name;
 
-	@FieldType(Type.BOOLEAN)
+	@FieldType(dataType = Type.BOOLEAN)
 	private boolean isElectric;
 
-	@FieldType(Type.CLASSTYPE)
+	@FieldType(dataType = Type.CLASSTYPE)
 	private Byke byke;
 
 	public Vehicle(String name, boolean isElectric, Byke byke) {

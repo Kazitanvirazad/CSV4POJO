@@ -5,22 +5,22 @@ import com.csvutil.annotation.Type;
 
 public class Byke {
 
-	@FieldType(Type.STRING)
+	@FieldType(dataType = Type.STRING, csvColumnName = "byke_brandName")
 	private String brandName;
 
-	@FieldType(Type.STRING)
+	@FieldType(dataType = Type.STRING, csvColumnName = "byke_modelName")
 	private String modelName;
 
-	@FieldType(Type.STRING)
+	@FieldType(dataType = Type.STRING, csvColumnName = "byke_color")
 	private String color;
 
-	@FieldType(Type.CLASSTYPE)
+	@FieldType(dataType = Type.CLASSTYPE)
 	private Tyre tyre;
 
-	@FieldType(Type.CLASSTYPE)
+	@FieldType(dataType = Type.CLASSTYPE)
 	private Engine engine;
 
-	@FieldType(Type.INTEGER)
+	@FieldType(dataType = Type.INTEGER)
 	private int kerbWeight;
 
 	private float price;

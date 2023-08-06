@@ -5,14 +5,14 @@ import com.csvutil.annotation.Type;
 
 public class Tyre {
 
-	@FieldType(Type.STRING)
+	@FieldType(dataType = Type.STRING, csvColumnName = "tyre_brandName")
 	private String tyreBrand;
 
 	private int tyreWidth;
 
 	private int tyreBreadth;
 
-	@FieldType(Type.INTEGER)
+	@FieldType(dataType = Type.INTEGER, csvColumnName = "tyre_selfLife")
 	private int selfLife;
 
 	public Tyre(String tyreBrand, int tyreWidth, int tyreBreadth, int selfLife) {

@@ -35,10 +35,13 @@ public class CSVUtil {
 		try {
 			for (Field field : clazz.getDeclaredFields()) {
 				if (field.isAnnotationPresent(FieldType.class)) {
-					if (field.getAnnotation(FieldType.class).value() == Type.CLASSTYPE) {
+					if (field.getDeclaredAnnotation(FieldType.class).dataType() == Type.CLASSTYPE) {
 						fieldNames.addAll(getClassFields(field.getType()));
 					} else {
-						fieldNames.add(field.getName());
+						String fieldName = field.getDeclaredAnnotation(FieldType.class).csvColumnName().length() > 0
+								? field.getDeclaredAnnotation(FieldType.class).csvColumnName()
+								: field.getName();
+						fieldNames.add(fieldName);
 					}
 				}
 			}
@@ -54,7 +57,7 @@ public class CSVUtil {
 			for (Field field : bean.getClass().getDeclaredFields()) {
 				if (field.isAnnotationPresent(FieldType.class)) {
 					field.setAccessible(true);
-					if (field.getAnnotation(FieldType.class).value() == Type.CLASSTYPE) {
+					if (field.getDeclaredAnnotation(FieldType.class).dataType() == Type.CLASSTYPE) {
 						fieldValues.addAll(getClassFieldValues(field.get(bean)));
 					} else {
 						String val = String.valueOf(field.get(bean));
@@ -165,7 +168,7 @@ public class CSVUtil {
 						field.setAccessible(true);
 						FieldType type = field.getAnnotation(FieldType.class);
 						if (type != null) {
-							switch (type.value()) {
+							switch (type.dataType()) {
 							case INTEGER:
 								int intVal = Integer.valueOf(valueList.get(i)).intValue();
 								field.setInt(beanInstance, intVal);

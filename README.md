@@ -12,6 +12,7 @@
 		reflection.</li>
 	<li>Validation of the CSV file data against the Java bean
 		definitions, using annotations and reflection.</li>
+	<li>Custom CSV column name support.</li>
 </ul>
 
 <h4>Methods</h4>

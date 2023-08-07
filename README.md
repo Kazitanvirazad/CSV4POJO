@@ -15,14 +15,39 @@
 	<li>Custom CSV column name support.</li>
 </ul>
 
+<h3>Class CSVFileReaderUtil</h3>
 <h4>Methods</h4>
 <pre>
-static getInstance(): CSVUtil
+static getCSVFileReader() : CSVFileReader
 
-returns:
+return:
+	CSVFileReader
+	
+Creates and returns an instance of CSVFileReader
+</pre>
+<pre>
+createBeansFromCSV(Class clazz, String path, String fileName) : List
+
+params:
+	clazz: Class type of the bean
+	path: Directory path location of the file.
+	fileName: Name of the file
+
+return:
 	CSVUtil
 
-Creates and returns an instance of CSVUtil
+Reads the given file and returns a list of beans with csv data.
+</pre>
+
+<h3>Class CSVFileWriterUtil</h3>
+<h4>Methods</h4>
+<pre>
+static getCSVFileWriter() : CSVFileWriter
+
+return:
+	CSVFileWriter
+	
+Creates and returns an instance of CSVFileWriter
 </pre>
 <pre>
 writeBeansToCSV(Class clazz, List beanList, String path, String fileName) : void
@@ -49,19 +74,7 @@ Creates an empty csv file with all the headings mapped with the given java class
 If path is null it will use the project root as the default path.
 If fileName is null it will use bean Class name as the file name
 </pre>
-<pre>
-createBeansFromCSV(Class clazz, String path, String fileName) : List
 
-params:
-	clazz: Class type of the bean
-	path: Directory path location of the file.
-	fileName: Name of the file
-
-return:
-	CSVUtil
-
-Reads the given file and returns a list of beans with csv data.
-</pre>
 <h4>Configuring Java class instance variables with CSVUtil FieldType annotations</h4>
 <span><b>**Any field with missing @FieldType annotation will be ignored by CSVUtil</b></span></br>
 <span><b>**For any field with missing optional attribute 'csvColumnName' of @FieldType annotation, original field name will be used in CSV column name</b></span>
@@ -229,9 +242,9 @@ public class Engine {
 </ul>
 <h4>Usage:</h4>
 <ol>
-<li><span>Get an instance of CSVUtil</span>
+<li><span>Get an instance of CSVFileWriter</span>
 <pre>
-CSVUtil csvUtil = CSVUtil.getInstance();
+CSVFileWriter csvFileWriter = CSVFileWriterUtil.getCSVFileWriter();
 </pre>
 </li>
 <li><span>Write Java beans data to a CSV file</span>
@@ -243,7 +256,7 @@ List<Vehicle> vehicles = new ArrayList<>() {
 		add(new Vehicle("Yamaha MotorCycle", false, new Byke("Yamaha", "mt09", "White", new Tyre("Pirelli", 180, 90, 2), new Engine(900.0f, 120, 4), 180, 1192000f)));	
 	}
 };
-csvUtil.writeBeansToCSV(Vehicle.class, vehicles, System.getProperty("user.dir"), "Vehicles");
+csvFileWriter.writeBeansToCSV(Vehicle.class, vehicles, System.getProperty("user.dir"), "Vehicles");
 </pre>
 <h4>CSV output file data:</h4>
 <pre>
@@ -255,16 +268,20 @@ Yamaha MotorCycle,false,Yamaha,mt09,White,Pirelli,2,900.0,120.0,4,180
 </li>
 <li><span>Creating an empty CSV file with Java bean definition</span>
 <pre>
-csvUtil.createEmptyCSVFromClass(Vehicle.class, System.getProperty("user.dir"), "Vehicle_sample");
+csvFileWriter.createEmptyCSVFromClass(Vehicle.class, System.getProperty("user.dir"), "Vehicle_sample");
 </pre>
 <h4>CSV output file data:</h4>
 <pre>
 vahicle_name,isElectric,byke_brandName,byke_modelName,byke_color,tyre_brandName,tyre_selfLife,cc,engine_horsepower,engine_cylinders,kerbWeight
 </pre>
 </li>
+<li><span>Get an instance of CSVFileReader</span>
+<pre>
+CSVFileReader csvFileReader = CSVFileReaderUtil.getCSVFileReader();
+</pre>
 <li><span>Create list of Java beans from CSV file data</span>
 <pre>
-csvUtil.createBeansFromCSV(Vehicle.class, System.getProperty("user.dir"), "Vehicles").forEach(vehicle -> {
+csvFileReader.createBeansFromCSV(Vehicle.class, System.getProperty("user.dir"), "Vehicles").forEach(vehicle -> {
 	System.out.println(vehicle.toString());
 });
 </pre>

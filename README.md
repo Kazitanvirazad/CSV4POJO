@@ -34,9 +34,9 @@ params:
 	fileName: Name of the file
 
 return:
-	CSVUtil
+	List
 
-Reads the given file and returns a list of beans with csv data.
+Reads the given file and returns a list of beans with CSV data.
 </pre>
 
 <h3>Class CSVFileWriterUtil</h3>
@@ -55,12 +55,12 @@ writeBeansToCSV(Class clazz, List beanList, String path, String fileName) : void
 params:
 	clazz: Class type of the beans
 	path: Directory path location where the file will be created and written.
-	beanList: List of beans of clazz type which will be written in the csv fil
+	beanList: List of beans of clazz type which will be written in the CSV file
 	fileName: Name of the file
 
-Writes all the beans annotated fields in the csv file. 
+Writes all the beans annotated fields in the CSV file. 
 If path is null it will use the project root as the default path.
-If fileName is null it will use bean Class name as the file name
+If fileName is null it will use bean Class name as the file name.
 </pre>
 <pre>
 createEmptyCSVFromClass(Class clazz, String path, String fileName) : void
@@ -72,7 +72,7 @@ params:
 
 Creates an empty csv file with all the headings mapped with the given java class annotated fields
 If path is null it will use the project root as the default path.
-If fileName is null it will use bean Class name as the file name
+If fileName is null it will use bean Class name as the file name.
 </pre>
 
 <h4>Configuring Java class instance variables with CSVUtil FieldType annotations</h4>

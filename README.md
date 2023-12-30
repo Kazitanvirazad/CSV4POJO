@@ -1,16 +1,16 @@
-<h2><span>CSVUtil library for Java application - Parse CSV file data
-	to existing Java beans and vice-versa.</span></h2>
+<h2><span>CSV4POJO library for Java application - Parse CSV file data
+	to existing Pojo and vice-versa.</span></h2>
 <h5><span>This utility is a lightweight and easy-to-use library that
-	allows you to perform various operations with CSV files and Java beans.</span></h5>
+	allows you to perform various operations with CSV files and Pojos.</span></h5>
 <h4>Features</h4>
 <ul>
-	<li>Create CSV file data from existing Java beans, using
+	<li>Create CSV file data from existing Pojos, using
 		annotations and reflection.</li>
-	<li>Generate empty CSV file from Java bean definitions, using
+	<li>Generate empty CSV file from Pojo definitions, using
 		annotations and reflection.</li>
-	<li>Create Java beans from CSV file data, using annotations and
+	<li>Create Pojo from CSV file data, using annotations and
 		reflection.</li>
-	<li>Validation of the CSV file data against the Java bean
+	<li>Validation of the CSV file data against the Pojo
 		definitions, using annotations and reflection.</li>
 	<li>Custom CSV column name support.</li>
 </ul>
@@ -29,14 +29,14 @@ Creates and returns an instance of CSVFileReader
 createBeansFromCSV(Class clazz, String path, String fileName) : List
 
 params:
-	clazz: Class type of the bean
+	clazz: Class type of the pojo
 	path: Directory path location of the file.
 	fileName: Name of the file
 
 return:
 	List
 
-Reads the given file and returns a list of beans with CSV data.
+Reads the given file and returns a list of pojos with CSV data.
 </pre>
 
 <h3>Class CSVFileWriterUtil</h3>
@@ -53,26 +53,26 @@ Creates and returns an instance of CSVFileWriter
 writeBeansToCSV(Class clazz, List beanList, String path, String fileName) : void
 
 params:
-	clazz: Class type of the beans
+	clazz: Class type of the pojos
 	path: Directory path location where the file will be created and written.
-	beanList: List of beans of clazz type which will be written in the CSV file
+	beanList: List of pojos of clazz type which will be written in the CSV file
 	fileName: Name of the file
 
-Writes all the beans annotated fields in the CSV file. 
+Writes all the pojos annotated fields in the CSV file. 
 If path is null it will use the project root as the default path.
-If fileName is null it will use bean Class name as the file name.
+If fileName is null it will use pojo Class name as the file name.
 </pre>
 <pre>
 createEmptyCSVFromClass(Class clazz, String path, String fileName) : void
 
 params:
-	clazz: Class type of the bean
+	clazz: Class type of the pojo
 	path: Directory path location where the file will be created and written.
 	fileName: Name of the file
 
 Creates an empty csv file with all the headings mapped with the given java class annotated fields
 If path is null it will use the project root as the default path.
-If fileName is null it will use bean Class name as the file name.
+If fileName is null it will use pojo Class name as the file name.
 </pre>
 
 <h4>Configuring Java class instance variables with CSVUtil FieldType annotations</h4>
@@ -247,7 +247,7 @@ public class Engine {
 CSVFileWriter csvFileWriter = CSVFileWriterUtil.getCSVFileWriter();
 </pre>
 </li>
-<li><span>Write Java beans data to a CSV file</span>
+<li><span>Write Pojos data to a CSV file</span>
 <pre>
 List<Vehicle> vehicles = new ArrayList<>() {
 	{
@@ -266,7 +266,7 @@ Kawasaki MotorCycle,false,Kawasaki,z900,Ninja green,Bridgestone,2,899.9,128.0,4,
 Yamaha MotorCycle,false,Yamaha,mt09,White,Pirelli,2,900.0,120.0,4,180
 </pre>
 </li>
-<li><span>Creating an empty CSV file with Java bean definition</span>
+<li><span>Creating an empty CSV file with Pojo definition</span>
 <pre>
 csvFileWriter.createEmptyCSVFromClass(Vehicle.class, System.getProperty("user.dir"), "Vehicle_sample");
 </pre>
@@ -279,7 +279,7 @@ vahicle_name,isElectric,byke_brandName,byke_modelName,byke_color,tyre_brandName,
 <pre>
 CSVFileReader csvFileReader = CSVFileReaderUtil.getCSVFileReader();
 </pre>
-<li><span>Create list of Java beans from CSV file data</span>
+<li><span>Create list of Java pojos from CSV file data</span>
 <pre>
 csvFileReader.createBeansFromCSV(Vehicle.class, System.getProperty("user.dir"), "Vehicles").forEach(vehicle -> {
 	System.out.println(vehicle.toString());

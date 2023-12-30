@@ -7,7 +7,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>CSVUtil</name>
 	<packaging>jar</packaging>
-	<description>CSVUtil for parsing csv file to existing Java Bean and
+	<description>CSVUtil for parsing csv file to existing Pojo and
 		vice-versa</description>
 	<properties>
 		<java.version>17</java.version>

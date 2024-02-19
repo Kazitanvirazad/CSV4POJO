@@ -1,4 +1,4 @@
-package com.csvutil.util.impl;
+package com.csv4pojo.util.impl;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -8,24 +8,23 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.csvutil.exception.FieldNotMatchedException;
-import com.csvutil.util.CSVFileReader;
-import com.csvutil.util.CSVUtil;
+import com.csv4pojo.exception.FieldNotMatchedException;
+import com.csv4pojo.util.CSVReader;
+import com.csv4pojo.util.CSV4Pojo;
 
-public class CSVFileReaderUtil implements CSVFileReader {
+public class CSVReaderImplDeprecated {
 
-	private final CSVUtil csvUtil;
+	private final CSV4Pojo csvUtil;
 
-	private CSVFileReaderUtil() {
+	private CSVReaderImplDeprecated() {
 		super();
-		this.csvUtil = CSVUtil.getInstance();
+		this.csvUtil = CSV4Pojo.getInstance();
 	}
 
-	public static CSVFileReader getCSVFileReader() {
-		return new CSVFileReaderUtil();
+	public static CSVReader getCSVFileReader() {
+		return new CSVReaderImplDeprecated();
 	}
 
-	@Override
 	public <T> List<T> createBeansFromCSV(Class<?> clazz, String path, String fileName) {
 
 		List<T> beans = new ArrayList<>();

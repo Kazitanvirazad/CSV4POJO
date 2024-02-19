@@ -1,7 +1,7 @@
-package com.csvutil.test.model;
+package com.csv4pojo.util.test;
 
-import com.csvutil.annotation.FieldType;
-import com.csvutil.annotation.Type;
+import com.csv4pojo.annotation.FieldType;
+import com.csv4pojo.annotation.Type;
 
 public class Tyre {
 

@@ -1,4 +1,4 @@
-package com.csvutil.util.impl;
+package com.csv4pojo.util.impl;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -6,23 +6,22 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.List;
 
-import com.csvutil.util.CSVFileWriter;
-import com.csvutil.util.CSVUtil;
+import com.csv4pojo.util.CSVWriter;
+import com.csv4pojo.util.CSV4Pojo;
 
-public class CSVFileWriterUtil implements CSVFileWriter {
+public class CSVWriterImplDeprecated {
 
-	private final CSVUtil csvUtil;
+	private final CSV4Pojo csvUtil;
 
-	private CSVFileWriterUtil() {
+	private CSVWriterImplDeprecated() {
 		super();
-		this.csvUtil = CSVUtil.getInstance();
+		this.csvUtil = CSV4Pojo.getInstance();
 	}
 
-	public static CSVFileWriter getCSVFileWriter() {
-		return new CSVFileWriterUtil();
+	public static CSVWriter getCSVFileWriter() {
+		return new CSVWriterImplDeprecated();
 	}
 
-	@Override
 	public <T> void writeBeansToCSV(Class<T> clazz, List<T> beanList, String path, String fileName) {
 		if (beanList != null && beanList.size() > 0) {
 			if (path == null) {
@@ -46,7 +45,6 @@ public class CSVFileWriterUtil implements CSVFileWriter {
 		}
 	}
 
-	@Override
 	public <T> void createEmptyCSVFromClass(Class<T> clazz, String path, String fileName) {
 		if (path == null) {
 			path = csvUtil.getDefaultPath();

@@ -20,7 +20,7 @@ public class Byke {
 	@FieldType(dataType = Type.CLASSTYPE)
 	private Engine engine;
 
-	@FieldType(dataType = Type.INTEGER)
+	@FieldType(dataType = Type.INT)
 	private int kerbWeight;
 
 	private float price;

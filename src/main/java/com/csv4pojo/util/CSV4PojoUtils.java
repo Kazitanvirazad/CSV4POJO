@@ -1,0 +1,98 @@
+package com.csv4pojo.util;
+
+import com.csv4pojo.annotation.FieldType;
+import com.csv4pojo.annotation.Type;
+import com.csv4pojo.exception.MisConfiguredClassFieldException;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
+public class CSV4PojoUtils implements CommonConstants {
+
+    /**
+     * Counts and returns the fields annotated with {@link FieldType}
+     *
+     * @param clazz
+     * @return count of {@link FieldType} annotated fields
+     */
+    public static int getAnnotatedFieldCount(Class<?> clazz) {
+        int count = 0;
+        for (Field field : clazz.getDeclaredFields()) {
+            if (field.isAnnotationPresent(FieldType.class))
+                count++;
+        }
+        return count;
+    }
+
+    /**
+     * Returns the first argument if it is non-null and otherwise returns the non-null second argument.
+     *
+     * @param obj        an object
+     * @param defaultObj a non-null object to return if the first argument is null
+     * @return the first argument if it is non-null and otherwise the second argument if it is non-null
+     * @throws NullPointerException if both obj is null and defaultObj is null
+     * @since 9
+     * This method has been copied from java.util.Objects::requireNonNull from OpenJDK 11 to make CSV4POJO
+     * compatible java 8
+     */
+    public static <T> T requireNonNullElse(T obj, T defaultObj) {
+        return (obj != null) ? obj : requireNonNull(defaultObj, "defaultObj");
+    }
+
+    /**
+     * Checks that the specified object reference is not null. This
+     * method is designed primarily for doing parameter validation in methods
+     * and constructors.
+     *
+     * @param obj the object reference to check for nullity
+     * @param <T> the type of the reference
+     * @return obj if not null
+     * @throws NullPointerException if obj is null
+     * @since 9
+     * This method has been copied from java.util.Objects::requireNonNull from OpenJDK 11 to make CSV4POJO
+     * compatible java 8
+     */
+    private static <T> T requireNonNull(T obj, String message) {
+        if (obj == null)
+            throw new NullPointerException(message);
+        return obj;
+    }
+
+    /**
+     * Returns list of class field names which are annotated with FieldType annotation
+     *
+     * @param clazz
+     * @return List<String>
+     */
+    public static <T> List<String> getAnnotatedClassFields(Class<T> clazz) {
+        List<String> fieldNames = new ArrayList<>();
+        try {
+            for (Field field : clazz.getDeclaredFields()) {
+                field.setAccessible(true);
+                if (field.isAnnotationPresent(FieldType.class)) {
+                    if (field.getDeclaredAnnotation(FieldType.class).dataType() == Type.CLASSTYPE) {
+                        fieldNames.addAll(getAnnotatedClassFields(field.getType()));
+                    } else {
+                        String fieldName = getFieldName(field);
+                        fieldNames.add(fieldName);
+                    }
+                }
+            }
+        } catch (RuntimeException exception) {
+            throw new MisConfiguredClassFieldException("CSV4Pojo FieldType Annotations not properly set: ", exception);
+        }
+        return fieldNames;
+    }
+
+    /**
+     * Returns field names from csvColumnName attribute value if exists, else returns original field name
+     *
+     * @param field
+     * @return String
+     */
+    public static String getFieldName(Field field) {
+        return !field.getDeclaredAnnotation(FieldType.class).csvColumnName().isEmpty() ?
+                field.getDeclaredAnnotation(FieldType.class).csvColumnName() : field.getName();
+    }
+}

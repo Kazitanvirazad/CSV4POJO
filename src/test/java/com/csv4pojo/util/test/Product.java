@@ -10,10 +10,10 @@ public class Product {
 	@FieldType(dataType = Type.STRING, csvColumnName = "product_color")
 	private String color;
 
-	@FieldType(dataType = Type.INTEGER)
+	@FieldType(dataType = Type.INT)
 	private int inventory;
 
-	@FieldType(dataType = Type.INTEGER, csvColumnName = "product_price")
+	@FieldType(dataType = Type.INT, csvColumnName = "product_price")
 	private int price;
 
 	@FieldType(dataType = Type.STRING, csvColumnName = "product_category")

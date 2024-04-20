@@ -1,11 +1,11 @@
 package com.csv4pojo.util.impl;
 
 import com.csv4pojo.annotation.FieldType;
-import com.csv4pojo.annotation.Type;
 import com.csv4pojo.exception.CSVParsingException;
 import com.csv4pojo.exception.FieldNotMatchedException;
 import com.csv4pojo.exception.InputOutputStreamException;
 import com.csv4pojo.exception.MisConfiguredClassFieldException;
+import com.csv4pojo.util.CSV4PojoUtils;
 import com.csv4pojo.util.CSVReader;
 import com.csv4pojo.util.CommonConstants;
 
@@ -13,6 +13,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
         List<T> pojoList = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             // Getting the class field names with FieldType annotation
-            List<String> annotatedClassFields = getAnnotatedClassFields(clazz);
+            List<String> annotatedClassFields = CSV4PojoUtils.getAnnotatedClassFields(clazz);
 
             // Extracting the csv header elements from the first line of the CSV InputStream
             String csvHeader = reader.readLine();
@@ -54,7 +55,7 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
                 cleanCsvLineElements(lineElements);
 
                 // Creating the object of the specified class with the field values passed as a List of String
-                T pojo = createPojoFromCSVLineElements(Arrays.asList(lineElements), clazz);
+                T pojo = createPojoFromCSVLineElements(Arrays.asList(lineElements), annotatedClassFields, clazz);
 
                 if (pojo != null) {
                     // Adding the returned pojo in to the list if the pojo is not null
@@ -69,7 +70,7 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
         }
     }
 
-    private <T> T createPojoFromCSVLineElements(List<String> lineElements, Class<T> clazz) {
+    private <T> T createPojoFromCSVLineElements(List<String> lineElements, List<String> classFields, Class<T> clazz) {
         T classInstance = null;
         try {
             classInstance = clazz.getDeclaredConstructor().newInstance();
@@ -78,63 +79,116 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
             throw new MisConfiguredClassFieldException(exception.getMessage(), exception);
         }
 
-        Field[] fields = clazz.getDeclaredFields();
-        int i = 0;
-        int fieldIndex = 0;
-        while (fieldIndex < fields.length && fields.length <= lineElements.size()) {
+        for (int i = 0; i < classFields.size(); i++) {
+            String classField = classFields.get(i);
+            String lineElement = lineElements.get(i);
+
             try {
-                Field field = fields[fieldIndex];
-                if (classInstance != null) {
-                    if (field.isAnnotationPresent(FieldType.class)) {
-                        field.setAccessible(true);
-                        FieldType type = field.getAnnotation(FieldType.class);
-                        if (type != null) {
-                            switch (type.dataType()) {
-                                case INTEGER:
-                                    int intVal = Integer.valueOf(lineElements.get(i)).intValue();
-                                    field.setInt(classInstance, intVal);
-                                    break;
-                                case CHAR:
-                                    char charVal = lineElements.get(i).length() == 1 ? (Character) lineElements.get(i).charAt(0)
-                                            : '\000';
-                                    field.set(classInstance, charVal);
-                                    break;
-                                case BOOLEAN:
-                                    boolean booleanVal = Boolean.valueOf(String.valueOf(lineElements.get(i)));
-                                    field.set(classInstance, booleanVal);
-                                    break;
-                                case FLOAT:
-                                    float floatVal = Float.valueOf(lineElements.get(i));
-                                    field.setFloat(classInstance, floatVal);
-                                    break;
-                                case LONG:
-                                    long longVal = Long.valueOf(lineElements.get(i));
-                                    field.set(classInstance, longVal);
-                                    break;
-                                case DOUBLE:
-                                    double doubleVal = Double.valueOf(lineElements.get(i));
-                                    field.set(classInstance, doubleVal);
-                                    break;
-                                case STRING:
-                                    String stringVal = lineElements.get(i);
-                                    field.set(classInstance, stringVal);
-                                    break;
-                                case CLASSTYPE:
-                                    field.set(classInstance,
-                                            createPojoFromCSVLineElements(lineElements.subList(i, lineElements.size()), field.getType()));
-                                    i += getAnnotatedFieldCount(field.getType()) - 1;
-                                    break;
-                                default:
-                                    break;
+                Field field = clazz.getDeclaredField(classField);
+                field.setAccessible(true);
+                FieldType type = field.getAnnotation(FieldType.class);
+                if (type != null) {
+                    switch (type.dataType()) {
+                        case INT:
+                            int intVal = Integer.parseInt(lineElement);
+                            field.setInt(classInstance, intVal);
+                            break;
+                        case INTEGER_ARRAY:
+                            String[] rawIntegerValList = lineElement.split(SPLIT_REGEX, -1);
+                            List<Integer> integerValList = new ArrayList<>();
+                            for (String s : rawIntegerValList) {
+                                integerValList.add(Integer.parseInt(s));
                             }
-                        }
-                        i++;
+                            field.set(classInstance,
+                                    integerValList.toArray((Integer[]) Array.newInstance(field.getType().getComponentType(), integerValList.size())));
+                            break;
+                        case CHAR:
+                            char charVal = lineElement.length() == 1 ? lineElement.charAt(0)
+                                    : '\000';
+                            field.set(classInstance, charVal);
+                            break;
+                        case CHARACTER_ARRAY:
+                            String[] rawCharacterValList = lineElement.split(SPLIT_REGEX, -1);
+                            List<Character> characterValList = new ArrayList<>();
+                            for (String s : rawCharacterValList) {
+                                characterValList.add(s.charAt(0));
+                            }
+                            field.set(classInstance,
+                                    characterValList.toArray((Character[]) Array.newInstance(field.getType().getComponentType(), characterValList.size())));
+                            break;
+                        case BOOLEAN:
+                            boolean booleanVal = Boolean.parseBoolean(lineElement);
+                            field.set(classInstance, booleanVal);
+                            break;
+                        case BOOLEAN_ARRAY:
+                            String[] rawBooleanValList = lineElement.split(SPLIT_REGEX, -1);
+                            List<Boolean> booleanValList = new ArrayList<>();
+                            for (String s : rawBooleanValList) {
+                                booleanValList.add(Boolean.parseBoolean(s));
+                            }
+                            field.set(classInstance,
+                                    booleanValList.toArray((Boolean[]) Array.newInstance(field.getType().getComponentType(), booleanValList.size())));
+                            break;
+                        case FLOAT:
+                            float floatVal = Float.parseFloat(lineElement);
+                            field.setFloat(classInstance, floatVal);
+                            break;
+                        case FLOAT_ARRAY:
+                            String[] rawFloatValList = lineElement.split(SPLIT_REGEX, -1);
+                            List<Float> floatValList = new ArrayList<>();
+                            for (String s : rawFloatValList) {
+                                floatValList.add(Float.parseFloat(s));
+                            }
+                            field.set(classInstance,
+                                    floatValList.toArray((Float[]) Array.newInstance(field.getType().getComponentType(), floatValList.size())));
+                            break;
+                        case LONG:
+                            long longVal = Long.parseLong(lineElement);
+                            field.set(classInstance, longVal);
+                            break;
+                        case LONG_ARRAY:
+                            String[] rawLongValList = lineElement.split(SPLIT_REGEX, -1);
+                            List<Long> longValList = new ArrayList<>();
+                            for (String s : rawLongValList) {
+                                longValList.add(Long.parseLong(s));
+                            }
+                            field.set(classInstance,
+                                    longValList.toArray((Long[]) Array.newInstance(field.getType().getComponentType(), longValList.size())));
+                            break;
+                        case DOUBLE:
+                            double doubleVal = Double.parseDouble(lineElement);
+                            field.set(classInstance, doubleVal);
+                            break;
+                        case DOUBLE_ARRAY:
+                            String[] rawDoubleValList = lineElement.split(SPLIT_REGEX, -1);
+                            List<Double> doubleValList = new ArrayList<>();
+                            for (String s : rawDoubleValList) {
+                                doubleValList.add(Double.parseDouble(s));
+                            }
+                            field.set(classInstance,
+                                    doubleValList.toArray((Double[]) Array.newInstance(field.getType().getComponentType(), doubleValList.size())));
+                            break;
+                        case STRING:
+                            field.set(classInstance, lineElement);
+                            break;
+                        case STRING_ARRAY:
+                            String[] rawStringValList = lineElement.split(SPLIT_REGEX, -1);
+                            List<String> stringValList = Arrays.asList(rawStringValList);
+                            field.set(classInstance,
+                                    stringValList.toArray((String[]) Array.newInstance(field.getType().getComponentType(), stringValList.size())));
+                            break;
+                        case CLASSTYPE:
+                            field.set(classInstance,
+                                    createPojoFromCSVLineElements(classFields.subList(i, classFields.size()), lineElements.subList(i, lineElements.size()), field.getType()));
+                            i += CSV4PojoUtils.getAnnotatedFieldCount(field.getType()) - 1;
+                            break;
+                        default:
+                            break;
                     }
                 }
-            } catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
-                e.printStackTrace();
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException(e);
             }
-            fieldIndex++;
         }
         return classInstance;
     }
@@ -183,41 +237,5 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
             flag = csv4PojoAnnotatedClassFields.get(i).equals(csvHeaderElements[i]);
         }
         return flag;
-    }
-
-    /**
-     * Returns list of class field names which are annotated with FieldType annotation
-     *
-     * @param clazz
-     * @return List<String>
-     */
-    private <T> List<String> getAnnotatedClassFields(Class<T> clazz) {
-        List<String> fieldNames = new ArrayList<>();
-        try {
-            for (Field field : clazz.getDeclaredFields()) {
-                if (field.isAnnotationPresent(FieldType.class)) {
-                    if (field.getDeclaredAnnotation(FieldType.class).dataType() == Type.CLASSTYPE) {
-                        fieldNames.addAll(getAnnotatedClassFields(field.getType()));
-                    } else {
-                        String fieldName = getFieldName(field);
-                        fieldNames.add(fieldName);
-                    }
-                }
-            }
-        } catch (RuntimeException exception) {
-            throw new MisConfiguredClassFieldException("CSV4Pojo FieldType Annotations not properly set: ", exception);
-        }
-        return fieldNames;
-    }
-
-    /**
-     * Returns field names from csvColumnName attribute value if exists, else returns original field name
-     *
-     * @param field
-     * @return String
-     */
-    private String getFieldName(Field field) {
-        return !field.getDeclaredAnnotation(FieldType.class).csvColumnName().isEmpty() ?
-                field.getDeclaredAnnotation(FieldType.class).csvColumnName() : field.getName();
     }
 }

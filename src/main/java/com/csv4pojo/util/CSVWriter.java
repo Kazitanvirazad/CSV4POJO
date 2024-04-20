@@ -1,11 +1,11 @@
 package com.csv4pojo.util;
 
-import java.io.OutputStream;
+import java.io.Writer;
 import java.util.List;
 
 public interface CSVWriter {
 
-    <T> OutputStream createCSVOutputStreamFromPojoList(Class<T> clazz, List<T> pojoList);
+    <T> void createCSVOutputStreamFromPojoList(Class<T> clazz, List<T> pojoList, Writer writer);
 
-    <T> OutputStream createEmptyCSVOutputStreamFromClass(Class<T> clazz);
+    <T> void createEmptyCSVOutputStreamFromClass(Class<T> clazz, Writer writer);
 }

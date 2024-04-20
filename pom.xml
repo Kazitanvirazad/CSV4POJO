@@ -31,6 +31,7 @@
                 <role>Java Developer</role>
                 <role>Application Development Expert in AWS</role>
             </roles>
+			<url>https://www.linkedin.com/in/kazitanvirazad/</url>
         </developer>
     </developers>
 
@@ -46,6 +47,20 @@
                     <target>${java.version}</target>
                     <source>${java.version}</source>
                 </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>3.3.0</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>jar-no-fork</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

@@ -11,7 +11,7 @@ public class Engine {
 	@FieldType(dataType = Type.FLOAT, csvColumnName = "engine_horsepower")
 	private float bhp;
 
-	@FieldType(dataType = Type.INTEGER, csvColumnName = "engine_cylinders")
+	@FieldType(dataType = Type.INT, csvColumnName = "engine_cylinders")
 	private int cylinders;
 
 	public Engine() {

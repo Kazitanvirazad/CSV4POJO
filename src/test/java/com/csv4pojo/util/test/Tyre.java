@@ -12,7 +12,7 @@ public class Tyre {
 
 	private int tyreBreadth;
 
-	@FieldType(dataType = Type.INTEGER, csvColumnName = "tyre_selfLife")
+	@FieldType(dataType = Type.INT, csvColumnName = "tyre_selfLife")
 	private int selfLife;
 
 	public Tyre(String tyreBrand, int tyreWidth, int tyreBreadth, int selfLife) {

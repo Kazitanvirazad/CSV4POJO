@@ -2,10 +2,11 @@ package com.csv4pojo.annotation;
 
 public enum Type {
 
-    INTEGER,
+    INT,
     STRING,
     BOOLEAN,
-    FLOAT, DOUBLE,
+    FLOAT,
+    DOUBLE,
     LONG,
     CHAR,
     CLASSTYPE,
@@ -15,6 +16,5 @@ public enum Type {
     FLOAT_ARRAY,
     DOUBLE_ARRAY,
     LONG_ARRAY,
-    CHAR_ARRAY,
-    CLASSTYPE_ARRAY;
+    CHARACTER_ARRAY
 }

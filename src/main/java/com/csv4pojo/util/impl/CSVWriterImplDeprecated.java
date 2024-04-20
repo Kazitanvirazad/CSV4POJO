@@ -19,46 +19,46 @@ public class CSVWriterImplDeprecated {
 	}
 
 	public static CSVWriter getCSVFileWriter() {
-		return new CSVWriterImplDeprecated();
+		return (CSVWriter) new CSVWriterImplDeprecated();
 	}
-
-	public <T> void writeBeansToCSV(Class<T> clazz, List<T> beanList, String path, String fileName) {
-		if (beanList != null && beanList.size() > 0) {
-			if (path == null) {
-				path = csvUtil.getDefaultPath();
-			}
-			if (fileName == null) {
-				fileName = clazz.getSimpleName() + csvUtil.getFileExtension();
-			}
-
-			try (BufferedWriter writer = new BufferedWriter(
-					new FileWriter(new File(path + fileName + csvUtil.getFileExtension())))) {
-				List<String> fieldNames = csvUtil.getClassFields(clazz);
-				csvUtil.writeLinesToCSVFile(fieldNames, writer);
-				for (T bean : beanList) {
-					List<String> fieldValues = csvUtil.getClassFieldValues(bean);
-					csvUtil.writeLinesToCSVFile(fieldValues, writer);
-				}
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public <T> void createEmptyCSVFromClass(Class<T> clazz, String path, String fileName) {
-		if (path == null) {
-			path = csvUtil.getDefaultPath();
-		}
-		if (fileName == null) {
-			fileName = clazz.getSimpleName() + csvUtil.getFileExtension();
-		}
-		try (BufferedWriter writer = new BufferedWriter(
-				new FileWriter(new File(path + fileName + csvUtil.getFileExtension())))) {
-			List<String> fieldNames = csvUtil.getClassFields(clazz);
-			csvUtil.writeLinesToCSVFile(fieldNames, writer);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
+//
+//	public <T> void writeBeansToCSV(Class<T> clazz, List<T> beanList, String path, String fileName) {
+//		if (beanList != null && beanList.size() > 0) {
+//			if (path == null) {
+//				path = csvUtil.getDefaultPath();
+//			}
+//			if (fileName == null) {
+//				fileName = clazz.getSimpleName() + csvUtil.getFileExtension();
+//			}
+//
+//			try (BufferedWriter writer = new BufferedWriter(
+//					new FileWriter(new File(path + fileName + csvUtil.getFileExtension())))) {
+//				List<String> fieldNames = csvUtil.getClassFields(clazz);
+//				csvUtil.writeLinesToCSVFile(fieldNames, writer);
+//				for (T bean : beanList) {
+//					List<String> fieldValues = csvUtil.getClassFieldValues(bean);
+//					csvUtil.writeLinesToCSVFile(fieldValues, writer);
+//				}
+//			} catch (IOException e) {
+//				e.printStackTrace();
+//			}
+//		}
+//	}
+//
+//	public <T> void createEmptyCSVFromClass(Class<T> clazz, String path, String fileName) {
+//		if (path == null) {
+//			path = csvUtil.getDefaultPath();
+//		}
+//		if (fileName == null) {
+//			fileName = clazz.getSimpleName() + csvUtil.getFileExtension();
+//		}
+//		try (BufferedWriter writer = new BufferedWriter(
+//				new FileWriter(new File(path + fileName + csvUtil.getFileExtension())))) {
+//			List<String> fieldNames = csvUtil.getClassFields(clazz);
+//			csvUtil.writeLinesToCSVFile(fieldNames, writer);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 }

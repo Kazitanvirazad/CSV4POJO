@@ -1,5 +1,8 @@
 package com.csv4pojo.exception;
 
+/**
+ * @author Kazi Tanvir Azad
+ */
 public class FieldNotMatchedException extends RuntimeException {
     private static final long serialVersionUID = 5102964048309023434L;
 

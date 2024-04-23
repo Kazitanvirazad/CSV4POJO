@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * @author Kazi Tanvir Azad
+ */
 public class CSVReaderImpl implements CSVReader, CommonConstants {
 
     @Override
@@ -27,13 +30,16 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
         List<T> pojoList = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             // Getting the class field names with FieldType annotation
-            List<String> annotatedClassFields = CSV4PojoUtils.getAnnotatedClassFields(clazz);
+            List<String> annotatedClassFields = CSV4PojoUtils.getAnnotatedClassFieldNames(clazz);
 
             // Extracting the csv header elements from the first line of the CSV InputStream
             String csvHeader = reader.readLine();
             if (csvHeader == null) {
                 throw new CSVParsingException("CSV header elements does not exists!");
             }
+
+            // Remove BOM (BYTE-ORDER MARK) if it's present in the line. For UTF-8 the BOM is: 0xEF, 0xBB, 0xBF
+            csvHeader = removeUTF8BOM(csvHeader);
 
             // Split the line by comma, but ignore commas inside double quotes
             String[] headerElements = csvHeader.split(SPLIT_REGEX, -1);
@@ -55,7 +61,7 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
                 cleanCsvLineElements(lineElements);
 
                 // Creating the object of the specified class with the field values passed as a List of String
-                T pojo = createPojoFromCSVLineElements(Arrays.asList(lineElements), annotatedClassFields, clazz);
+                T pojo = createPojoFromCSVLineElements(clazz, Arrays.asList(lineElements));
 
                 if (pojo != null) {
                     // Adding the returned pojo in to the list if the pojo is not null
@@ -70,8 +76,8 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
         }
     }
 
-    private <T> T createPojoFromCSVLineElements(List<String> lineElements, List<String> classFields, Class<T> clazz) {
-        T classInstance = null;
+    private <T> T createPojoFromCSVLineElements(Class<T> clazz, List<String> lineElements) {
+        T classInstance;
         try {
             classInstance = clazz.getDeclaredConstructor().newInstance();
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
@@ -79,12 +85,14 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
             throw new MisConfiguredClassFieldException(exception.getMessage(), exception);
         }
 
-        for (int i = 0; i < classFields.size(); i++) {
-            String classField = classFields.get(i);
-            String lineElement = lineElements.get(i);
+        List<Field> fields = CSV4PojoUtils.getAnnotatedClassFieldList(clazz);
 
+        int index = 0;
+        int lineIndex = 0;
+        while (index < fields.size()) {
+            String lineElement = lineElements.get(lineIndex);
+            Field field = fields.get(index);
             try {
-                Field field = clazz.getDeclaredField(classField);
                 field.setAccessible(true);
                 FieldType type = field.getAnnotation(FieldType.class);
                 if (type != null) {
@@ -178,17 +186,20 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
                                     stringValList.toArray((String[]) Array.newInstance(field.getType().getComponentType(), stringValList.size())));
                             break;
                         case CLASSTYPE:
+                            int fieldCount = CSV4PojoUtils.getAnnotatedFieldCount(field.getType());
                             field.set(classInstance,
-                                    createPojoFromCSVLineElements(classFields.subList(i, classFields.size()), lineElements.subList(i, lineElements.size()), field.getType()));
-                            i += CSV4PojoUtils.getAnnotatedFieldCount(field.getType()) - 1;
+                                    createPojoFromCSVLineElements(field.getType(), lineElements.subList(lineIndex, lineIndex + fieldCount)));
+                            lineIndex += fieldCount - 1;
                             break;
                         default:
                             break;
                     }
                 }
-            } catch (NoSuchFieldException | IllegalAccessException e) {
+            } catch (IllegalAccessException e) {
                 throw new RuntimeException(e);
             }
+            index++;
+            lineIndex++;
         }
         return classInstance;
     }
@@ -237,5 +248,18 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
             flag = csv4PojoAnnotatedClassFields.get(i).equals(csvHeaderElements[i]);
         }
         return flag;
+    }
+
+    /**
+     * Remove BOM if it's present in the line. For UTF-8 the BOM is: 0xEF, 0xBB, 0xBF
+     *
+     * @param line
+     * @return String
+     */
+    private String removeUTF8BOM(String line) {
+        if (line.startsWith(UTF8_BOM)) {
+            line = line.substring(1);
+        }
+        return line;
     }
 }

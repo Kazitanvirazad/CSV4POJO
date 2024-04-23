@@ -8,6 +8,9 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Kazi Tanvir Azad
+ */
 public class CSV4PojoUtils implements CommonConstants {
 
     /**
@@ -33,8 +36,7 @@ public class CSV4PojoUtils implements CommonConstants {
      * @return the first argument if it is non-null and otherwise the second argument if it is non-null
      * @throws NullPointerException if both obj is null and defaultObj is null
      * @since 9
-     * This method has been copied from java.util.Objects::requireNonNull from OpenJDK 11 to make CSV4POJO
-     * compatible java 8
+     * This method has been copied from java.util.Objects::requireNonNull from OpenJDK 11
      */
     public static <T> T requireNonNullElse(T obj, T defaultObj) {
         return (obj != null) ? obj : requireNonNull(defaultObj, "defaultObj");
@@ -50,8 +52,7 @@ public class CSV4PojoUtils implements CommonConstants {
      * @return obj if not null
      * @throws NullPointerException if obj is null
      * @since 9
-     * This method has been copied from java.util.Objects::requireNonNull from OpenJDK 11 to make CSV4POJO
-     * compatible java 8
+     * This method has been copied from java.util.Objects::requireNonNull from OpenJDK 11
      */
     private static <T> T requireNonNull(T obj, String message) {
         if (obj == null)
@@ -60,21 +61,42 @@ public class CSV4PojoUtils implements CommonConstants {
     }
 
     /**
+     * Returns list of Field which are annotated with FieldType annotation
+     *
+     * @param clazz
+     * @return List<Field>
+     */
+    public static <T> List<Field> getAnnotatedClassFieldList(Class<T> clazz) {
+        List<Field> fields = new ArrayList<>();
+        try {
+            for (Field field : clazz.getDeclaredFields()) {
+                field.setAccessible(true);
+                if (field.isAnnotationPresent(FieldType.class)) {
+                    fields.add(field);
+                }
+            }
+        } catch (RuntimeException exception) {
+            throw new MisConfiguredClassFieldException("CSV4Pojo FieldType Annotations not properly set: ", exception);
+        }
+        return fields;
+    }
+
+    /**
      * Returns list of class field names which are annotated with FieldType annotation
      *
      * @param clazz
      * @return List<String>
      */
-    public static <T> List<String> getAnnotatedClassFields(Class<T> clazz) {
+    public static <T> List<String> getAnnotatedClassFieldNames(Class<T> clazz) {
         List<String> fieldNames = new ArrayList<>();
         try {
             for (Field field : clazz.getDeclaredFields()) {
                 field.setAccessible(true);
                 if (field.isAnnotationPresent(FieldType.class)) {
                     if (field.getDeclaredAnnotation(FieldType.class).dataType() == Type.CLASSTYPE) {
-                        fieldNames.addAll(getAnnotatedClassFields(field.getType()));
+                        fieldNames.addAll(getAnnotatedClassFieldNames(field.getType()));
                     } else {
-                        String fieldName = getFieldName(field);
+                        String fieldName = getAnnotatedFieldName(field);
                         fieldNames.add(fieldName);
                     }
                 }
@@ -86,12 +108,12 @@ public class CSV4PojoUtils implements CommonConstants {
     }
 
     /**
-     * Returns field names from csvColumnName attribute value if exists, else returns original field name
+     * Returns field name from csvColumnName attribute value if exists, else returns original field name
      *
      * @param field
      * @return String
      */
-    public static String getFieldName(Field field) {
+    public static String getAnnotatedFieldName(Field field) {
         return !field.getDeclaredAnnotation(FieldType.class).csvColumnName().isEmpty() ?
                 field.getDeclaredAnnotation(FieldType.class).csvColumnName() : field.getName();
     }

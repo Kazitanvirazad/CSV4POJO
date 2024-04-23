@@ -1,5 +1,8 @@
 package com.csv4pojo.annotation;
 
+/**
+ * @author Kazi Tanvir Azad
+ */
 public enum Type {
 
     INT,

@@ -1,4 +1,4 @@
-package com.csv4pojo.util.test;
+package com.csv4pojo.util.test.model;
 
 import com.csv4pojo.annotation.FieldType;
 import com.csv4pojo.annotation.Type;

@@ -1,5 +1,8 @@
 package com.csv4pojo.exception;
 
+/**
+ * @author Kazi Tanvir Azad
+ */
 public class MisConfiguredClassFieldException extends RuntimeException {
     private static final long serialVersionUID = -3030041225634143353L;
 

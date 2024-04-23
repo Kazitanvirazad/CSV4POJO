@@ -1,5 +1,8 @@
 package com.csv4pojo.exception;
 
+/**
+ * @author Kazi Tanvir Azad
+ */
 public class CSVParsingException extends RuntimeException {
 
     private static final long serialVersionUID = 4911628100785175704L;

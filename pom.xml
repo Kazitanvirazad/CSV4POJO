@@ -7,9 +7,7 @@
     <version>2.0.0</version>
     <name>CSVUtil</name>
     <packaging>jar</packaging>
-    <description>CSV utility tool for parsing csv file to existing Pojo and
-        vice-versa
-    </description>
+    <description>CSV utility tool for parsing csv file to existing Pojo and vice-versa</description>
     <properties>
         <java.version>8</java.version>
     </properties>
@@ -31,7 +29,7 @@
                 <role>Java Developer</role>
                 <role>Application Development Expert in AWS</role>
             </roles>
-			<url>https://www.linkedin.com/in/kazitanvirazad/</url>
+            <url>https://www.linkedin.com/in/kazitanvirazad/</url>
         </developer>
     </developers>
 

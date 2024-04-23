@@ -12,6 +12,9 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * @author Kazi Tanvir Azad
+ */
 public class CSVWriterImpl implements CSVWriter, CommonConstants {
     @Override
     public <T> void createCSVOutputStreamFromPojoList(Class<T> clazz, List<T> pojoList, Writer writer) {
@@ -35,7 +38,7 @@ public class CSVWriterImpl implements CSVWriter, CommonConstants {
     private <T> List<String> getAnnotatedFieldValuesFromPojo(T pojo) {
         Class<?> clazz = pojo.getClass();
         List<String> fieldvalues = new ArrayList<>();
-        List<String> annotatedClassFields = CSV4PojoUtils.getAnnotatedClassFields(clazz);
+        List<String> annotatedClassFields = CSV4PojoUtils.getAnnotatedClassFieldNames(clazz);
         for (int i = 0; i < annotatedClassFields.size(); i++) {
             String fieldName = annotatedClassFields.get(i);
             try {
@@ -108,7 +111,7 @@ public class CSVWriterImpl implements CSVWriter, CommonConstants {
     }
 
     private <T> void writeHeaderToCsvOutputStream(Class<T> clazz, BufferedWriter writer) throws IOException {
-        List<String> annotatedHeaderNameListFromClass = CSV4PojoUtils.getAnnotatedClassFields(clazz);
+        List<String> annotatedHeaderNameListFromClass = CSV4PojoUtils.getAnnotatedClassFieldNames(clazz);
         writer.write(getFormattedLineElements(annotatedHeaderNameListFromClass));
         writer.newLine();
     }

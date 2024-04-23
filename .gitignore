@@ -6,6 +6,9 @@ workspace/
 
 io
 
+data/
+AppTest*.java
+
 # Cached file
 .ehcache-diskstore.lock
 *.data

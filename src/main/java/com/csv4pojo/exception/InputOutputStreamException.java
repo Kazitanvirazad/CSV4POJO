@@ -1,5 +1,8 @@
 package com.csv4pojo.exception;
 
+/**
+ * @author Kazi Tanvir Azad
+ */
 public class InputOutputStreamException extends RuntimeException {
     private static final long serialVersionUID = -4352063377933591921L;
 

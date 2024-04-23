@@ -4,85 +4,83 @@
 	allows you to perform various operations with CSV files and Pojos.</span></h5>
 <h4>Features</h4>
 <ul>
-	<li>Create CSV file data from existing Pojos, using
-		annotations and reflection.</li>
-	<li>Generate empty CSV file from Pojo definitions, using
-		annotations and reflection.</li>
-	<li>Create Pojo from CSV file data, using annotations and
-		reflection.</li>
-	<li>Validation of the CSV file data against the Pojo
-		definitions, using annotations and reflection.</li>
+	<li>Create CSV file data from existing Pojo, using annotations.</li>
+	<li>Generate empty CSV file from Pojo definitions, using annotations.</li>
+	<li>Create Pojo list from CSV file data, using annotations.</li>
+	<li>Validation of the CSV file data against the Pojo definitions, using annotations.</li>
 	<li>Custom CSV column name support.</li>
+	<li>15 Supported DataTypes: 
+		<ol>
+			<li>int</li>
+			<li>boolean</li>
+			<li>float</li>
+			<li>double</li>
+			<li>long</li>
+			<li>char</li>
+			<li>String</li>
+			<li>Integer Array</li>
+			<li>String Array</li>
+			<li>Boolean Array</li>
+			<li>Float Array</li>
+			<li>Double Array</li>
+			<li>Long Array</li>
+			<li>Character Array</li>
+			<li>Class</li>
+		</ol>
+	</li>
 </ul>
 
-<h3>Class CSVFileReaderUtil</h3>
+<h3>Interface CSVReader</h3>
 <h4>Methods</h4>
 <pre>
-static getCSVFileReader() : CSVFileReader
-
-return:
-	CSVFileReader
-	
-Creates and returns an instance of CSVFileReader
-</pre>
-<pre>
-createBeansFromCSV(Class clazz, String path, String fileName) : List
+createPojoListFromCSVInputStream(Class<T> clazz, InputStream inputStream) : List
 
 params:
 	clazz: Class type of the pojo
-	path: Directory path location of the file.
-	fileName: Name of the file
+	inputStream: csv file inputStream.
 
 return:
 	List
 
-Reads the given file and returns a list of pojos with CSV data.
+Reads the given file and returns a list of pojo with CSV data.
 </pre>
-
-<h3>Class CSVFileWriterUtil</h3>
+<h4>Implementing Class</h4>
+<pre>
+CSVReader csvReader = new CSVReaderImpl();
+</pre>
+<h3>Interface CSVWriter</h3>
 <h4>Methods</h4>
 <pre>
-static getCSVFileWriter() : CSVFileWriter
-
-return:
-	CSVFileWriter
-	
-Creates and returns an instance of CSVFileWriter
-</pre>
-<pre>
-writeBeansToCSV(Class clazz, List beanList, String path, String fileName) : void
+createCSVOutputStreamFromPojoList(Class<T> clazz, List<T> pojoList, Writer writer) : void
 
 params:
 	clazz: Class type of the pojos
-	path: Directory path location where the file will be created and written.
-	beanList: List of pojos of clazz type which will be written in the CSV file
-	fileName: Name of the file
+	pojoList: List of pojos of clazz type which will be written in the CSV file
+	writer: csv file writer
 
-Writes all the pojos annotated fields in the CSV file. 
-If path is null it will use the project root as the default path.
-If fileName is null it will use pojo Class name as the file name.
+Writes all the pojos annotated fields in the CSV file.
 </pre>
 <pre>
-createEmptyCSVFromClass(Class clazz, String path, String fileName) : void
+createEmptyCSVOutputStreamFromClass(Class<T> clazz, Writer writer) : void
 
 params:
 	clazz: Class type of the pojo
-	path: Directory path location where the file will be created and written.
-	fileName: Name of the file
+	writer: csv file writer
 
 Creates an empty csv file with all the headings mapped with the given java class annotated fields
-If path is null it will use the project root as the default path.
-If fileName is null it will use pojo Class name as the file name.
 </pre>
-
-<h4>Configuring Java class instance variables with CSVUtil FieldType annotations</h4>
-<span><b>**Any field with missing @FieldType annotation will be ignored by CSVUtil</b></span></br>
+<h4>Implementing Class</h4>
+<pre>
+CSVWriter csvWriter = new CSVWriterImpl();
+</pre>
+<h4>Configuring Java class instance variables with CSV4POJO FieldType annotations</h4>
+<span><b>**Any field with missing @FieldType annotation will be ignored by CSV4POJO</b></span></br>
 <span><b>**For any field with missing optional attribute 'csvColumnName' of @FieldType annotation, original field name will be used in CSV column name</b></span>
 <ul>
 <li><span>Vehicle.java</span>
 <pre>
-import com.csvutil.annotation.FieldType;
-import com.csvutil.annotation.Type;
+import com.csv4pojo.annotation.FieldType;
+import com.csv4pojo.annotation.Type;
 
 public class Vehicle {
 
@@ -116,8 +114,8 @@ public class Vehicle {
 </li>
 <li><span>Byke.java</span>
 <pre>
-import com.csvutil.annotation.FieldType;
-import com.csvutil.annotation.Type;
+import com.csv4pojo.annotation.FieldType;
+import com.csv4pojo.annotation.Type;
 
 public class Byke {
 
@@ -136,7 +134,7 @@ public class Byke {
 	@FieldType(dataType = Type.CLASSTYPE)
 	private Engine engine;
 
-	@FieldType(dataType = Type.INTEGER)
+	@FieldType(dataType = Type.INT)
 	private int kerbWeight;
 
 	private float price;
@@ -168,8 +166,8 @@ public class Byke {
 </li>
 <li><span>Tyre.java</span>
 <pre>
-import com.csvutil.annotation.FieldType;
-import com.csvutil.annotation.Type;
+import com.csv4pojo.annotation.FieldType;
+import com.csv4pojo.annotation.Type;
 
 public class Tyre {
 
@@ -180,7 +178,7 @@ public class Tyre {
 
 	private int tyreBreadth;
 
-	@FieldType(dataType = Type.INTEGER, csvColumnName = "tyre_selfLife")
+	@FieldType(dataType = Type.INT, csvColumnName = "tyre_selfLife")
 	private int selfLife;
 
 	public Tyre(String tyreBrand, int tyreWidth, int tyreBreadth, int selfLife) {
@@ -206,8 +204,8 @@ public class Tyre {
 </li>
 <li><span>Engine.java</span>
 <pre>
-import com.csvutil.annotation.FieldType;
-import com.csvutil.annotation.Type;
+import com.csv4pojo.annotation.FieldType;
+import com.csv4pojo.annotation.Type;
 
 public class Engine {
 
@@ -217,7 +215,7 @@ public class Engine {
 	@FieldType(dataType = Type.FLOAT, csvColumnName = "engine_horsepower")
 	private float bhp;
 
-	@FieldType(dataType = Type.INTEGER, csvColumnName = "engine_cylinders")
+	@FieldType(dataType = Type.INT, csvColumnName = "engine_cylinders")
 	private int cylinders;
 
 	public Engine() {
@@ -242,12 +240,12 @@ public class Engine {
 </ul>
 <h4>Usage:</h4>
 <ol>
-<li><span>Get an instance of CSVFileWriter</span>
+<li><span>Create an instance of CSVWriter</span>
 <pre>
-CSVFileWriter csvFileWriter = CSVFileWriterUtil.getCSVFileWriter();
+CSVWriter csvWriter = new CSVWriterImpl();
 </pre>
 </li>
-<li><span>Write Pojos data to a CSV file</span>
+<li><span>Write Pojo List data to a CSV file</span>
 <pre>
 List<Vehicle> vehicles = new ArrayList<>() {
 	{
@@ -256,7 +254,7 @@ List<Vehicle> vehicles = new ArrayList<>() {
 		add(new Vehicle("Yamaha MotorCycle", false, new Byke("Yamaha", "mt09", "White", new Tyre("Pirelli", 180, 90, 2), new Engine(900.0f, 120, 4), 180, 1192000f)));	
 	}
 };
-csvFileWriter.writeBeansToCSV(Vehicle.class, vehicles, System.getProperty("user.dir"), "Vehicles");
+csvWriter.createCSVOutputStreamFromPojoList(Vehicle.class, vehicles, writer);
 </pre>
 <h4>CSV output file data:</h4>
 <pre>
@@ -268,24 +266,22 @@ Yamaha MotorCycle,false,Yamaha,mt09,White,Pirelli,2,900.0,120.0,4,180
 </li>
 <li><span>Creating an empty CSV file with Pojo definition</span>
 <pre>
-csvFileWriter.createEmptyCSVFromClass(Vehicle.class, System.getProperty("user.dir"), "Vehicle_sample");
+csvWriter.createEmptyCSVOutputStreamFromClass(Vehicle.class, writer);
 </pre>
 <h4>CSV output file data:</h4>
 <pre>
 vahicle_name,isElectric,byke_brandName,byke_modelName,byke_color,tyre_brandName,tyre_selfLife,cc,engine_horsepower,engine_cylinders,kerbWeight
 </pre>
 </li>
-<li><span>Get an instance of CSVFileReader</span>
+<li><span>Create an instance of CSVReader</span>
 <pre>
-CSVFileReader csvFileReader = CSVFileReaderUtil.getCSVFileReader();
+CSVReader csvReader = new CSVReaderImpl();
 </pre>
-<li><span>Create list of Java pojos from CSV file data</span>
+<li><span>Create list of Java pojo from CSV file data</span>
 <pre>
-csvFileReader.createBeansFromCSV(Vehicle.class, System.getProperty("user.dir"), "Vehicles").forEach(vehicle -> {
-	System.out.println(vehicle.toString());
-});
+csvReader.createPojoListFromCSVInputStream(Vehicle.class, inputStream);
 </pre>
-<h4>Output data:</h4>
+<h4>Output data using toString() method :</h4>
 <pre>
 Vehicle [name=KTM MotorCycle, isElectric=false, byke=Byke [brandName=KTM, modelName=Duke 250, color=Ebony Black, tyre=Tyre [tyreBrand=MRF, tyreWidth=0, tyreBreadth=0, selfLife=5], engine=Engine [cc=249.9, bhp=28.0, cylinders=1], kerbWeight=170, price=0.0]]
 Vehicle [name=Kawasaki MotorCycle, isElectric=false, byke=Byke [brandName=Kawasaki, modelName=z900, color=Ninja green, tyre=Tyre [tyreBrand=Bridgestone, tyreWidth=0, tyreBreadth=0, selfLife=2], engine=Engine [cc=899.9, bhp=128.0, cylinders=4], kerbWeight=190, price=0.0]]

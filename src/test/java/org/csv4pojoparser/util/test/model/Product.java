@@ -1,7 +1,7 @@
-package com.csv4pojo.util.test.model;
+package org.csv4pojoparser.util.test.model;
 
-import com.csv4pojo.annotation.FieldType;
-import com.csv4pojo.annotation.Type;
+import org.csv4pojoparser.annotation.FieldType;
+import org.csv4pojoparser.annotation.Type;
 
 public class Product {
 	@FieldType(dataType = Type.STRING, csvColumnName = "product_name")

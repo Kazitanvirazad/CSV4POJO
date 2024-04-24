@@ -1,13 +1,13 @@
-package com.csv4pojo.util.impl;
+package org.csv4pojoparser.util.impl;
 
-import com.csv4pojo.annotation.FieldType;
-import com.csv4pojo.exception.CSVParsingException;
-import com.csv4pojo.exception.FieldNotMatchedException;
-import com.csv4pojo.exception.InputOutputStreamException;
-import com.csv4pojo.exception.MisConfiguredClassFieldException;
-import com.csv4pojo.util.CSV4PojoUtils;
-import com.csv4pojo.util.CSVReader;
-import com.csv4pojo.util.CommonConstants;
+import org.csv4pojoparser.annotation.FieldType;
+import org.csv4pojoparser.exception.CSVParsingException;
+import org.csv4pojoparser.exception.FieldNotMatchedException;
+import org.csv4pojoparser.exception.InputOutputStreamException;
+import org.csv4pojoparser.exception.MisConfiguredClassFieldException;
+import org.csv4pojoparser.util.CSV4PojoUtils;
+import org.csv4pojoparser.util.CSVReader;
+import org.csv4pojoparser.util.CommonConstants;
 
 import java.io.BufferedReader;
 import java.io.IOException;

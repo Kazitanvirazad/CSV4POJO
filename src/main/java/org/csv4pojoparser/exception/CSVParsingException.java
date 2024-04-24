@@ -1,17 +1,18 @@
-package com.csv4pojo.exception;
+package org.csv4pojoparser.exception;
 
 /**
  * @author Kazi Tanvir Azad
  */
-public class MisConfiguredClassFieldException extends RuntimeException {
-    private static final long serialVersionUID = -3030041225634143353L;
+public class CSVParsingException extends RuntimeException {
+
+    private static final long serialVersionUID = 4911628100785175704L;
 
     /**
      * Constructs a new runtime exception with {@code null} as its
      * detail message.  The cause is not initialized, and may subsequently be
      * initialized by a call to {@link #initCause}.
      */
-    public MisConfiguredClassFieldException() {
+    public CSVParsingException() {
     }
 
     /**
@@ -22,7 +23,7 @@ public class MisConfiguredClassFieldException extends RuntimeException {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public MisConfiguredClassFieldException(String message) {
+    public CSVParsingException(String message) {
         super(message);
     }
 
@@ -40,7 +41,7 @@ public class MisConfiguredClassFieldException extends RuntimeException {
      *                unknown.)
      * @since 1.4
      */
-    public MisConfiguredClassFieldException(String message, Throwable cause) {
+    public CSVParsingException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -57,7 +58,7 @@ public class MisConfiguredClassFieldException extends RuntimeException {
      *              unknown.)
      * @since 1.4
      */
-    public MisConfiguredClassFieldException(Throwable cause) {
+    public CSVParsingException(Throwable cause) {
         super(cause);
     }
 
@@ -75,7 +76,7 @@ public class MisConfiguredClassFieldException extends RuntimeException {
      *                           be writable
      * @since 1.7
      */
-    public MisConfiguredClassFieldException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public CSVParsingException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

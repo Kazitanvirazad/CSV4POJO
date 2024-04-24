@@ -1,18 +1,17 @@
-package com.csv4pojo.exception;
+package org.csv4pojoparser.exception;
 
 /**
  * @author Kazi Tanvir Azad
  */
-public class CSVParsingException extends RuntimeException {
-
-    private static final long serialVersionUID = 4911628100785175704L;
+public class MisConfiguredClassFieldException extends RuntimeException {
+    private static final long serialVersionUID = -3030041225634143353L;
 
     /**
      * Constructs a new runtime exception with {@code null} as its
      * detail message.  The cause is not initialized, and may subsequently be
      * initialized by a call to {@link #initCause}.
      */
-    public CSVParsingException() {
+    public MisConfiguredClassFieldException() {
     }
 
     /**
@@ -23,7 +22,7 @@ public class CSVParsingException extends RuntimeException {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public CSVParsingException(String message) {
+    public MisConfiguredClassFieldException(String message) {
         super(message);
     }
 
@@ -41,7 +40,7 @@ public class CSVParsingException extends RuntimeException {
      *                unknown.)
      * @since 1.4
      */
-    public CSVParsingException(String message, Throwable cause) {
+    public MisConfiguredClassFieldException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -58,7 +57,7 @@ public class CSVParsingException extends RuntimeException {
      *              unknown.)
      * @since 1.4
      */
-    public CSVParsingException(Throwable cause) {
+    public MisConfiguredClassFieldException(Throwable cause) {
         super(cause);
     }
 
@@ -76,7 +75,7 @@ public class CSVParsingException extends RuntimeException {
      *                           be writable
      * @since 1.7
      */
-    public CSVParsingException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public MisConfiguredClassFieldException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

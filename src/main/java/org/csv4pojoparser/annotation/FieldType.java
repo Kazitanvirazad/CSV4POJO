@@ -1,4 +1,4 @@
-package com.csv4pojo.annotation;
+package org.csv4pojoparser.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

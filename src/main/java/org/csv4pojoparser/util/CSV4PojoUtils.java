@@ -1,8 +1,8 @@
-package com.csv4pojo.util;
+package org.csv4pojoparser.util;
 
-import com.csv4pojo.annotation.FieldType;
-import com.csv4pojo.annotation.Type;
-import com.csv4pojo.exception.MisConfiguredClassFieldException;
+import org.csv4pojoparser.annotation.FieldType;
+import org.csv4pojoparser.annotation.Type;
+import org.csv4pojoparser.exception.MisConfiguredClassFieldException;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

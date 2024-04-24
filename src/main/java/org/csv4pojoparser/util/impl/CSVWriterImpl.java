@@ -1,9 +1,9 @@
-package com.csv4pojo.util.impl;
+package org.csv4pojoparser.util.impl;
 
-import com.csv4pojo.annotation.FieldType;
-import com.csv4pojo.util.CSV4PojoUtils;
-import com.csv4pojo.util.CSVWriter;
-import com.csv4pojo.util.CommonConstants;
+import org.csv4pojoparser.annotation.FieldType;
+import org.csv4pojoparser.util.CSV4PojoUtils;
+import org.csv4pojoparser.util.CSVWriter;
+import org.csv4pojoparser.util.CommonConstants;
 
 import java.io.BufferedWriter;
 import java.io.IOException;

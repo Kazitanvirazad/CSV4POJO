@@ -1,17 +1,17 @@
-package com.csv4pojo.exception;
+package org.csv4pojoparser.exception;
 
 /**
  * @author Kazi Tanvir Azad
  */
-public class FieldNotMatchedException extends RuntimeException {
-    private static final long serialVersionUID = 5102964048309023434L;
+public class InputOutputStreamException extends RuntimeException {
+    private static final long serialVersionUID = -4352063377933591921L;
 
     /**
      * Constructs a new runtime exception with {@code null} as its
      * detail message.  The cause is not initialized, and may subsequently be
      * initialized by a call to {@link #initCause}.
      */
-    public FieldNotMatchedException() {
+    public InputOutputStreamException() {
     }
 
     /**
@@ -22,7 +22,7 @@ public class FieldNotMatchedException extends RuntimeException {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public FieldNotMatchedException(String message) {
+    public InputOutputStreamException(String message) {
         super(message);
     }
 
@@ -40,7 +40,7 @@ public class FieldNotMatchedException extends RuntimeException {
      *                unknown.)
      * @since 1.4
      */
-    public FieldNotMatchedException(String message, Throwable cause) {
+    public InputOutputStreamException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -57,7 +57,7 @@ public class FieldNotMatchedException extends RuntimeException {
      *              unknown.)
      * @since 1.4
      */
-    public FieldNotMatchedException(Throwable cause) {
+    public InputOutputStreamException(Throwable cause) {
         super(cause);
     }
 
@@ -75,7 +75,7 @@ public class FieldNotMatchedException extends RuntimeException {
      *                           be writable
      * @since 1.7
      */
-    public FieldNotMatchedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public InputOutputStreamException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

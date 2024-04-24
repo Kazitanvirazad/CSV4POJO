@@ -1,17 +1,17 @@
-package com.csv4pojo.exception;
+package org.csv4pojoparser.exception;
 
 /**
  * @author Kazi Tanvir Azad
  */
-public class InputOutputStreamException extends RuntimeException {
-    private static final long serialVersionUID = -4352063377933591921L;
+public class FieldNotMatchedException extends RuntimeException {
+    private static final long serialVersionUID = 5102964048309023434L;
 
     /**
      * Constructs a new runtime exception with {@code null} as its
      * detail message.  The cause is not initialized, and may subsequently be
      * initialized by a call to {@link #initCause}.
      */
-    public InputOutputStreamException() {
+    public FieldNotMatchedException() {
     }
 
     /**
@@ -22,7 +22,7 @@ public class InputOutputStreamException extends RuntimeException {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public InputOutputStreamException(String message) {
+    public FieldNotMatchedException(String message) {
         super(message);
     }
 
@@ -40,7 +40,7 @@ public class InputOutputStreamException extends RuntimeException {
      *                unknown.)
      * @since 1.4
      */
-    public InputOutputStreamException(String message, Throwable cause) {
+    public FieldNotMatchedException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -57,7 +57,7 @@ public class InputOutputStreamException extends RuntimeException {
      *              unknown.)
      * @since 1.4
      */
-    public InputOutputStreamException(Throwable cause) {
+    public FieldNotMatchedException(Throwable cause) {
         super(cause);
     }
 
@@ -75,7 +75,7 @@ public class InputOutputStreamException extends RuntimeException {
      *                           be writable
      * @since 1.7
      */
-    public InputOutputStreamException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public FieldNotMatchedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

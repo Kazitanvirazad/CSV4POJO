@@ -8,6 +8,13 @@ import java.util.List;
  */
 public interface CSVWriter {
 
+    /**
+     * Creates csv outputStream with all the Java object List data mapped with the given java class annotated fields
+     *
+     * @param clazz        Class<T>
+     * @param pojoList     List<T>
+     * @param outputStream OutputStream
+     */
     <T> void createCSVOutputStreamFromPojoList(Class<T> clazz, List<T> pojoList, OutputStream outputStream);
 
     /**

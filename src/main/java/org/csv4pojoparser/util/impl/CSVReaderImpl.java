@@ -25,6 +25,13 @@ import java.util.List;
  */
 public class CSVReaderImpl implements CSVReader, CommonConstants {
 
+    /**
+     * Creates and returns List of Java objects mapped with CSV InputStream
+     *
+     * @param clazz       Class<T>
+     * @param inputStream InputStream
+     * @return List<T>
+     */
     @Override
     public <T> List<T> createPojoListFromCSVInputStream(Class<T> clazz, InputStream inputStream) {
         List<T> pojoList = new ArrayList<>();
@@ -76,6 +83,13 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
         }
     }
 
+    /**
+     * Creates and returns Java object mapped with CSV InputStream
+     *
+     * @param clazz        Class<T>
+     * @param lineElements List<String>
+     * @return T
+     */
     private <T> T createPojoFromCSVLineElements(Class<T> clazz, List<String> lineElements) {
         T classInstance;
         try {
@@ -243,8 +257,8 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
      * Validates class fields with an array of csv header elements. Returns true if
      * length and all values matches else returns false
      *
-     * @param csv4PojoAnnotatedClassFields
-     * @param csvHeaderElements
+     * @param csv4PojoAnnotatedClassFields List<String>
+     * @param csvHeaderElements            String[]
      * @return boolean
      */
     private boolean validateFields(List<String> csv4PojoAnnotatedClassFields, String[] csvHeaderElements) {
@@ -261,7 +275,7 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
     /**
      * Remove BOM if it's present in the line. For UTF-8 the BOM is: 0xEF, 0xBB, 0xBF
      *
-     * @param line
+     * @param line String
      * @return String
      */
     private String removeUTF8BOM(String line) {

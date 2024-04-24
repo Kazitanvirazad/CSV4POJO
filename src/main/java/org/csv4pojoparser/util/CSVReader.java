@@ -8,5 +8,12 @@ import java.util.List;
  */
 public interface CSVReader {
 
+    /**
+     * Creates and returns List of Java objects mapped with CSV InputStream
+     *
+     * @param clazz       Class<T>
+     * @param inputStream InputStream
+     * @return List<T>
+     */
     <T> List<T> createPojoListFromCSVInputStream(Class<T> clazz, InputStream inputStream);
 }

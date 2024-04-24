@@ -40,7 +40,6 @@ public class CSVWriterImpl implements CSVWriter, CommonConstants {
         } catch (IOException exception) {
             throw new InputOutputStreamException("OutputStream is invalid or null: ", exception);
         }
-
     }
 
     /**

@@ -35,6 +35,12 @@ public class CSVWriterImpl implements CSVWriter, CommonConstants {
 
     }
 
+    /**
+     * Creates an empty csv outputStream with all the headings mapped with the given java class annotated fields
+     *
+     * @param clazz        Class<T>
+     * @param outputStream OutputStream
+     */
     @Override
     public <T> void createEmptyCSVOutputStreamFromClass(Class<T> clazz, OutputStream outputStream) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {

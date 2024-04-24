@@ -76,7 +76,7 @@ CSVWriter csvWriter = new CSVWriterImpl();
 <h4>Configuring Java class instance variables with CSV4POJO FieldType annotations</h4>
 <span><b>**Any field with missing @FieldType annotation will be ignored by CSV4POJO</b></span></br>
 <span><b>**For any field with missing optional attribute 'csvColumnName' of @FieldType annotation, original field name will be used in CSV column name</b></span></br>
-<span><b>**CSV file headers sequence must match with the instance variable sequence of the mapped classes</b></span>
+<span><b>**CSV file headers sequence must match with the annotated instance variable sequence of the mapped classes</b></span>
 <ul>
 <li><span>Vehicle.java</span>
 <pre>

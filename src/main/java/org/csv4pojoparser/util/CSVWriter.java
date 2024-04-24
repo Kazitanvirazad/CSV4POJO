@@ -10,5 +10,11 @@ public interface CSVWriter {
 
     <T> void createCSVOutputStreamFromPojoList(Class<T> clazz, List<T> pojoList, OutputStream outputStream);
 
+    /**
+     * Creates an empty csv file with all the headings mapped with the given java class annotated fields
+     *
+     * @param clazz        Class<T>
+     * @param outputStream OutputStream
+     */
     <T> void createEmptyCSVOutputStreamFromClass(Class<T> clazz, OutputStream outputStream);
 }

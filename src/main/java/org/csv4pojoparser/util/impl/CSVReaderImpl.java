@@ -94,9 +94,9 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
             Field field = fields.get(index);
             try {
                 field.setAccessible(true);
-                FieldType type = field.getAnnotation(FieldType.class);
-                if (type != null) {
-                    switch (type.dataType()) {
+                FieldType fieldType = field.getAnnotation(FieldType.class);
+                if (fieldType != null) {
+                    switch (fieldType.dataType()) {
                         case INT:
                             int intVal = Integer.parseInt(lineElement);
                             field.setInt(classInstance, intVal);
@@ -180,8 +180,15 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
                             field.set(classInstance, lineElement);
                             break;
                         case STRING_ARRAY:
-                            String[] rawStringValList = lineElement.split(SPLIT_REGEX, -1);
-                            List<String> stringValList = Arrays.asList(rawStringValList);
+                            List<String> stringValList = new ArrayList<String>() {
+                                private static final long serialVersionUID = 6146247278157261184L;
+
+                                {
+                                    for (String rawStringData : lineElement.split(SPLIT_REGEX, -1)) {
+                                        add(rawStringData.trim());
+                                    }
+                                }
+                            };
                             field.set(classInstance,
                                     stringValList.toArray((String[]) Array.newInstance(field.getType().getComponentType(), stringValList.size())));
                             break;
@@ -192,11 +199,12 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
                             lineIndex += fieldCount - 1;
                             break;
                         default:
-                            break;
+                            throw new MisConfiguredClassFieldException("Type attribute of FieldType annotation do not match with actual Datatype for " + field.getName());
                     }
                 }
-            } catch (IllegalAccessException e) {
-                throw new RuntimeException(e);
+            } catch (IllegalAccessException | IllegalArgumentException | NullPointerException |
+                     ExceptionInInitializerError exception) {
+                throw new CSVParsingException(exception.getMessage());
             }
             index++;
             lineIndex++;
@@ -227,7 +235,7 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
             }
 
             // updating the array with formatted element
-            elements[i] = element;
+            elements[i] = element.trim();
         }
     }
 

@@ -22,8 +22,13 @@ public class CSV4PojoUtils implements CommonConstants {
     public static int getAnnotatedFieldCount(Class<?> clazz) {
         int count = 0;
         for (Field field : clazz.getDeclaredFields()) {
-            if (field.isAnnotationPresent(FieldType.class))
-                count++;
+            if (field.isAnnotationPresent(FieldType.class)) {
+                if (field.getDeclaredAnnotation(FieldType.class).dataType() == Type.CLASSTYPE) {
+                    count += getAnnotatedFieldCount(field.getType());
+                } else {
+                    count++;
+                }
+            }
         }
         return count;
     }

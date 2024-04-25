@@ -42,7 +42,7 @@ params:
 return:
 	List
 
-Reads the given file and returns a list of pojo with CSV data.
+Creates and returns List of Java objects mapped with FieldType annotation from CSV InputStream
 </pre>
 <h4>Implementing Class</h4>
 <pre>
@@ -51,191 +51,157 @@ CSVReader csvReader = new CSVReaderImpl();
 <h3>Interface CSVWriter</h3>
 <h4>Methods</h4>
 <pre>
-createCSVOutputStreamFromPojoList(Class<T> clazz, List<T> pojoList, Writer writer) : void
+writeCSVOutputStreamFromPojoList(Class<T> clazz, List<T> pojo, OutputStream outputStream) : void
 
 params:
 	clazz: Class type of the pojos
-	pojoList: List of pojos of clazz type which will be written in the CSV file
-	writer: csv file writer
+	pojo: List of pojos of clazz type which will be written in the CSV file
+	outputStream: csv file OutputStream
 
-Writes all the pojos annotated fields in the CSV file.
+return:
+	void
+
+Writes all the pojos annotated field values with FieldType annotation in the CSV file OutputStream
 </pre>
 <pre>
-createEmptyCSVOutputStreamFromClass(Class<T> clazz, Writer writer) : void
+writeEmptyCSVOutputStreamFromClass(Class<T> clazz, OutputStream outputStream) : void
 
 params:
 	clazz: Class type of the pojo
-	writer: csv file writer
+	outputStream: csv file OutputStream
 
-Creates an empty csv file with all the headings mapped with the given java class annotated fields
+return:
+	void
+
+Writes an empty csv file with all the headers mapped with the given java class fields annotated with FieldType annotation in the CSV file OutputStream
 </pre>
 <h4>Implementing Class</h4>
 <pre>
 CSVWriter csvWriter = new CSVWriterImpl();
 </pre>
 <h4>Configuring Java class instance variables with CSV4POJO FieldType annotations</h4>
-<span><b>**Any field with missing @FieldType annotation will be ignored by CSV4POJO</b></span></br>
-<span><b>**For any field with missing optional attribute 'csvColumnName' of @FieldType annotation, original field name will be used in CSV column name</b></span></br>
-<span><b>**CSV file headers sequence must match with the annotated instance variable sequence of the mapped classes</b></span>
+<span><b>** Any field with missing @FieldType annotation will be ignored by CSV4POJO</b></span></br>
+<span><b>** For any field with missing optional attribute 'csvColumnName' of @FieldType annotation, original field name will be used in CSV column name</b></span></br>
+<span><b>** CSV file headers sequence must match with the annotated instance variable sequence of the mapped classes</b></span></br>
+<span><b>** Mapped classes must have a public default constructor</b></span>
 <ul>
-<li><span>Vehicle.java</span>
+<li><span>Product.java</span>
 <pre>
-import com.csv4pojo.annotation.FieldType;
-import com.csv4pojo.annotation.Type;
+import org.csv4pojoparser.annotation.FieldType;
+import org.csv4pojoparser.annotation.Type;
 
-public class Vehicle {
+	public class Product {
+	
+		 @FieldType(dataType = Type.STRING, csvColumnName = "product_name")
+		private String name;
+	
+		@FieldType(dataType = Type.STRING, csvColumnName = "product_color")
+		private String color;
+	
+		@FieldType(dataType = Type.CLASSTYPE)
+		private Inventory inventory;
+	
+		@FieldType(dataType = Type.FLOAT)
+		private float price;
+	
+		@FieldType(dataType = Type.CLASSTYPE)
+		private Category category;
 
-	@FieldType(dataType = Type.STRING, csvColumnName = "vahicle_name")
-	private String name;
-
-	@FieldType(dataType = Type.BOOLEAN)
-	private boolean isElectric;
-
-	@FieldType(dataType = Type.CLASSTYPE)
-	private Byke byke;
-
-	public Vehicle(String name, boolean isElectric, Byke byke) {
-		this();
-		this.name = name;
-		this.isElectric = isElectric;
-		this.byke = byke;
+		public Product() {
+		}
+	
+		public Product(String name, String color, Inventory inventory, float price, Category category) {
+			this.name = name;
+			this.color = color;
+			this.inventory = inventory;
+			this.price = price;
+			this.category = category;
+		}
+	
+		@Override
+		public String toString() {
+			return "Product{" +
+					"name='" + name + '\'' +
+					", color='" + color + '\'' +
+					", inventory=" + inventory +
+					", price=" + price +
+					", category=" + category +
+					'}';
+		}
+	
 	}
-
-	public Vehicle() {
-		super();
-	}
-
-	@Override
-	public String toString() {
-		return "Vehicle [name=" + name + ", isElectric=" + isElectric + ", byke=" + byke + "]";
-	}
-
-}
 </pre>
 </li>
-<li><span>Byke.java</span>
+<li><span>Inventory.java</span>
 <pre>
-import com.csv4pojo.annotation.FieldType;
-import com.csv4pojo.annotation.Type;
+import org.csv4pojoparser.annotation.FieldType;
+import org.csv4pojoparser.annotation.Type;
 
-public class Byke {
+	public class Inventory {
+		@FieldType(dataType = Type.INT, csvColumnName = "inventory_id")
+		private int inventoryId;
+	
+		@FieldType(dataType = Type.STRING)
+		private String location;
+	
+		@FieldType(dataType = Type.INT, csvColumnName = "items_count")
+		private int itemsCount;
+	
+		@FieldType(dataType = Type.INTEGER_ARRAY, csvColumnName = "skus")
+		private Integer[] skus;
 
-	@FieldType(dataType = Type.STRING, csvColumnName = "byke_brandName")
-	private String brandName;
-
-	@FieldType(dataType = Type.STRING, csvColumnName = "byke_modelName")
-	private String modelName;
-
-	@FieldType(dataType = Type.STRING, csvColumnName = "byke_color")
-	private String color;
-
-	@FieldType(dataType = Type.CLASSTYPE)
-	private Tyre tyre;
-
-	@FieldType(dataType = Type.CLASSTYPE)
-	private Engine engine;
-
-	@FieldType(dataType = Type.INT)
-	private int kerbWeight;
-
-	private float price;
-
-	public Byke(String brandName, String modelName, String color, Tyre tyre, Engine engine, int kerbWeight,
-			float price) {
-		this();
-		this.brandName = brandName;
-		this.modelName = modelName;
-		this.color = color;
-		this.tyre = tyre;
-		this.engine = engine;
-		this.kerbWeight = kerbWeight;
-		this.price = price;
+		public Inventory() {
+		}
+	
+		public Inventory(int inventoryId, String location, int itemsCount, Integer[] skus) {
+			this.inventoryId = inventoryId;
+			this.location = location;
+			this.itemsCount = itemsCount;
+			this.skus = skus;
+		}
+	
+		@Override
+		public String toString() {
+			return "Inventory{" +
+					"inventoryId=" + inventoryId +
+					", location='" + location + '\'' +
+					", itemsCount=" + itemsCount +
+					", skus=" + Arrays.toString(skus) +
+					'}';
+		}
 	}
-
-	public Byke() {
-		super();
-	}
-
-	@Override
-	public String toString() {
-		return "Byke [brandName=" + brandName + ", modelName=" + modelName + ", color=" + color + ", tyre=" + tyre
-				+ ", engine=" + engine + ", kerbWeight=" + kerbWeight + ", price=" + price + "]";
-	}
-
-}
 </pre>
 </li>
-<li><span>Tyre.java</span>
+<li><span>Category.java</span>
 <pre>
-import com.csv4pojo.annotation.FieldType;
-import com.csv4pojo.annotation.Type;
+import org.csv4pojoparser.annotation.FieldType;
+import org.csv4pojoparser.annotation.Type;
 
-public class Tyre {
+	public class Category {
 
-	@FieldType(dataType = Type.STRING, csvColumnName = "tyre_brandName")
-	private String tyreBrand;
+		@FieldType(dataType = Type.STRING, csvColumnName = "category_name")
+		private String categoryName;
+	
+		@FieldType(dataType = Type.STRING_ARRAY)
+		private String[] tags;
 
-	private int tyreWidth;
+		public Category(String categoryName, String[] tags) {
+			this.categoryName = categoryName;
+			this.tags = tags;
+		}
+	
+		public Category() {
+		}
+	
+		@Override
+		public String toString() {
+			return "Category{" +
+					"categoryName='" + categoryName + '\'' +
+					", tags=" + Arrays.toString(tags) +
+					'}';
+		}
 
-	private int tyreBreadth;
-
-	@FieldType(dataType = Type.INT, csvColumnName = "tyre_selfLife")
-	private int selfLife;
-
-	public Tyre(String tyreBrand, int tyreWidth, int tyreBreadth, int selfLife) {
-		super();
-		this.tyreBrand = tyreBrand;
-		this.tyreWidth = tyreWidth;
-		this.tyreBreadth = tyreBreadth;
-		this.selfLife = selfLife;
 	}
-
-	public Tyre() {
-		super();
-	}
-
-	@Override
-	public String toString() {
-		return "Tyre [tyreBrand=" + tyreBrand + ", tyreWidth=" + tyreWidth + ", tyreBreadth=" + tyreBreadth
-				+ ", selfLife=" + selfLife + "]";
-	}
-
-}
-</pre>
-</li>
-<li><span>Engine.java</span>
-<pre>
-import com.csv4pojo.annotation.FieldType;
-import com.csv4pojo.annotation.Type;
-
-public class Engine {
-
-	@FieldType(dataType = Type.FLOAT)
-	private float cc;
-
-	@FieldType(dataType = Type.FLOAT, csvColumnName = "engine_horsepower")
-	private float bhp;
-
-	@FieldType(dataType = Type.INT, csvColumnName = "engine_cylinders")
-	private int cylinders;
-
-	public Engine() {
-		super();
-	}
-
-	public Engine(float cc, float bhp, int cylinders) {
-		this();
-		this.cc = cc;
-		this.bhp = bhp;
-		this.cylinders = cylinders;
-	}
-
-	@Override
-	public String toString() {
-		return "Engine [cc=" + cc + ", bhp=" + bhp + ", cylinders=" + cylinders + "]";
-	}
-
-}
 </pre>
 </li>
 </ul>
@@ -248,45 +214,63 @@ CSVWriter csvWriter = new CSVWriterImpl();
 </li>
 <li><span>Write Pojo List data to a CSV file</span>
 <pre>
-List<Vehicle> vehicles = new ArrayList<>() {
-	{
-		add(new Vehicle("KTM MotorCycle", false, new Byke("KTM", "Duke 250", "Ebony Black", new Tyre("MRF", 150, 70, 5), new Engine(249.9f, 28, 1), 170, 292000f)));
-		add(new Vehicle("Kawasaki MotorCycle", false, new Byke("Kawasaki", "z900", "Ninja green", new Tyre("Bridgestone", 180, 90, 2), new Engine(899.9f, 128, 4), 190, 1092000f)));	
-		add(new Vehicle("Yamaha MotorCycle", false, new Byke("Yamaha", "mt09", "White", new Tyre("Pirelli", 180, 90, 2), new Engine(900.0f, 120, 4), 180, 1192000f)));	
-	}
-};
-csvWriter.createCSVOutputStreamFromPojoList(Vehicle.class, vehicles, writer);
+		
+        Integer[] skus1 = {2301, 1421, 456, 3423};
+        Integer[] skus2 = {4509, 3456, 9254, 2352};
+        Integer[] skus3 = {9876, 9458, 9243, 8746};
+
+        String[] tags1 = {"Gadgets", "Electronics", "Wireless"};
+        String[] tags2 = {"Technology", "AMoLED", "Bluetooth"};
+        String[] tags3 = {"Charging", "Wireless Charging", "Type C Charging"};
+
+        List<Product> products = new ArrayList<Product>() {
+            private static final long serialVersionUID = 6801078320304556337L;
+
+            {
+                add(new Product("Oneplus Headphone", "Black",
+                        new Inventory(101, "Bangalore", 234, skus1), 1499.34f,
+                        new Category("Wireless Earphone", tags1)));
+                add(new Product("Samsung Mobile", "White",
+                        new Inventory(103, "Mumbai", 456, skus2), 31879.00f,
+                        new Category("Smartphone", tags2)));
+                add(new Product("Mi Powerbank", "Blue",
+                        new Inventory(104, "Delhi", 167, skus3), 1129.65f,
+                        new Category("Wireless Charging", tags3)));
+            }
+        };
+
+        csvWriter.writeCSVOutputStreamFromPojoList(Product.class, products, outputStream);
 </pre>
 <h4>CSV output file data:</h4>
 <pre>
-vahicle_name,isElectric,byke_brandName,byke_modelName,byke_color,tyre_brandName,tyre_selfLife,cc,engine_horsepower,engine_cylinders,kerbWeight
-KTM MotorCycle,false,KTM,Duke 250,Ebony Black,MRF,5,249.9,28.0,1,170
-Kawasaki MotorCycle,false,Kawasaki,z900,Ninja green,Bridgestone,2,899.9,128.0,4,190
-Yamaha MotorCycle,false,Yamaha,mt09,White,Pirelli,2,900.0,120.0,4,180
+product_name,product_color,inventory_id,location,items_count,skus,price,category_name,tags
+Oneplus Headphone,Black,101,Bangalore,234,"2301,1421,456,3423",1499.34,Wireless Earphone,"Gadgets,Electronics,Wireless"
+Samsung Mobile,White,103,Mumbai,456,"4509,3456,9254,2352",31879.0,Smartphone,"Technology,AMoLED,Bluetooth"
+Mi Powerbank,Blue,104,Delhi,167,"9876,9458,9243,8746",1129.65,Wireless Charging,"Charging,Wireless Charging,Type C Charging"
 </pre>
 </li>
 <li><span>Creating an empty CSV file with Pojo definition</span>
 <pre>
-csvWriter.createEmptyCSVOutputStreamFromClass(Vehicle.class, writer);
+csvWriter.writeEmptyCSVOutputStreamFromClass(Product.class, outputStream);
 </pre>
 <h4>CSV output file data:</h4>
 <pre>
-vahicle_name,isElectric,byke_brandName,byke_modelName,byke_color,tyre_brandName,tyre_selfLife,cc,engine_horsepower,engine_cylinders,kerbWeight
+product_name,product_color,inventory_id,location,items_count,skus,price,category_name,tags
 </pre>
 </li>
 <li><span>Create an instance of CSVReader</span>
 <pre>
 CSVReader csvReader = new CSVReaderImpl();
 </pre>
-<li><span>Create list of Java pojo from CSV file data</span>
+<li><span>Create list of Java objects from CSV file data</span>
 <pre>
-csvReader.createPojoListFromCSVInputStream(Vehicle.class, inputStream);
+List<Product> productList = csvReader.createPojoListFromCSVInputStream(Product.class, inputStream);
 </pre>
 <h4>Output data using toString() method :</h4>
 <pre>
-Vehicle [name=KTM MotorCycle, isElectric=false, byke=Byke [brandName=KTM, modelName=Duke 250, color=Ebony Black, tyre=Tyre [tyreBrand=MRF, tyreWidth=0, tyreBreadth=0, selfLife=5], engine=Engine [cc=249.9, bhp=28.0, cylinders=1], kerbWeight=170, price=0.0]]
-Vehicle [name=Kawasaki MotorCycle, isElectric=false, byke=Byke [brandName=Kawasaki, modelName=z900, color=Ninja green, tyre=Tyre [tyreBrand=Bridgestone, tyreWidth=0, tyreBreadth=0, selfLife=2], engine=Engine [cc=899.9, bhp=128.0, cylinders=4], kerbWeight=190, price=0.0]]
-Vehicle [name=Yamaha MotorCycle, isElectric=false, byke=Byke [brandName=Yamaha, modelName=mt09, color=White, tyre=Tyre [tyreBrand=Pirelli, tyreWidth=0, tyreBreadth=0, selfLife=2], engine=Engine [cc=900.0, bhp=120.0, cylinders=4], kerbWeight=180, price=0.0]]
+Product{name='Oneplus Headphone', color='Black', inventory=Inventory{inventoryId=101, location='Bangalore', itemsCount=234, skus=[2301, 1421, 456, 3423]}, price=1499.34, category=Category{categoryName='Wireless Earphone', tags=[Gadgets, Electronics, Wireless]}}
+Product{name='Samsung Mobile', color='White', inventory=Inventory{inventoryId=103, location='Mumbai', itemsCount=456, skus=[4509, 3456, 9254, 2352]}, price=31879.0, category=Category{categoryName='Smartphone', tags=[Technology, AMoLED, Bluetooth]}}
+Product{name='Mi Powerbank', color='Blue', inventory=Inventory{inventoryId=104, location='Delhi', itemsCount=167, skus=[9876, 9458, 9243, 8746]}, price=1129.65, category=Category{categoryName='Wireless Charging', tags=[Charging, Wireless Charging, Type C Charging]}}
 </pre>
 </li>
 </ol>
@@ -300,3 +284,7 @@ the repository, create pull requests, or open issues.</span>
 <span>I would love to hear your feedback and suggestions on how to improve
 this utility. Please share it with your network and let me know what you
 think. Thank you for your support and interest.</span>
+
+<h4>Comment</h4>
+<span>This utility tool is free to use for any purpose. This tool can also be used for commercial purposes for free. The code in this repository
+is free and open for all.</span>

@@ -1,5 +1,7 @@
 package org.csv4pojoparser.util;
 
+import org.csv4pojoparser.annotation.FieldType;
+
 import java.io.InputStream;
 import java.util.List;
 
@@ -9,7 +11,7 @@ import java.util.List;
 public interface CSVReader {
 
     /**
-     * Creates and returns List of Java objects mapped with CSV InputStream
+     * Creates and returns List of Java objects mapped with {@link FieldType} annotation from CSV InputStream
      *
      * @param clazz       Class<T>
      * @param inputStream InputStream

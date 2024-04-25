@@ -19,6 +19,17 @@ public class Product {
     @FieldType(dataType = Type.CLASSTYPE)
     private Category category;
 
+    public Product() {
+    }
+
+    public Product(String name, String color, Inventory inventory, float price, Category category) {
+        this.name = name;
+        this.color = color;
+        this.inventory = inventory;
+        this.price = price;
+        this.category = category;
+    }
+
     @Override
     public String toString() {
         return "Product{" +

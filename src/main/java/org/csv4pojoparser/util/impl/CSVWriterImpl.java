@@ -1,7 +1,9 @@
 package org.csv4pojoparser.util.impl;
 
 import org.csv4pojoparser.annotation.FieldType;
+import org.csv4pojoparser.exception.CSVParsingException;
 import org.csv4pojoparser.exception.InputOutputStreamException;
+import org.csv4pojoparser.exception.MisConfiguredClassFieldException;
 import org.csv4pojoparser.util.CSV4PojoUtils;
 import org.csv4pojoparser.util.CSVWriter;
 import org.csv4pojoparser.util.CommonConstants;
@@ -21,35 +23,46 @@ import java.util.List;
 public class CSVWriterImpl implements CSVWriter, CommonConstants {
 
     /**
-     * Creates csv outputStream with all the Java object List data mapped with the given java class annotated fields
+     * Writes List of Java object mapped with the given java class annotated with {@link FieldType} annotation field
+     * values in to the outputStream
      *
      * @param clazz        Class<T>
      * @param pojoList     List<T>
      * @param outputStream OutputStream
      */
     @Override
-    public <T> void createCSVOutputStreamFromPojoList(Class<T> clazz, List<T> pojoList, OutputStream outputStream) {
+    public <T> void writeCSVOutputStreamFromPojoList(Class<T> clazz, List<T> pojoList, OutputStream outputStream) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
             // Writing the header elements to the OutputStream
             writeHeaderToOutputStream(clazz, writer);
             // Reading each object from List and execute logic to create line elements and write in to the BufferedWriter
-            pojoList.forEach(pojo -> {
+            for (T pojo : pojoList) {
+                // Reading the annotated with @FieldType annotation field data from java object and putting it in to a List
+                List<String> lineElements = getAnnotatedFieldValuesFromPojo(pojo);
 
-            });
+                // Converting the List of line elements to a CSV row format
+                String formattedLineElement = getFormattedLineElements(lineElements);
 
+                // Writing the csv formatted row in to the BufferedWriter
+                writer.write(formattedLineElement);
+
+                // Appending a line in to the BufferedWriter
+                writer.write(System.lineSeparator());
+            }
         } catch (IOException exception) {
             throw new InputOutputStreamException("OutputStream is invalid or null: ", exception);
         }
     }
 
     /**
-     * Creates an empty csv outputStream with all the headings mapped with the given java class annotated fields
+     * Writes an empty csv file in to the OutputStream with all the headers mapped with the given java class annotated
+     * with {@link FieldType} annotation field names
      *
      * @param clazz        Class<T>
      * @param outputStream OutputStream
      */
     @Override
-    public <T> void createEmptyCSVOutputStreamFromClass(Class<T> clazz, OutputStream outputStream) {
+    public <T> void writeEmptyCSVOutputStreamFromClass(Class<T> clazz, OutputStream outputStream) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
             // Writing the header elements to the OutputStream
             writeHeaderToOutputStream(clazz, writer);
@@ -58,79 +71,132 @@ public class CSVWriterImpl implements CSVWriter, CommonConstants {
         }
     }
 
+    /**
+     * Read all the annotated with {@link FieldType} annotation fields of the Java object passed in the method parameter and creates
+     * and returns a List of the values
+     *
+     * @param pojo T
+     * @return List<String>
+     */
     private <T> List<String> getAnnotatedFieldValuesFromPojo(T pojo) {
-        Class<?> clazz = pojo.getClass();
-        List<String> fieldvalues = new ArrayList<>();
-        List<String> annotatedClassFields = CSV4PojoUtils.getAnnotatedClassFieldNames(clazz);
-        for (int i = 0; i < annotatedClassFields.size(); i++) {
-            String fieldName = annotatedClassFields.get(i);
-            try {
-                Field field = clazz.getDeclaredField(fieldName);
-                switch (field.getAnnotation(FieldType.class).dataType()) {
-                    case INT:
-                        int intVal = field.getInt(pojo);
-                        fieldvalues.add(String.valueOf(intVal));
-                        break;
-                    case STRING:
-                        String stringVal = (String) field.get(pojo);
-                        fieldvalues.add(CSV4PojoUtils.requireNonNullElse(stringVal, ""));
-                        break;
-                    case BOOLEAN:
-                        boolean boolVal = field.getBoolean(pojo);
-                        fieldvalues.add(String.valueOf(boolVal));
-                        break;
-                    case FLOAT:
-                        float floatVal = field.getFloat(pojo);
-                        fieldvalues.add(String.valueOf(floatVal));
-                        break;
-                    case DOUBLE:
-                        double doubleVal = field.getDouble(pojo);
-                        fieldvalues.add(String.valueOf(doubleVal));
-                        break;
-                    case LONG:
-                        long longVal = field.getLong(pojo);
-                        fieldvalues.add(String.valueOf(longVal));
-                        break;
-                    case CHAR:
-                        char charVal = field.getChar(pojo);
-                        fieldvalues.add(String.valueOf(charVal));
-                        break;
-                    case CLASSTYPE:
-                        Class<?> classValObj = (Class<?>) field.get(pojo);
-                        List<String> classValList = getAnnotatedFieldValuesFromPojo(classValObj);
-                        fieldvalues.addAll(classValList);
-                        i += CSV4PojoUtils.getAnnotatedFieldCount(field.getType()) - 1;
-                        break;
-                    case INTEGER_ARRAY:
-                        Integer[] intArrayVal = (Integer[]) field.get(pojo);
-                        StringBuilder intArrayString = new StringBuilder();
-                        for (int j = 0; j < intArrayVal.length; j++) {
-                            Integer integer = intArrayVal[j];
-                            intArrayString.append(integer);
-                            if (j < intArrayVal.length - 1) {
-                                intArrayString.append(COMMA);
-                            }
-                        }
-                        fieldvalues.add(intArrayString.toString());
-                        break;
-                    case STRING_ARRAY:
-                        break;
-                    case BOOLEAN_ARRAY:
-                        break;
-                    case FLOAT_ARRAY:
-                        break;
-                    case DOUBLE_ARRAY:
-                        break;
-                    case LONG_ARRAY:
-                        break;
-                    case CHARACTER_ARRAY:
-                        break;
-                }
-            } catch (NoSuchFieldException | IllegalAccessException exception) {
+        List<String> fieldValues = new ArrayList<>();
 
+        List<Field> fields = CSV4PojoUtils.getAnnotatedClassFieldList(pojo.getClass());
+
+        int index = 0;
+        while (index < fields.size()) {
+            Field field = fields.get(index);
+            StringBuilder stringBuilder = new StringBuilder();
+            try {
+                field.setAccessible(true);
+                FieldType fieldType = field.getAnnotation(FieldType.class);
+                if (fieldType != null) {
+                    switch (fieldType.dataType()) {
+                        case INT:
+                            fieldValues.add(String.valueOf(field.getInt(pojo)));
+                            break;
+                        case STRING:
+                            fieldValues.add(String.valueOf(field.get(pojo)));
+                            break;
+                        case BOOLEAN:
+                            fieldValues.add(String.valueOf(field.getBoolean(pojo)));
+                            break;
+                        case FLOAT:
+                            fieldValues.add(String.valueOf(field.getFloat(pojo)));
+                            break;
+                        case DOUBLE:
+                            fieldValues.add(String.valueOf(field.getDouble(pojo)));
+                            break;
+                        case LONG:
+                            fieldValues.add(String.valueOf(field.getLong(pojo)));
+                            break;
+                        case CHAR:
+                            fieldValues.add(String.valueOf(field.getChar(pojo)));
+                            break;
+                        case INTEGER_ARRAY:
+                            Integer[] integerArray = (Integer[]) field.get(pojo);
+                            for (int i = 0; i < integerArray.length; i++) {
+                                stringBuilder.append(integerArray[i]);
+                                if (i < integerArray.length - 1) {
+                                    stringBuilder.append(COMMA);
+                                }
+                            }
+                            fieldValues.add(stringBuilder.toString());
+                            break;
+                        case STRING_ARRAY:
+                            String[] stringArray = (String[]) field.get(pojo);
+                            for (int i = 0; i < stringArray.length; i++) {
+                                stringBuilder.append(stringArray[i]);
+                                if (i < stringArray.length - 1) {
+                                    stringBuilder.append(COMMA);
+                                }
+                            }
+                            fieldValues.add(stringBuilder.toString());
+                            break;
+                        case BOOLEAN_ARRAY:
+                            Boolean[] booleanArray = (Boolean[]) field.get(pojo);
+                            for (int i = 0; i < booleanArray.length; i++) {
+                                stringBuilder.append(booleanArray[i]);
+                                if (i < booleanArray.length - 1) {
+                                    stringBuilder.append(COMMA);
+                                }
+                            }
+                            fieldValues.add(stringBuilder.toString());
+                            break;
+                        case FLOAT_ARRAY:
+                            Float[] floatArray = (Float[]) field.get(pojo);
+                            for (int i = 0; i < floatArray.length; i++) {
+                                stringBuilder.append(floatArray[i]);
+                                if (i < floatArray.length - 1) {
+                                    stringBuilder.append(COMMA);
+                                }
+                            }
+                            fieldValues.add(stringBuilder.toString());
+                            break;
+                        case DOUBLE_ARRAY:
+                            Double[] doubleArray = (Double[]) field.get(pojo);
+                            for (int i = 0; i < doubleArray.length; i++) {
+                                stringBuilder.append(doubleArray[i]);
+                                if (i < doubleArray.length - 1) {
+                                    stringBuilder.append(COMMA);
+                                }
+                            }
+                            fieldValues.add(stringBuilder.toString());
+                            break;
+                        case LONG_ARRAY:
+                            Long[] longArray = (Long[]) field.get(pojo);
+                            for (int i = 0; i < longArray.length; i++) {
+                                stringBuilder.append(longArray[i]);
+                                if (i < longArray.length - 1) {
+                                    stringBuilder.append(COMMA);
+                                }
+                            }
+                            fieldValues.add(stringBuilder.toString());
+                            break;
+                        case CHARACTER_ARRAY:
+                            Character[] characterArray = (Character[]) field.get(pojo);
+                            for (int i = 0; i < characterArray.length; i++) {
+                                stringBuilder.append(characterArray[i]);
+                                if (i < characterArray.length - 1) {
+                                    stringBuilder.append(COMMA);
+                                }
+                            }
+                            fieldValues.add(stringBuilder.toString());
+                            break;
+                        case CLASSTYPE:
+                            fieldValues.addAll(getAnnotatedFieldValuesFromPojo(field.get(pojo)));
+                            break;
+                        default:
+                            throw new MisConfiguredClassFieldException("Type attribute of FieldType annotation do not match with actual Datatype for " + field.getName());
+                    }
+                }
+            } catch (IllegalAccessException | IllegalArgumentException | NullPointerException |
+                     ExceptionInInitializerError exception) {
+                throw new CSVParsingException("Exception in " + field.getName() + " : " + exception.getMessage(), exception);
             }
+            index++;
         }
-        return fieldvalues;
+        return fieldValues;
     }
 
     /**

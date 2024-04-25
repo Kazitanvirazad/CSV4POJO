@@ -14,7 +14,7 @@ import java.util.List;
 public class CSV4PojoUtils implements CommonConstants {
 
     /**
-     * Counts and returns the fields annotated with {@link FieldType}
+     * Return count of the fields annotated with {@link FieldType}
      *
      * @param clazz Class<?>
      * @return count of {@link FieldType} annotated fields
@@ -66,7 +66,7 @@ public class CSV4PojoUtils implements CommonConstants {
     }
 
     /**
-     * Returns list of Field which are annotated with FieldType annotation
+     * Returns list of Field which are annotated with {@link FieldType} annotation
      *
      * @param clazz Class<T>
      * @return List<Field>
@@ -87,7 +87,7 @@ public class CSV4PojoUtils implements CommonConstants {
     }
 
     /**
-     * Returns list of class field names which are annotated with FieldType annotation
+     * Returns list of class field names which are annotated with {@link FieldType} annotation
      *
      * @param clazz Class<T>
      * @return List<String>
@@ -113,9 +113,10 @@ public class CSV4PojoUtils implements CommonConstants {
     }
 
     /**
-     * Returns field name from csvColumnName attribute value if exists, else returns original field name
+     * Returns field name from csvColumnName attribute value if exists in {@link FieldType} annotation,
+     * else returns original field name
      *
-     * @param field Field
+     * @param field {@link Field}
      * @return String
      */
     public static String getAnnotatedFieldName(Field field) {

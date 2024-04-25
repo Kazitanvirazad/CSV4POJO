@@ -26,7 +26,7 @@ import java.util.List;
 public class CSVReaderImpl implements CSVReader, CommonConstants {
 
     /**
-     * Creates and returns List of Java objects mapped with CSV InputStream
+     * Creates and returns List of Java objects mapped with {@link FieldType} annotation from CSV InputStream
      *
      * @param clazz       Class<T>
      * @param inputStream InputStream
@@ -36,7 +36,7 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
     public <T> List<T> createPojoListFromCSVInputStream(Class<T> clazz, InputStream inputStream) {
         List<T> pojoList = new ArrayList<>();
         try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-            // Getting the class field names with FieldType annotation
+            // Getting the class field names with @FieldType annotation
             List<String> annotatedClassFields = CSV4PojoUtils.getAnnotatedClassFieldNames(clazz);
 
             // Extracting the csv header elements from the first line of the CSV InputStream
@@ -84,7 +84,7 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
     }
 
     /**
-     * Creates and returns Java object mapped with CSV InputStream
+     * Creates and returns Java object mapped with {@link FieldType} from List of field values (lineElements)
      *
      * @param clazz        Class<T>
      * @param lineElements List<String>
@@ -213,12 +213,12 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
                             lineIndex += fieldCount - 1;
                             break;
                         default:
-                            throw new MisConfiguredClassFieldException("Type attribute of FieldType annotation do not match with actual Datatype for " + field.getName());
+                            throw new MisConfiguredClassFieldException("Type attribute of @FieldType annotation do not match with actual Datatype for " + field.getName());
                     }
                 }
             } catch (IllegalAccessException | IllegalArgumentException | NullPointerException |
                      ExceptionInInitializerError exception) {
-                throw new CSVParsingException(exception.getMessage());
+                throw new CSVParsingException("Exception in " + field.getName() + " : " + exception.getMessage(), exception);
             }
             index++;
             lineIndex++;

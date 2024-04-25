@@ -1,5 +1,7 @@
 package org.csv4pojoparser.util;
 
+import org.csv4pojoparser.annotation.FieldType;
+
 import java.io.OutputStream;
 import java.util.List;
 
@@ -9,19 +11,21 @@ import java.util.List;
 public interface CSVWriter {
 
     /**
-     * Creates csv outputStream with all the Java object List data mapped with the given java class annotated fields
+     * Writes List of Java object mapped with the given java class annotated with {@link FieldType} annotation field
+     * values in to the outputStream
      *
      * @param clazz        Class<T>
      * @param pojoList     List<T>
      * @param outputStream OutputStream
      */
-    <T> void createCSVOutputStreamFromPojoList(Class<T> clazz, List<T> pojoList, OutputStream outputStream);
+    <T> void writeCSVOutputStreamFromPojoList(Class<T> clazz, List<T> pojoList, OutputStream outputStream);
 
     /**
-     * Creates an empty csv file with all the headings mapped with the given java class annotated fields
+     * Writes an empty csv file in to the OutputStream with all the headers mapped with the given java class annotated
+     * with {@link FieldType} annotation field names
      *
      * @param clazz        Class<T>
      * @param outputStream OutputStream
      */
-    <T> void createEmptyCSVOutputStreamFromClass(Class<T> clazz, OutputStream outputStream);
+    <T> void writeEmptyCSVOutputStreamFromClass(Class<T> clazz, OutputStream outputStream);
 }

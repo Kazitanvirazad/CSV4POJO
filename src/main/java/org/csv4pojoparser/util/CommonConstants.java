@@ -17,7 +17,7 @@ public interface CommonConstants {
         if (char_buffer_size != null) {
             try {
                 int_char_buffer_size = Integer.parseInt(char_buffer_size);
-            } catch (NumberFormatException exception) {
+            } catch (NumberFormatException ignored) {
             }
         }
         return int_char_buffer_size;

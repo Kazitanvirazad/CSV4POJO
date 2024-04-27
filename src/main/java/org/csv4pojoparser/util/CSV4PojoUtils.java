@@ -14,7 +14,8 @@ import java.util.List;
 public class CSV4PojoUtils implements CommonConstants {
 
     /**
-     * Return count of the fields annotated with {@link FieldType}
+     * Return count of the fields annotated with {@link FieldType} of
+     * the parent class, and it's annotated with {@link FieldType} nested class
      *
      * @param clazz Class<?>
      * @return count of {@link FieldType} annotated fields
@@ -31,38 +32,6 @@ public class CSV4PojoUtils implements CommonConstants {
             }
         }
         return count;
-    }
-
-    /**
-     * Returns the first argument if it is non-null and otherwise returns the non-null second argument.
-     *
-     * @param obj        an object
-     * @param defaultObj a non-null object to return if the first argument is null
-     * @return the first argument if it is non-null and otherwise the second argument if it is non-null
-     * @throws NullPointerException if both obj is null and defaultObj is null
-     * @since 9
-     * This method has been copied from java.util.Objects::requireNonNull from OpenJDK 11
-     */
-    public static <T> T requireNonNullElse(T obj, T defaultObj) {
-        return (obj != null) ? obj : requireNonNull(defaultObj, "defaultObj");
-    }
-
-    /**
-     * Checks that the specified object reference is not null. This
-     * method is designed primarily for doing parameter validation in methods
-     * and constructors.
-     *
-     * @param obj the object reference to check for nullity
-     * @param <T> the type of the reference
-     * @return obj if not null
-     * @throws NullPointerException if obj is null
-     * @since 9
-     * This method has been copied from java.util.Objects::requireNonNull from OpenJDK 11
-     */
-    private static <T> T requireNonNull(T obj, String message) {
-        if (obj == null)
-            throw new NullPointerException(message);
-        return obj;
     }
 
     /**

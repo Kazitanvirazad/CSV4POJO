@@ -6,13 +6,13 @@ import org.csv4pojoparser.annotation.Type;
 import java.util.Arrays;
 
 public class Inventory {
-    @FieldType(dataType = Type.INT, csvColumnName = "inventory_id")
+    @FieldType(dataType = Type.INTEGER, csvColumnName = "inventory_id")
     private int inventoryId;
 
     @FieldType(dataType = Type.STRING)
     private String location;
 
-    @FieldType(dataType = Type.INT, csvColumnName = "items_count")
+    @FieldType(dataType = Type.INTEGER, csvColumnName = "items_count")
     private int itemsCount;
 
     @FieldType(dataType = Type.INTEGER_ARRAY, csvColumnName = "skus")

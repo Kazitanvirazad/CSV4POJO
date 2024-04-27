@@ -9,14 +9,14 @@
 	<li>Create Pojo list from CSV file data, using annotations.</li>
 	<li>Validation of the CSV file data against the Pojo definitions, using annotations.</li>
 	<li>Custom CSV column name support.</li>
-	<li>15 Supported DataTypes: 
+	<li>15 Supported DataTypes:
 		<ol>
-			<li>int</li>
-			<li>boolean</li>
-			<li>float</li>
-			<li>double</li>
-			<li>long</li>
-			<li>char</li>
+			<li>Integer</li>
+			<li>Boolean</li>
+			<li>Float</li>
+			<li>Double</li>
+			<li>Long</li>
+			<li>Character</li>
 			<li>String</li>
 			<li>Integer Array</li>
 			<li>String Array</li>
@@ -29,7 +29,19 @@
 		</ol>
 	</li>
 </ul>
-
+<h4>Configuring Java class instance variables with CSV4POJO FieldType annotations:</h4>
+<ol>
+<li><span>Any field with missing @FieldType annotation will be ignored by CSV4POJO</span></li>
+<li><span>For any field with missing optional attribute 'csvColumnName' of @FieldType annotation, original field name will be used in CSV column name</span></li>
+<li><span>CSV file headers sequence must match with the annotated instance variable sequence of the mapped classes</span></li>
+<li><span>Mapped classes must have a public default constructor</span></li>
+<li><span>Static fields are not guaranteed, using instance fields are recommended</span></li>
+<li><span>Using separate DTO class for csv mapping is recommended</span></li>
+<li><span>For empty element in csv InputStream will be stored as null value in the Java object variable</span></li>
+<li><span>For null value in the Java object variable will be written as empty element in the csv OutputStream</span></li>
+<li><span>Primitives are not supported, use Wrappers for mapping fields with FieldType annotations</span></li>
+<li><span>(Optional) Set environment variable "CHAR_BUFFER_SIZE" to set custom input and output buffer size. Fallback buffer size is 8192</span></li>
+</ol>
 <h3>Interface CSVReader</h3>
 <h4>Methods</h4>
 <pre>
@@ -79,11 +91,7 @@ Writes an empty csv file with all the headers mapped with the given java class f
 <pre>
 CSVWriter csvWriter = new CSVWriterImpl();
 </pre>
-<h4>Configuring Java class instance variables with CSV4POJO FieldType annotations</h4>
-<span><b>** Any field with missing @FieldType annotation will be ignored by CSV4POJO</b></span></br>
-<span><b>** For any field with missing optional attribute 'csvColumnName' of @FieldType annotation, original field name will be used in CSV column name</b></span></br>
-<span><b>** CSV file headers sequence must match with the annotated instance variable sequence of the mapped classes</b></span></br>
-<span><b>** Mapped classes must have a public default constructor</b></span>
+<h4>Example use case:</h4>
 <ul>
 <li><span>Product.java</span>
 <pre>
@@ -92,7 +100,7 @@ import org.csv4pojoparser.annotation.Type;
 
 	public class Product {
 	
-		 @FieldType(dataType = Type.STRING, csvColumnName = "product_name")
+        @FieldType(dataType = Type.STRING, csvColumnName = "product_name")
 		private String name;
 	
 		@FieldType(dataType = Type.STRING, csvColumnName = "product_color")

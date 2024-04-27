@@ -5,13 +5,13 @@ package org.csv4pojoparser.annotation;
  */
 public enum Type {
 
-    INT,
+    INTEGER,
     STRING,
     BOOLEAN,
     FLOAT,
     DOUBLE,
     LONG,
-    CHAR,
+    CHARACTER,
     CLASSTYPE,
     INTEGER_ARRAY,
     STRING_ARRAY,

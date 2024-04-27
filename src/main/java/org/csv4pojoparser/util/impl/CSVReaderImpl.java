@@ -35,7 +35,7 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
     @Override
     public <T> List<T> createPojoListFromCSVInputStream(Class<T> clazz, InputStream inputStream) {
         List<T> pojoList = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream), CHAR_BUFFER_SIZE())) {
             // Getting the class field names with @FieldType annotation
             List<String> annotatedClassFields = CSV4PojoUtils.getAnnotatedClassFieldNames(clazz);
 
@@ -55,12 +55,13 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
             cleanCsvLineElements(headerElements);
 
             // Validating csv header line elements with class fields
-            if (!validateFields(annotatedClassFields, headerElements)) {
+            if (!validateHeadersWithMappedFields(annotatedClassFields, headerElements)) {
                 throw new FieldNotMatchedException("CSV header elements does not match with Class fields");
             }
 
             // Reading each line after header and execute logic to create pojo list
-            reader.lines().forEach(line -> {
+            String line;
+            while ((line = reader.readLine()) != null) {
                 // Split the line by comma, but ignore commas inside double quotes
                 String[] lineElements = line.split(SPLIT_REGEX, -1);
 
@@ -74,7 +75,7 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
                     // Adding the returned pojo in to the list if the pojo is not null
                     pojoList.add(pojo);
                 }
-            });
+            }
 
             // Returning the resultant list
             return pojoList;
@@ -111,25 +112,40 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
                 FieldType fieldType = field.getAnnotation(FieldType.class);
                 if (fieldType != null) {
                     switch (fieldType.dataType()) {
-                        case INT:
-                            int intVal = Integer.parseInt(lineElement);
-                            field.setInt(classInstance, intVal);
+                        case INTEGER:
+                            if (lineElement == null || lineElement.equals(EMPTY_STRING)) {
+                                field.set(classInstance, null);
+                                break;
+                            }
+                            field.set(classInstance, Integer.valueOf(lineElement));
                             break;
                         case INTEGER_ARRAY:
+                            if (lineElement == null || lineElement.equals(EMPTY_STRING)) {
+                                field.set(classInstance, null);
+                                break;
+                            }
                             String[] rawIntegerValList = lineElement.split(SPLIT_REGEX, -1);
                             List<Integer> integerValList = new ArrayList<>();
                             for (String s : rawIntegerValList) {
-                                integerValList.add(Integer.parseInt(s));
+                                integerValList.add(Integer.valueOf(s));
                             }
                             field.set(classInstance,
                                     integerValList.toArray((Integer[]) Array.newInstance(field.getType().getComponentType(), integerValList.size())));
                             break;
-                        case CHAR:
-                            char charVal = lineElement.length() == 1 ? lineElement.charAt(0)
-                                    : '\000';
+                        case CHARACTER:
+                            if (lineElement == null || lineElement.equals(EMPTY_STRING)) {
+                                field.set(classInstance, null);
+                                break;
+                            }
+                            Character charVal = lineElement.length() == 1 ? lineElement.charAt(0)
+                                    : null;
                             field.set(classInstance, charVal);
                             break;
                         case CHARACTER_ARRAY:
+                            if (lineElement == null || lineElement.equals(EMPTY_STRING)) {
+                                field.set(classInstance, null);
+                                break;
+                            }
                             String[] rawCharacterValList = lineElement.split(SPLIT_REGEX, -1);
                             List<Character> characterValList = new ArrayList<>();
                             for (String s : rawCharacterValList) {
@@ -139,61 +155,97 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
                                     characterValList.toArray((Character[]) Array.newInstance(field.getType().getComponentType(), characterValList.size())));
                             break;
                         case BOOLEAN:
-                            boolean booleanVal = Boolean.parseBoolean(lineElement);
-                            field.set(classInstance, booleanVal);
+                            if (lineElement == null || lineElement.equals(EMPTY_STRING)) {
+                                field.set(classInstance, null);
+                                break;
+                            }
+                            field.set(classInstance, Boolean.valueOf(lineElement));
                             break;
                         case BOOLEAN_ARRAY:
+                            if (lineElement == null || lineElement.equals(EMPTY_STRING)) {
+                                field.set(classInstance, null);
+                                break;
+                            }
                             String[] rawBooleanValList = lineElement.split(SPLIT_REGEX, -1);
                             List<Boolean> booleanValList = new ArrayList<>();
                             for (String s : rawBooleanValList) {
-                                booleanValList.add(Boolean.parseBoolean(s));
+                                booleanValList.add(Boolean.valueOf(s));
                             }
                             field.set(classInstance,
                                     booleanValList.toArray((Boolean[]) Array.newInstance(field.getType().getComponentType(), booleanValList.size())));
                             break;
                         case FLOAT:
-                            float floatVal = Float.parseFloat(lineElement);
-                            field.setFloat(classInstance, floatVal);
+                            if (lineElement == null || lineElement.equals(EMPTY_STRING)) {
+                                field.set(classInstance, null);
+                                break;
+                            }
+                            field.set(classInstance, Float.valueOf(lineElement));
                             break;
                         case FLOAT_ARRAY:
+                            if (lineElement == null || lineElement.equals(EMPTY_STRING)) {
+                                field.set(classInstance, null);
+                                break;
+                            }
                             String[] rawFloatValList = lineElement.split(SPLIT_REGEX, -1);
                             List<Float> floatValList = new ArrayList<>();
                             for (String s : rawFloatValList) {
-                                floatValList.add(Float.parseFloat(s));
+                                floatValList.add(Float.valueOf(s));
                             }
                             field.set(classInstance,
                                     floatValList.toArray((Float[]) Array.newInstance(field.getType().getComponentType(), floatValList.size())));
                             break;
                         case LONG:
-                            long longVal = Long.parseLong(lineElement);
-                            field.set(classInstance, longVal);
+                            if (lineElement == null || lineElement.equals(EMPTY_STRING)) {
+                                field.set(classInstance, null);
+                                break;
+                            }
+                            field.set(classInstance, Long.valueOf(lineElement));
                             break;
                         case LONG_ARRAY:
+                            if (lineElement == null || lineElement.equals(EMPTY_STRING)) {
+                                field.set(classInstance, null);
+                                break;
+                            }
                             String[] rawLongValList = lineElement.split(SPLIT_REGEX, -1);
                             List<Long> longValList = new ArrayList<>();
                             for (String s : rawLongValList) {
-                                longValList.add(Long.parseLong(s));
+                                longValList.add(Long.valueOf(s));
                             }
                             field.set(classInstance,
                                     longValList.toArray((Long[]) Array.newInstance(field.getType().getComponentType(), longValList.size())));
                             break;
                         case DOUBLE:
-                            double doubleVal = Double.parseDouble(lineElement);
-                            field.set(classInstance, doubleVal);
+                            if (lineElement == null || lineElement.equals(EMPTY_STRING)) {
+                                field.set(classInstance, null);
+                                break;
+                            }
+                            field.set(classInstance, Double.valueOf(lineElement));
                             break;
                         case DOUBLE_ARRAY:
+                            if (lineElement == null || lineElement.equals(EMPTY_STRING)) {
+                                field.set(classInstance, null);
+                                break;
+                            }
                             String[] rawDoubleValList = lineElement.split(SPLIT_REGEX, -1);
                             List<Double> doubleValList = new ArrayList<>();
                             for (String s : rawDoubleValList) {
-                                doubleValList.add(Double.parseDouble(s));
+                                doubleValList.add(Double.valueOf(s));
                             }
                             field.set(classInstance,
                                     doubleValList.toArray((Double[]) Array.newInstance(field.getType().getComponentType(), doubleValList.size())));
                             break;
                         case STRING:
+                            if (lineElement == null || lineElement.equals(EMPTY_STRING)) {
+                                field.set(classInstance, null);
+                                break;
+                            }
                             field.set(classInstance, lineElement);
                             break;
                         case STRING_ARRAY:
+                            if (lineElement == null || lineElement.equals(EMPTY_STRING)) {
+                                field.set(classInstance, null);
+                                break;
+                            }
                             List<String> stringValList = new ArrayList<String>() {
                                 private static final long serialVersionUID = 6146247278157261184L;
 
@@ -229,10 +281,21 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
     /**
      * Removes extra special characters such as double quotes added by MS Excel or Google Sheet
      *
-     * @param elements String[]
+     * @param elements {@link String[]}
      */
     private void cleanCsvLineElements(String[] elements) {
         for (int i = 0; i < elements.length; i++) {
+
+            if (elements[i] == null) {
+                elements[i] = EMPTY_STRING;
+                continue;
+            }
+
+            // Skipping the cleaning process for element with empty string
+            if (elements[i].equals(EMPTY_STRING)) {
+                continue;
+            }
+
             String element = elements[i];
 
             // replacing two double quotes to one double quotes
@@ -261,7 +324,7 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
      * @param csvHeaderElements            String[]
      * @return boolean
      */
-    private boolean validateFields(List<String> csv4PojoAnnotatedClassFields, String[] csvHeaderElements) {
+    private boolean validateHeadersWithMappedFields(List<String> csv4PojoAnnotatedClassFields, String[] csvHeaderElements) {
         if (csv4PojoAnnotatedClassFields.size() != csvHeaderElements.length) {
             return false;
         }
@@ -273,7 +336,7 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
     }
 
     /**
-     * Remove BOM if it's present in the line. For UTF-8 the BOM is: 0xEF, 0xBB, 0xBF
+     * Remove BOM (BYTE-ORDER MARK) if it's present in the line. For UTF-8 the BOM is: 0xEF, 0xBB, 0xBF
      *
      * @param line String
      * @return String

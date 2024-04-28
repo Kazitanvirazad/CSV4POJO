@@ -10,13 +10,16 @@
     <description>CSV utility tool for parsing csv file to existing Pojo and vice-versa</description>
     <properties>
         <java.version>8</java.version>
+        <junit.version>5.10.0</junit.version>
+        <maven.compiler-plugin.version>3.8.1</maven.compiler-plugin.version>
+        <maven.source-plugin.version>3.3.0</maven.source-plugin.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
-            <version>5.10.0</version>
+            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -27,7 +30,7 @@
             <email>tanvir.kaziazad@gmail.com</email>
             <roles>
                 <role>Java Developer</role>
-                <role>Application Development Expert in AWS</role>
+                <role>AWS Cloud Native Application Developer</role>
             </roles>
             <url>https://www.linkedin.com/in/kazitanvirazad/</url>
         </developer>
@@ -39,7 +42,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>${maven.compiler-plugin.version}</version>
                 <configuration>
                     <compilerVersion>${java.version}</compilerVersion>
                     <target>${java.version}</target>
@@ -49,7 +52,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-source-plugin</artifactId>
-                <version>3.3.0</version>
+                <version>${maven.source-plugin.version}</version>
                 <executions>
                     <execution>
                         <id>attach-sources</id>

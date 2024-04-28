@@ -85,9 +85,7 @@ public class CSVWriterImpl implements CSVWriter, CommonConstants {
         if (pojo == null) {
             int fieldCount = CSV4PojoUtils.getAnnotatedFieldCount(clazz);
             for (int i = 0; i < fieldCount; i++) {
-                if (i < fieldCount - 1) {
-                    fieldValues.add(EMPTY_STRING);
-                }
+                fieldValues.add(EMPTY_STRING);
             }
             return fieldValues;
         }

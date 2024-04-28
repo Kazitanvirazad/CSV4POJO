@@ -1,14 +1,17 @@
-package com.csvutil.annotation;
+package org.csv4pojoparser.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+/**
+ * @author Kazi Tanvir Azad
+ */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface FieldType {
-	Type dataType();
+    Type dataType();
 
-	String csvColumnName() default "";
+    String csvColumnName() default "";
 }

@@ -1,6 +1,6 @@
-<h2><span>CSV4POJO library for Java application - Parse CSV file data
+<h2><span>CSV4POJO tool for Java application - Parse CSV file data
 	to existing Pojo and vice-versa.</span></h2>
-<h5><span>This utility is a lightweight and easy-to-use library that
+<h5><span>This utility is a lightweight and easy-to-use tool that
 	allows you to perform various operations with CSV files and Pojos.</span></h5>
 <h4>Features</h4>
 <ul>

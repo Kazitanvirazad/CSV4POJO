@@ -3,10 +3,10 @@
 <h5><span>CSV4POJO is a lightweight and easy-to-use utility tool that allows us to perform various operations with CSV files and mapped Java classes.</span></h5>
 <h4>Features</h4>
 <ul>
-	<li>Create CSV file data from existing Pojo, using annotations.</li>
-	<li>Generate empty CSV file from Pojo definitions, using annotations.</li>
+	<li>Create CSV file data from mapped classes, using annotations.</li>
+	<li>Generate empty CSV file from mapped class definitions, using annotations.</li>
 	<li>Create Pojo list from CSV file data, using annotations.</li>
-	<li>Validation of the CSV file data against the Pojo definitions, using annotations.</li>
+	<li>Validation of the CSV file data against the mapped class definitions, using annotations.</li>
 	<li>Custom CSV column name support.</li>
 	<li>15 Supported DataTypes:
 		<table>
@@ -37,8 +37,8 @@
 <li><span>Mapped classes must have a public default constructor</span></li>
 <li><span>Static fields are not guaranteed, using instance fields are recommended</span></li>
 <li><span>Using separate DTO class for csv mapping is recommended</span></li>
-<li><span>For empty element in csv InputStream will be stored as null value in the Java object variable</span></li>
-<li><span>For null value in the Java object variable will be written as empty element in the csv OutputStream</span></li>
+<li><span>For empty element in csv InputStream will be stored as null value in the Java instance variable</span></li>
+<li><span>For null value in the Java instance variable will be written as empty element in the csv OutputStream</span></li>
 <li><span>Primitives are not supported, use Wrappers for mapping fields with FieldType annotations</span></li>
 <li><span>(Optional) Set environment variable "CHAR_BUFFER_SIZE" to set custom input and output buffer size. Fallback buffer size is 8192</span></li>
 </ol>

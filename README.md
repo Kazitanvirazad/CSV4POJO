@@ -42,27 +42,51 @@
 <li><span>Primitives are not supported, use Wrappers for mapping fields with FieldType annotations</span></li>
 <li><span>(Optional) Set environment variable "CHAR_BUFFER_SIZE" to set custom input and output buffer size. Fallback buffer size is 8192</span></li>
 </ol>
+
+### Download
+
+Gradle:
+
+```gradle
+dependencies {
+  implementation 'io.github.kazitanvirazad:csv4pojo:2.0.0'
+}
+```
+
+Maven:
+```xml
+<dependency>
+    <groupId>io.github.kazitanvirazad</groupId>
+    <artifactId>csv4pojo</artifactId>
+    <version>2.0.0</version>
+</dependency>
+```
+
+[csv4pojo jar downloads](https://search.maven.org/artifact/io.github.kazitanvirazad/csv4pojo/2.0.0/jar?eh=) are available from Maven Central.
 <h3>Interface CSVReader</h3>
 <h4>Methods</h4>
-<pre>
-createPojoListFromCSVInputStream(Class<T> clazz, InputStream inputStream) : List
+
+```java
+createPojoListFromCSVInputStream(Class<T> clazz, InputStream inputStream) : List<T>
 
 params:
 	clazz: Class type of the pojo
 	inputStream: csv file inputStream.
 
 return:
-	List
+	List<T>
+```
 
 Creates and returns List of Java objects mapped with FieldType annotation from CSV InputStream
-</pre>
+
+
 <h4>Implementing Class</h4>
-<pre>
+```java
 CSVReader csvReader = new CSVReaderImpl();
-</pre>
+```
 <h3>Interface CSVWriter</h3>
 <h4>Methods</h4>
-<pre>
+```java
 writeCSVOutputStreamFromPojoList(Class<T> clazz, List<T> pojo, OutputStream outputStream) : void
 
 params:
@@ -72,10 +96,10 @@ params:
 
 return:
 	void
-
+```
 Writes all the pojos annotated field values with FieldType annotation in the CSV file OutputStream
-</pre>
-<pre>
+
+```java
 writeEmptyCSVOutputStreamFromClass(Class<T> clazz, OutputStream outputStream) : void
 
 params:
@@ -84,247 +108,262 @@ params:
 
 return:
 	void
-
+```
 Writes an empty csv file with all the headers mapped with the given java class fields annotated with FieldType annotation in the CSV file OutputStream
-</pre>
+
 <h4>Implementing Class</h4>
-<pre>
+```java
 CSVWriter csvWriter = new CSVWriterImpl();
-</pre>
+```
 <h4>Example use case:</h4>
 <ul>
 <li><span>Product.java</span>
-<pre>
+
+```java
 import org.csv4pojoparser.annotation.FieldType;
 import org.csv4pojoparser.annotation.Type;
 
-	public class Product {
-		@FieldType(dataType = Type.STRING, csvColumnName = "product_name")
-    	private String name;
+public class Product {
+	@FieldType(dataType = Type.STRING, csvColumnName = "product_name")
+	private String name;
 
-		@FieldType(dataType = Type.STRING, csvColumnName = "product_color")
-		private String color;
-	
-		@FieldType(dataType = Type.CLASSTYPE)
-		private Inventory inventory;
-	
-		@FieldType(dataType = Type.FLOAT)
-		private Float price;
-	
-		private Float taxRate;
-	
-		@FieldType(dataType = Type.CLASSTYPE)
-		private Category category;
-	
-		public Product() {
-		}
-	
-		public Product(String name, String color, Inventory inventory, Float price, Float taxRate, Category category) {
-			this.name = name;
-			this.color = color;
-			this.inventory = inventory;
-			this.price = price;
-			this.taxRate = taxRate;
-			this.category = category;
-		}
-	
-		@Override
-		public String toString() {
-			return "Product{" +
-					"name='" + name + '\'' +
-					", color='" + color + '\'' +
-					", inventory=" + inventory +
-					", price=" + price +
-					", taxRate=" + taxRate +
-					", category=" + category +
-					'}';
-		}
-	
+	@FieldType(dataType = Type.STRING, csvColumnName = "product_color")
+	private String color;
+
+	@FieldType(dataType = Type.CLASSTYPE)
+	private Inventory inventory;
+
+	@FieldType(dataType = Type.FLOAT)
+	private Float price;
+
+	private Float taxRate;
+
+	@FieldType(dataType = Type.CLASSTYPE)
+	private Category category;
+
+	public Product() {
 	}
-</pre>
+
+	public Product(String name, String color, Inventory inventory, Float price, Float taxRate, Category category) {
+		this.name = name;
+		this.color = color;
+		this.inventory = inventory;
+		this.price = price;
+		this.taxRate = taxRate;
+		this.category = category;
+	}
+
+	@Override
+	public String toString() {
+		return "Product{" +
+				"name='" + name + '\'' +
+				", color='" + color + '\'' +
+				", inventory=" + inventory +
+				", price=" + price +
+				", taxRate=" + taxRate +
+				", category=" + category +
+				'}';
+	}
+
+}
+```
+
 </li>
 <li><span>Inventory.java</span>
-<pre>
+
+```java
 import org.csv4pojoparser.annotation.FieldType;
 import org.csv4pojoparser.annotation.Type;
 
-	public class Inventory {
-		@FieldType(dataType = Type.INTEGER, csvColumnName = "inventory_id")
-		private Integer inventoryId;
-	
-		@FieldType(dataType = Type.STRING)
-		private String location;
-	
-		@FieldType(dataType = Type.INTEGER, csvColumnName = "items_count")
-		private Integer itemsCount;
-	
-		@FieldType(dataType = Type.INTEGER_ARRAY, csvColumnName = "skus")
-		private Integer[] skus;
-	
-		public Inventory() {
-		}
-	
-		public Inventory(Integer inventoryId, String location, Integer itemsCount, Integer[] skus) {
-			this.inventoryId = inventoryId;
-			this.location = location;
-			this.itemsCount = itemsCount;
-			this.skus = skus;
-		}
-	
-		@Override
-		public String toString() {
-			return "Inventory{" +
-					"inventoryId=" + inventoryId +
-					", location='" + location + '\'' +
-					", itemsCount=" + itemsCount +
-					", skus=" + Arrays.toString(skus) +
-					'}';
-		}
+public class Inventory {
+	@FieldType(dataType = Type.INTEGER, csvColumnName = "inventory_id")
+	private Integer inventoryId;
+
+	@FieldType(dataType = Type.STRING)
+	private String location;
+
+	@FieldType(dataType = Type.INTEGER, csvColumnName = "items_count")
+	private Integer itemsCount;
+
+	@FieldType(dataType = Type.INTEGER_ARRAY, csvColumnName = "skus")
+	private Integer[] skus;
+
+	public Inventory() {
 	}
-</pre>
+
+	public Inventory(Integer inventoryId, String location, Integer itemsCount, Integer[] skus) {
+		this.inventoryId = inventoryId;
+		this.location = location;
+		this.itemsCount = itemsCount;
+		this.skus = skus;
+	}
+
+	@Override
+	public String toString() {
+		return "Inventory{" +
+				"inventoryId=" + inventoryId +
+				", location='" + location + '\'' +
+				", itemsCount=" + itemsCount +
+				", skus=" + Arrays.toString(skus) +
+				'}';
+	}
+}
+```
+
 </li>
 <li><span>Category.java</span>
-<pre>
+
+```java
 import org.csv4pojoparser.annotation.FieldType;
 import org.csv4pojoparser.annotation.Type;
 
-	public class Category {
+public class Category {
 
-		@FieldType(dataType = Type.STRING, csvColumnName = "category_name")
-		private String categoryName;
-	
-		@FieldType(dataType = Type.STRING_ARRAY)
-		private String[] tags;
-	
-		@FieldType(dataType = Type.CLASSTYPE)
-		private Variant variant;
-	
-		public Category(String categoryName, String[] tags, Variant variant) {
-			this.categoryName = categoryName;
-			this.tags = tags;
-			this.variant = variant;
-		}
-	
-		public Category() {
-		}
-	
-		@Override
-		public String toString() {
-			return "Category{" +
-					"categoryName='" + categoryName + '\'' +
-					", tags=" + Arrays.toString(tags) +
-					", variant=" + variant +
-					'}';
-		}
+	@FieldType(dataType = Type.STRING, csvColumnName = "category_name")
+	private String categoryName;
 
+	@FieldType(dataType = Type.STRING_ARRAY)
+	private String[] tags;
+
+	@FieldType(dataType = Type.CLASSTYPE)
+	private Variant variant;
+
+	public Category(String categoryName, String[] tags, Variant variant) {
+		this.categoryName = categoryName;
+		this.tags = tags;
+		this.variant = variant;
 	}
-</pre>
+
+	public Category() {
+	}
+
+	@Override
+	public String toString() {
+		return "Category{" +
+				"categoryName='" + categoryName + '\'' +
+				", tags=" + Arrays.toString(tags) +
+				", variant=" + variant +
+				'}';
+	}
+
+}
+```
 </li>
 <li><span>Variant.java</span>
-<pre>
+
+```java
 import org.csv4pojoparser.annotation.FieldType;
 import org.csv4pojoparser.annotation.Type;
 
-	public class Variant {
+public class Variant {
 
-		@FieldType(dataType = Type.STRING, csvColumnName = "variant_name")
-		private String variantName;
-		@FieldType(dataType = Type.STRING, csvColumnName = "variant_type")
-		private String variantType;
-	
-		public Variant() {
-		}
-	
-		public Variant(String variantName, String variantType) {
-			this.variantName = variantName;
-			this.variantType = variantType;
-		}
-	
-		@Override
-		public String toString() {
-			return "Variant{" +
-					"variantName='" + variantName + '\'' +
-					", variantType='" + variantType + '\'' +
-					'}';
-		}
+	@FieldType(dataType = Type.STRING, csvColumnName = "variant_name")
+	private String variantName;
+	@FieldType(dataType = Type.STRING, csvColumnName = "variant_type")
+	private String variantType;
 
+	public Variant() {
 	}
-</pre>
+
+	public Variant(String variantName, String variantType) {
+		this.variantName = variantName;
+		this.variantType = variantType;
+	}
+
+	@Override
+	public String toString() {
+		return "Variant{" +
+				"variantName='" + variantName + '\'' +
+				", variantType='" + variantType + '\'' +
+				'}';
+	}
+
+}
+```
 </li>
 </ul>
 <h4>Usage:</h4>
 <ol>
 <li><span>Create an instance of CSVWriter</span>
-<pre>
+
+```java
 CSVWriter csvWriter = new CSVWriterImpl();
-</pre>
+```
 </li>
 <li><span>Write Pojo List data to a CSV file</span>
-<pre>
+
+```java
 		
-        Integer[] skus1 = {2301, 1421, 456, 3423};
-        Integer[] skus2 = {4509, 3456, 9254, 2352};
-        Integer[] skus3 = {9876, 9458, 9243, 8746};
+Integer[] skus1 = {2301, 1421, 456, 3423};
+Integer[] skus2 = {4509, 3456, 9254, 2352};
+Integer[] skus3 = {9876, 9458, 9243, 8746};
 
-        String[] tags1 = {"Gadgets", "Electronics", "Wireless"};
-        String[] tags2 = {"Technology", "AMoLED", "Bluetooth"};
-        String[] tags3 = {"Charging", "Wireless Charging", "Type C Charging"};
+String[] tags1 = {"Gadgets", "Electronics", "Wireless"};
+String[] tags2 = {"Technology", "AMoLED", "Bluetooth"};
+String[] tags3 = {"Charging", "Wireless Charging", "Type C Charging"};
 
-        List<Product> products = new ArrayList<Product>() {
-            private static final long serialVersionUID = 6801078320304556337L;
+List<Product> products = new ArrayList<Product>() {
+	private static final long serialVersionUID = 6801078320304556337L;
 
-            {
-                add(new Product("Oneplus Headphone", "Black",
-                        new Inventory(101, "Bangalore", 234, skus1),
-                        1499.34f, 18f,
-                        new Category("Wireless Earphone", tags1,
-                            new Variant("Earphone Black", "Earphone"))));
-                add(new Product("Samsung Mobile", "White",
-                        new Inventory(103, "Mumbai", 456, skus2),
-                        31879.00f, 18f,
-                        new Category("Smartphone", tags2,
-                            new Variant("Smartphone 128gb", "Smartphone"))));
-                add(new Product("Mi Powerbank", "Blue",
-                        new Inventory(104, "Delhi", 167, skus3),
-                        1129.65f, 12f,
-                        new Category("Wireless Charging", tags3,
-                            new Variant("PowerBank 15000mah", "PowerBank"))));
-            }
-        };
+	{
+		add(new Product("Oneplus Headphone", "Black",
+				new Inventory(101, "Bangalore", 234, skus1),
+				1499.34f, 18f,
+				new Category("Wireless Earphone", tags1,
+					new Variant("Earphone Black", "Earphone"))));
+		add(new Product("Samsung Mobile", "White",
+				new Inventory(103, "Mumbai", 456, skus2),
+				31879.00f, 18f,
+				new Category("Smartphone", tags2,
+					new Variant("Smartphone 128gb", "Smartphone"))));
+		add(new Product("Mi Powerbank", "Blue",
+				new Inventory(104, "Delhi", 167, skus3),
+				1129.65f, 12f,
+				new Category("Wireless Charging", tags3,
+					new Variant("PowerBank 15000mah", "PowerBank"))));
+	}
+};
 
-        csvWriter.writeCSVOutputStreamFromPojoList(Product.class, products, outputStream);
-</pre>
+csvWriter.writeCSVOutputStreamFromPojoList(Product.class, products, outputStream);
+```
+
 <h4>CSV output file data:</h4>
-<pre>
+
+```csv
 product_name,product_color,inventory_id,location,items_count,skus,price,category_name,tags,variant_name,variant_type
 Oneplus Headphone,Black,101,Bangalore,234,"2301,1421,456,3423",1499.34,Wireless Earphone,"Gadgets,Electronics,Wireless",Earphone Black,Earphone
 Samsung Mobile,White,103,Mumbai,456,"4509,3456,9254,2352",31879.0,Smartphone,"Technology,AMoLED,Bluetooth",Smartphone 128gb,Smartphone
 Mi Powerbank,Blue,104,Delhi,167,"9876,9458,9243,8746",1129.65,Wireless Charging,"Charging,Wireless Charging,Type C Charging",PowerBank 15000mah,PowerBank
-</pre>
+```
 </li>
 <li><span>Creating an empty CSV file with Pojo definition</span>
-<pre>
+
+```java
 csvWriter.writeEmptyCSVOutputStreamFromClass(Product.class, outputStream);
-</pre>
+```
 <h4>CSV output file data:</h4>
-<pre>
+
+```csv
 product_name,product_color,inventory_id,location,items_count,skus,price,category_name,tags,variant_name,variant_type
-</pre>
+```
 </li>
 <li><span>Create an instance of CSVReader</span>
-<pre>
+
+```java
 CSVReader csvReader = new CSVReaderImpl();
-</pre>
+```
 <li><span>Create list of Java objects from CSV file data</span>
-<pre>
+
+```java
 List<Product> productList = csvReader.createPojoListFromCSVInputStream(Product.class, inputStream);
-</pre>
+```
 <h4>Output data using toString() method :</h4>
-<pre>
+
+```java
 Product{name='Oneplus Headphone', color='Black', inventory=Inventory{inventoryId=101, location='Bangalore', itemsCount=234, skus=[2301, 1421, 456, 3423]}, price=1499.34, taxRate=null, category=Category{categoryName='Wireless Earphone', tags=[Gadgets, Electronics, Wireless], variant=Variant{variantName='Earphone Black', variantType='Earphone'}}}
 Product{name='Samsung Mobile', color='White', inventory=Inventory{inventoryId=103, location='Mumbai', itemsCount=456, skus=[4509, 3456, 9254, 2352]}, price=31879.0, taxRate=null, category=Category{categoryName='Smartphone', tags=[Technology, AMoLED, Bluetooth], variant=Variant{variantName='Smartphone 128gb', variantType='Smartphone'}}}
 Product{name='Mi Powerbank', color='Blue', inventory=Inventory{inventoryId=104, location='Delhi', itemsCount=167, skus=[9876, 9458, 9243, 8746]}, price=1129.65, taxRate=null, category=Category{categoryName='Wireless Charging', tags=[Charging, Wireless Charging, Type C Charging], variant=Variant{variantName='PowerBank 15000mah', variantType='PowerBank'}}}
-</pre>
+```
 </li>
 </ol>
 

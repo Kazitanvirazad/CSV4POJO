@@ -10,25 +10,26 @@
 	<li>Validation of the CSV file data against the Pojo definitions, using annotations.</li>
 	<li>Custom CSV column name support.</li>
 	<li>15 Supported DataTypes:
-		<ol>
-			<li>Integer</li>
-			<li>Boolean</li>
-			<li>Float</li>
-			<li>Double</li>
-			<li>Long</li>
-			<li>Character</li>
-			<li>String</li>
-			<li>Integer Array</li>
-			<li>String Array</li>
-			<li>Boolean Array</li>
-			<li>Float Array</li>
-			<li>Double Array</li>
-			<li>Long Array</li>
-			<li>Character Array</li>
-			<li>Class</li>
-		</ol>
+		<table>
+			<thead>
+				<tr>
+					<th>Type</th><th>Class name</th><th>Type</th><th>Class name</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr><td>Integer</td><td>java.lang.Integer</td><td>Integer [ ]</td><td>java.lang.Integer [ ]</td></tr>
+				<tr><td>Boolean</td><td>java.lang.Boolean</td><td>Boolean [ ]</td><td>java.lang.Boolean [ ]</td></tr>
+				<tr><td>Float</td><td>java.lang.Float</td><td>Float [ ]</td><td>java.lang.Float [ ]</td></tr>
+				<tr><td>Double</td><td>java.lang.Double</td><td>Double [ ]</td><td>java.lang.Double [ ]</td></tr>
+				<tr><td>Long</td><td>java.lang.Long</td><td>Long [ ]</td><td>java.lang.Long [ ]</td></tr>
+				<tr><td>Character</td><td>java.lang.Character</td><td>Character [ ]</td><td>java.lang.Character [ ]</td></tr>
+				<tr><td>String</td><td>java.lang.String</td><td>String [ ]</td><td>java.lang.String [ ]</td></tr>
+				<tr><td>Class</td><td>User defined custom Java Class</td></tr>
+			</tbody>
+		</table>
 	</li>
 </ul>
+
 <h4>Configuring Java class instance variables with CSV4POJO FieldType annotations:</h4>
 <ol>
 <li><span>Any field with missing @FieldType annotation will be ignored by CSV4POJO</span></li>

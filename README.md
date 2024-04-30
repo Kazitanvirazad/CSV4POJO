@@ -81,11 +81,13 @@ Creates and returns List of Java objects mapped with FieldType annotation from C
 
 
 <h4>Implementing Class</h4>
+
 ```java
 CSVReader csvReader = new CSVReaderImpl();
 ```
 <h3>Interface CSVWriter</h3>
 <h4>Methods</h4>
+
 ```java
 writeCSVOutputStreamFromPojoList(Class<T> clazz, List<T> pojo, OutputStream outputStream) : void
 
@@ -112,6 +114,7 @@ return:
 Writes an empty csv file with all the headers mapped with the given java class fields annotated with FieldType annotation in the CSV file OutputStream
 
 <h4>Implementing Class</h4>
+
 ```java
 CSVWriter csvWriter = new CSVWriterImpl();
 ```

@@ -1,7 +1,6 @@
-<h2><span>CSV4POJO tool for Java application - Parse CSV file data
-	to existing Pojo and vice-versa.</span></h2>
-<h5><span>This utility is a lightweight and easy-to-use tool that
-	allows you to perform various operations with CSV files and Pojos.</span></h5>
+<h2><span>CSV4POJO utility tool for Java application - Parse CSV file data
+	to mapped Java classes and vice-versa.</span></h2>
+<h5><span>CSV4POJO is a lightweight and easy-to-use utility tool that allows us to perform various operations with CSV files and mapped Java classes.</span></h5>
 <h4>Features</h4>
 <ul>
 	<li>Create CSV file data from existing Pojo, using annotations.</li>

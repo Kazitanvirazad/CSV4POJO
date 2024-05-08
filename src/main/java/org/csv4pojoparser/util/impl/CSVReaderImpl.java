@@ -18,7 +18,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.Spliterator;
+import java.util.Spliterators;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 /**
  * @author Kazi Tanvir Azad
@@ -26,16 +33,17 @@ import java.util.List;
 public class CSVReaderImpl implements CSVReader, CommonConstants {
 
     /**
-     * Creates and returns List of Java objects mapped with {@link FieldType} annotation from CSV InputStream
+     * Creates and returns Stream of Java objects mapped with {@link FieldType} annotation from CSV InputStream
      *
-     * @param clazz       Class<T>
-     * @param inputStream InputStream
-     * @return List<T>
+     * @param clazz       {@link Class<T>}
+     * @param inputStream {@link InputStream}
+     * @return Stream<T> {@link Stream<T>}
      */
     @Override
-    public <T> List<T> createPojoListFromCSVInputStream(Class<T> clazz, InputStream inputStream) {
-        List<T> pojoList = new ArrayList<>();
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream), CHAR_BUFFER_SIZE())) {
+    public <T> Stream<T> createPojoStreamFromCSVInputStream(Class<T> clazz, InputStream inputStream) {
+
+        try {
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream), CHAR_BUFFER_SIZE());
             // Getting the class field names with @FieldType annotation
             List<String> annotatedClassFields = CSV4PojoUtils.getAnnotatedClassFieldNames(clazz);
 
@@ -59,26 +67,51 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
                 throw new FieldNotMatchedException("CSV header elements does not match with Class fields");
             }
 
-            // Reading each line after header and execute logic to create pojo list
-            String line;
-            while ((line = reader.readLine()) != null) {
-                // Split the line by comma, but ignore commas inside double quotes
-                String[] lineElements = line.split(SPLIT_REGEX, -1);
+            // Iterator to iterate each line after header and execute logic to create and return pojo
+            Iterator<T> iterator = new Iterator<T>() {
+                String line;
 
-                // Removes extra special characters such as double quotes added by MS Excel or Google Sheet
-                cleanCsvLineElements(lineElements);
-
-                // Creating the object of the specified class with the field values passed as a List of String
-                T pojo = createPojoFromCSVLineElements(clazz, Arrays.asList(lineElements));
-
-                if (pojo != null) {
-                    // Adding the returned pojo in to the list if the pojo is not null
-                    pojoList.add(pojo);
+                @Override
+                public boolean hasNext() {
+                    try {
+                        if (line != null) {
+                            return true;
+                        } else {
+                            line = reader.readLine();
+                            if (line == null) {
+                                reader.close();
+                                return false;
+                            }
+                            return true;
+                        }
+                    } catch (IOException exception) {
+                        throw new InputOutputStreamException("InputStream is invalid or null: ", exception);
+                    }
                 }
-            }
 
-            // Returning the resultant list
-            return pojoList;
+                @Override
+                public T next() {
+                    if (line != null || hasNext()) {
+                        // Split the line by comma, but ignore commas inside double quotes
+                        String[] lineElements = line.split(SPLIT_REGEX, -1);
+
+                        line = null;
+
+                        // Removes extra special characters such as double quotes added by MS Excel or Google Sheet
+                        cleanCsvLineElements(lineElements);
+
+                        // Creating and returning the object of the specified class with the field values passed as a List of String
+                        return createPojoFromCSVLineElements(clazz, Arrays.asList(lineElements));
+                    } else {
+                        throw new NoSuchElementException();
+                    }
+                }
+            };
+
+            // Returning the resultant Stream
+            return StreamSupport.stream(Spliterators.spliteratorUnknownSize(
+                            iterator, Spliterator.ORDERED | Spliterator.NONNULL), false)
+                    .filter(Objects::nonNull);
         } catch (IOException exception) {
             throw new InputOutputStreamException("InputStream is invalid or null: ", exception);
         }
@@ -87,9 +120,9 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
     /**
      * Creates and returns Java object mapped with {@link FieldType} from List of field values (lineElements)
      *
-     * @param clazz        Class<T>
-     * @param lineElements List<String>
-     * @return T
+     * @param clazz        {@link Class<T>}
+     * @param lineElements {@link List<String>}
+     * @return {@link T}
      */
     private <T> T createPojoFromCSVLineElements(Class<T> clazz, List<String> lineElements) {
         T classInstance;
@@ -320,8 +353,8 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
      * Validates class fields with an array of csv header elements. Returns true if
      * length and all values matches else returns false
      *
-     * @param csv4PojoAnnotatedClassFields List<String>
-     * @param csvHeaderElements            String[]
+     * @param csv4PojoAnnotatedClassFields {@link List<String>}
+     * @param csvHeaderElements            {@link String[]}
      * @return boolean
      */
     private boolean validateHeadersWithMappedFields(List<String> csv4PojoAnnotatedClassFields, String[] csvHeaderElements) {
@@ -338,8 +371,8 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
     /**
      * Remove BOM (BYTE-ORDER MARK) if it's present in the line. For UTF-8 the BOM is: 0xEF, 0xBB, 0xBF
      *
-     * @param line String
-     * @return String
+     * @param line {@link String}
+     * @return {@link String}
      */
     private String removeUTF8BOM(String line) {
         if (line.startsWith(UTF8_BOM)) {

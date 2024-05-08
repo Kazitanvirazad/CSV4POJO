@@ -14,6 +14,7 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @author Kazi Tanvir Azad
@@ -24,9 +25,9 @@ public class CSVWriterImpl implements CSVWriter, CommonConstants {
      * Writes List of Java object mapped with the given java class annotated with {@link FieldType} annotation field
      * values in to the outputStream
      *
-     * @param clazz        Class<T>
-     * @param pojoList     List<T>
-     * @param outputStream OutputStream
+     * @param clazz        {@link Class<T>}
+     * @param pojoList     {@link List<T>}
+     * @param outputStream {@link OutputStream}
      */
     @Override
     public <T> void writeCSVOutputStreamFromPojoList(Class<T> clazz, List<T> pojoList, OutputStream outputStream) {
@@ -56,11 +57,51 @@ public class CSVWriterImpl implements CSVWriter, CommonConstants {
     }
 
     /**
+     * Writes Stream of Java object mapped with the given java class annotated with {@link FieldType} annotation field
+     * values in to the outputStream
+     *
+     * @param clazz        {@link Class<T>}
+     * @param pojoStream   {@link Stream <T>}
+     * @param outputStream {@link OutputStream}
+     */
+    @Override
+    public <T> void writeCSVOutputStreamFromPojoStream(Class<T> clazz, Stream<T> pojoStream, OutputStream outputStream) {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream), CHAR_BUFFER_SIZE())) {
+            // Writing the header elements to the OutputStream
+            writeHeaderToOutputStream(clazz, writer);
+            // Reading each object from Stream and execute logic to create line elements and write in to the BufferedWriter
+            pojoStream.forEach((pojo) -> {
+                // Skipping null objects from the Stream
+                if (pojo != null) {
+                    // Reading the annotated with @FieldType annotation field data from java object and putting it in to a List
+                    List<String> lineElements = getAnnotatedFieldValuesFromPojo(pojo, pojo.getClass());
+
+                    // Converting the List of line elements to a CSV row format
+                    String formattedLineElement = getFormattedLineElements(lineElements);
+
+                    try {
+                        // Writing the csv formatted row in to the BufferedWriter
+                        writer.write(formattedLineElement);
+
+                        // Appending a line in to the BufferedWriter
+                        writer.newLine();
+                    } catch (IOException exception) {
+                        throw new InputOutputStreamException("OutputStream is invalid or null: ", exception);
+                    }
+                }
+            });
+        } catch (
+                IOException exception) {
+            throw new InputOutputStreamException("OutputStream is invalid or null: ", exception);
+        }
+    }
+
+    /**
      * Writes an empty csv file in to the OutputStream with all the headers mapped with the given java class annotated
      * with {@link FieldType} annotation field names
      *
-     * @param clazz        Class<T>
-     * @param outputStream OutputStream
+     * @param clazz        {@link Class<T>}
+     * @param outputStream {@link OutputStream}
      */
     @Override
     public <T> void writeEmptyCSVOutputStreamFromClass(Class<T> clazz, OutputStream outputStream) {
@@ -76,8 +117,8 @@ public class CSVWriterImpl implements CSVWriter, CommonConstants {
      * Read all the annotated with {@link FieldType} annotation fields of the Java object passed in the method
      * parameter and creates and returns a List of the values
      *
-     * @param pojo T
-     * @return List<String>
+     * @param pojo {@link T}
+     * @return {@link  List<String>}
      */
     private <T> List<String> getAnnotatedFieldValuesFromPojo(T pojo, Class<?> clazz) {
         List<String> fieldValues = new ArrayList<>();
@@ -224,8 +265,8 @@ public class CSVWriterImpl implements CSVWriter, CommonConstants {
     /**
      * Writes the csv header elements in to the BufferedWriter and a new line
      *
-     * @param clazz  Class<T>
-     * @param writer Writer
+     * @param clazz  {@link  Class<T>}
+     * @param writer {@link  BufferedWriter}
      * @throws IOException If an I/O error occurs
      */
     private <T> void writeHeaderToOutputStream(Class<T> clazz, BufferedWriter writer) throws IOException {
@@ -237,8 +278,8 @@ public class CSVWriterImpl implements CSVWriter, CommonConstants {
     /**
      * Adds extra special characters such as double quotes for MS Excel, Google Sheet or Libre Calc compatibility
      *
-     * @param lineElements List<String>
-     * @return String
+     * @param lineElements {@link List<String>}
+     * @return {@link String}
      */
     private String getFormattedLineElements(List<String> lineElements) {
         StringBuilder formattedLine = new StringBuilder();
@@ -266,8 +307,8 @@ public class CSVWriterImpl implements CSVWriter, CommonConstants {
     /**
      * Appends and prepends double quotes characters
      *
-     * @param element String
-     * @return String
+     * @param element {@link String}
+     * @return {@link String}
      */
     private String wrapToFormatElement(String element) {
         return ONE_DOUBLE_QUOTES + element + ONE_DOUBLE_QUOTES;

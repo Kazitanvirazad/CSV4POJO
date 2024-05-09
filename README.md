@@ -5,7 +5,7 @@
 <ul>
 	<li>Create CSV file data from mapped classes, using annotations.</li>
 	<li>Generate empty CSV file from mapped class definitions, using annotations.</li>
-	<li>Create Pojo list from CSV file data, using annotations.</li>
+	<li>Create Pojo stream from CSV file data, using annotations.</li>
 	<li>Validation of the CSV file data against the mapped class definitions, using annotations.</li>
 	<li>Custom CSV column name support.</li>
 	<li>15 Supported DataTypes:
@@ -67,17 +67,17 @@ Maven:
 <h4>Methods</h4>
 
 ```java
-createPojoListFromCSVInputStream(Class<T> clazz, InputStream inputStream) : List<T>
+createPojoStreamFromCSVInputStream(Class<T> clazz, InputStream inputStream) : Stream<T>
 
 params:
 	clazz: Class type of the pojo
 	inputStream: csv file inputStream.
 
 return:
-	List<T>
+	Stream<T>
 ```
 
-Creates and returns List of Java objects mapped with FieldType annotation from CSV InputStream
+Creates and returns Stream of Java objects mapped with FieldType annotation from CSV InputStream
 
 
 <h4>Implementing Class</h4>
@@ -93,7 +93,20 @@ writeCSVOutputStreamFromPojoList(Class<T> clazz, List<T> pojo, OutputStream outp
 
 params:
 	clazz: Class type of the pojos
-	pojo: List of pojos of clazz type which will be written in the CSV file
+	pojo: List of pojos which will be written in the CSV file
+	outputStream: csv file OutputStream
+
+return:
+	void
+```
+Writes all the pojos annotated field values with FieldType annotation in the CSV file OutputStream
+
+```java
+writeCSVOutputStreamFromPojoStream(Class<T> clazz, Stream<T> pojoStream, OutputStream outputStream) : void
+
+params:
+	clazz: Class type of the pojos
+	pojoStream: Stream of pojo which will be written in the CSV file
 	outputStream: csv file OutputStream
 
 return:
@@ -339,6 +352,56 @@ Samsung Mobile,White,103,Mumbai,456,"4509,3456,9254,2352",31879.0,Smartphone,"Te
 Mi Powerbank,Blue,104,Delhi,167,"9876,9458,9243,8746",1129.65,Wireless Charging,"Charging,Wireless Charging,Type C Charging",PowerBank 15000mah,PowerBank
 ```
 </li>
+<li><span>Write Pojo Stream data to a CSV file. This is suitable for writing large data.</span>
+
+```java
+
+import java.util.stream.Stream;
+
+Integer[] skus1 = {2301, 1421, 456, 3423};
+Integer[] skus2 = {4509, 3456, 9254, 2352};
+Integer[] skus3 = {9876, 9458, 9243, 8746};
+
+String[] tags1 = {"Gadgets", "Electronics", "Wireless"};
+String[] tags2 = {"Technology", "AMoLED", "Bluetooth"};
+String[] tags3 = {"Charging", "Wireless Charging", "Type C Charging"};
+
+List<Product> products = new ArrayList<Product>() {
+	private static final long serialVersionUID = 6801078320304556337L;
+
+	{
+		add(new Product("Oneplus Headphone", "Black",
+				new Inventory(101, "Bangalore", 234, skus1),
+				1499.34f, 18f,
+				new Category("Wireless Earphone", tags1,
+						new Variant("Earphone Black", "Earphone"))));
+		add(new Product("Samsung Mobile", "White",
+				new Inventory(103, "Mumbai", 456, skus2),
+				31879.00f, 18f,
+				new Category("Smartphone", tags2,
+						new Variant("Smartphone 128gb", "Smartphone"))));
+		add(new Product("Mi Powerbank", "Blue",
+				new Inventory(104, "Delhi", 167, skus3),
+				1129.65f, 12f,
+				new Category("Wireless Charging", tags3,
+						new Variant("PowerBank 15000mah", "PowerBank"))));
+	}
+};
+
+Stream<Product> productStream = products.stream();
+
+csvWriter.writeCSVOutputStreamFromPojoStream(Product .class, productStream, outputStream);
+```
+
+<h4>CSV output file data:</h4>
+
+```csv
+product_name,product_color,inventory_id,location,items_count,skus,price,category_name,tags,variant_name,variant_type
+Oneplus Headphone,Black,101,Bangalore,234,"2301,1421,456,3423",1499.34,Wireless Earphone,"Gadgets,Electronics,Wireless",Earphone Black,Earphone
+Samsung Mobile,White,103,Mumbai,456,"4509,3456,9254,2352",31879.0,Smartphone,"Technology,AMoLED,Bluetooth",Smartphone 128gb,Smartphone
+Mi Powerbank,Blue,104,Delhi,167,"9876,9458,9243,8746",1129.65,Wireless Charging,"Charging,Wireless Charging,Type C Charging",PowerBank 15000mah,PowerBank
+```
+</li>
 <li><span>Creating an empty CSV file with Pojo definition</span>
 
 ```java
@@ -355,10 +418,10 @@ product_name,product_color,inventory_id,location,items_count,skus,price,category
 ```java
 CSVReader csvReader = new CSVReaderImpl();
 ```
-<li><span>Create list of Java objects from CSV file data</span>
+<li><span>Create Stream of Java objects from CSV file data</span>
 
 ```java
-List<Product> productList = csvReader.createPojoListFromCSVInputStream(Product.class, inputStream);
+Stream<Product> productStream = csvReader.createPojoStreamFromCSVInputStream(Product.class, inputStream);
 ```
 <h4>Output data using toString() method :</h4>
 

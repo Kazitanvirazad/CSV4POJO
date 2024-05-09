@@ -30,7 +30,6 @@
     <url>https://github.com/Kazitanvirazad/CSV4POJO/tree/master</url>
     <properties>
         <java.version>8</java.version>
-        <junit.version>5.10.0</junit.version>
         <maven.compiler-plugin.version>3.8.1</maven.compiler-plugin.version>
         <maven.source-plugin.version>3.3.0</maven.source-plugin.version>
     </properties>
@@ -41,15 +40,6 @@
             <url>http://www.opensource.org/licenses/mit-license.php</url>
         </license>
     </licenses>
-
-    <dependencies>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-            <version>${junit.version}</version>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
 
     <scm>
         <connection>scm:git:git://github.com/Kazitanvirazad/CSV4POJO.git</connection>

@@ -49,20 +49,20 @@ Gradle:
 
 ```gradle
 dependencies {
-  implementation 'io.github.kazitanvirazad:csv4pojo:2.0.0'
+  implementation 'io.github.kazitanvirazad:csv4pojo:2.1.0'
 }
 ```
 
 Maven:
 ```xml
 <dependency>
-    <groupId>io.github.kazitanvirazad</groupId>
-    <artifactId>csv4pojo</artifactId>
-    <version>2.0.0</version>
+	<groupId>io.github.kazitanvirazad</groupId>
+	<artifactId>csv4pojo</artifactId>
+	<version>2.1.0</version>
 </dependency>
 ```
 
-[csv4pojo jar downloads](https://search.maven.org/artifact/io.github.kazitanvirazad/csv4pojo/2.0.0/jar?eh=) are available from Maven Central.
+[csv4pojo jar downloads](https://search.maven.org/artifact/io.github.kazitanvirazad/csv4pojo/2.1.0/jar?eh=) are available from Maven Central.
 <h3>Interface CSVReader</h3>
 <h4>Methods</h4>
 

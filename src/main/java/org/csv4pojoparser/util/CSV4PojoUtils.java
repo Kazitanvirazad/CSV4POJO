@@ -17,7 +17,7 @@ public class CSV4PojoUtils implements CommonConstants {
      * Return count of the fields annotated with {@link FieldType} of
      * the parent class, and it's annotated with {@link FieldType} nested class
      *
-     * @param clazz Class<?>
+     * @param clazz {@link Class<?>}
      * @return count of {@link FieldType} annotated fields
      */
     public static int getAnnotatedFieldCount(Class<?> clazz) {
@@ -37,8 +37,8 @@ public class CSV4PojoUtils implements CommonConstants {
     /**
      * Returns list of Field which are annotated with {@link FieldType} annotation
      *
-     * @param clazz Class<T>
-     * @return List<Field>
+     * @param clazz {@link Class<T>}
+     * @return {@link List<Field>}
      */
     public static <T> List<Field> getAnnotatedClassFieldList(Class<T> clazz) {
         List<Field> fields = new ArrayList<>();
@@ -58,8 +58,8 @@ public class CSV4PojoUtils implements CommonConstants {
     /**
      * Returns list of class field names which are annotated with {@link FieldType} annotation
      *
-     * @param clazz Class<T>
-     * @return List<String>
+     * @param clazz {@link Class<T>}
+     * @return {@link List<String>}
      */
     public static <T> List<String> getAnnotatedClassFieldNames(Class<T> clazz) {
         List<String> fieldNames = new ArrayList<>();
@@ -86,7 +86,7 @@ public class CSV4PojoUtils implements CommonConstants {
      * else returns original field name
      *
      * @param field {@link Field}
-     * @return String
+     * @return {@link String}
      */
     public static String getAnnotatedFieldName(Field field) {
         return !field.getDeclaredAnnotation(FieldType.class).csvColumnName().isEmpty() ?

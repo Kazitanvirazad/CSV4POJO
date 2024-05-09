@@ -3,7 +3,7 @@ package org.csv4pojoparser.util;
 import org.csv4pojoparser.annotation.FieldType;
 
 import java.io.InputStream;
-import java.util.List;
+import java.util.stream.Stream;
 
 /**
  * @author Kazi Tanvir Azad
@@ -11,11 +11,11 @@ import java.util.List;
 public interface CSVReader {
 
     /**
-     * Creates and returns List of Java objects mapped with {@link FieldType} annotation from CSV InputStream
+     * Creates and returns Stream of Java objects mapped with {@link FieldType} annotation from CSV InputStream
      *
-     * @param clazz       Class<T>
-     * @param inputStream InputStream
-     * @return List<T>
+     * @param clazz       {@link Class<T>}
+     * @param inputStream {@link InputStream}
+     * @return Stream<T> {@link Stream<T>}
      */
-    <T> List<T> createPojoListFromCSVInputStream(Class<T> clazz, InputStream inputStream);
+    <T> Stream<T> createPojoStreamFromCSVInputStream(Class<T> clazz, InputStream inputStream);
 }

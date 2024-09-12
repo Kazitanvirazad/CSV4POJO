@@ -5,7 +5,6 @@ import org.csv4pojoparser.exception.CSVParsingException;
 import org.csv4pojoparser.exception.InputOutputStreamException;
 import org.csv4pojoparser.util.CSV4PojoUtils;
 import org.csv4pojoparser.util.CSVWriter;
-import org.csv4pojoparser.util.CommonConstants;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -16,10 +15,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static org.csv4pojoparser.util.CSV4PojoUtils.charBufferSize;
+import static org.csv4pojoparser.util.CommonConstants.COMMA;
+import static org.csv4pojoparser.util.CommonConstants.EMPTY_STRING;
+import static org.csv4pojoparser.util.CommonConstants.ONE_DOUBLE_QUOTES;
+import static org.csv4pojoparser.util.CommonConstants.TWO_DOUBLE_QUOTES;
+
 /**
  * @author Kazi Tanvir Azad
  */
-public class CSVWriterImpl implements CSVWriter, CommonConstants {
+public class CSVWriterImpl implements CSVWriter {
 
     /**
      * Writes List of Java object mapped with the given java class annotated with {@link FieldType} annotation field
@@ -31,7 +36,7 @@ public class CSVWriterImpl implements CSVWriter, CommonConstants {
      */
     @Override
     public <T> void writeCSVOutputStreamFromPojoList(Class<T> clazz, List<T> pojoList, OutputStream outputStream) {
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream), CHAR_BUFFER_SIZE())) {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream), charBufferSize())) {
             // Writing the header elements to the OutputStream
             writeHeaderToOutputStream(clazz, writer);
             // Reading each object from List and execute logic to create line elements and write in to the BufferedWriter
@@ -66,7 +71,7 @@ public class CSVWriterImpl implements CSVWriter, CommonConstants {
      */
     @Override
     public <T> void writeCSVOutputStreamFromPojoStream(Class<T> clazz, Stream<T> pojoStream, OutputStream outputStream) {
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream), CHAR_BUFFER_SIZE())) {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream), charBufferSize())) {
             // Writing the header elements to the OutputStream
             writeHeaderToOutputStream(clazz, writer);
             // Reading each object from Stream and execute logic to create line elements and write in to the BufferedWriter
@@ -90,8 +95,7 @@ public class CSVWriterImpl implements CSVWriter, CommonConstants {
                     }
                 }
             });
-        } catch (
-                IOException exception) {
+        } catch (IOException exception) {
             throw new InputOutputStreamException("OutputStream is invalid or null: ", exception);
         }
     }

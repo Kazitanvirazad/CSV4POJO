@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * @author Kazi Tanvir Azad
  */
-public class CSV4PojoUtils implements CommonConstants {
+public class CSV4PojoUtils {
 
     /**
      * Return count of the fields annotated with {@link FieldType} of
@@ -91,5 +91,24 @@ public class CSV4PojoUtils implements CommonConstants {
     public static String getAnnotatedFieldName(Field field) {
         return !field.getDeclaredAnnotation(FieldType.class).csvColumnName().isEmpty() ?
                 field.getDeclaredAnnotation(FieldType.class).csvColumnName() : field.getName();
+    }
+
+    /**
+     * Returns buffer size to be used by {@link java.io.BufferedWriter} and {@link java.io.BufferedReader}.
+     * First priority goes to environment variable CHAR_BUFFER_SIZE, if this fails then it defaults to
+     * fallback size i.e. 8192
+     *
+     * @return buffer size
+     */
+    public static int charBufferSize() {
+        String charBufferSize = System.getenv("CHAR_BUFFER_SIZE");
+        int fallbackCharBufferSize = 8192;
+        if (charBufferSize != null) {
+            try {
+                fallbackCharBufferSize = Integer.parseInt(charBufferSize);
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return fallbackCharBufferSize;
     }
 }

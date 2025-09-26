@@ -18,19 +18,19 @@
     WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>io.github.kazitanvirazad</groupId>
     <artifactId>csv4pojo</artifactId>
-    <version>2.1.0</version>
+    <version>3.0.0</version>
     <name>${project.groupId}:${project.artifactId}</name>
     <packaging>jar</packaging>
     <description>CSV utility tool for parsing csv file to existing Pojo and vice-versa</description>
     <url>https://github.com/Kazitanvirazad/CSV4POJO/tree/master</url>
     <properties>
         <java.version>8</java.version>
-        <junit.version>5.10.0</junit.version>
+        <junit.version>5.13.4</junit.version>
         <maven.compiler-plugin.version>3.8.1</maven.compiler-plugin.version>
         <maven.source-plugin.version>3.3.0</maven.source-plugin.version>
     </properties>
@@ -45,7 +45,7 @@
     <dependencies>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
+            <artifactId>junit-jupiter-engine</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>

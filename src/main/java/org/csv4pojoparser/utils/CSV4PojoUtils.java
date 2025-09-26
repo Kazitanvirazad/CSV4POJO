@@ -1,4 +1,4 @@
-package org.csv4pojoparser.util;
+package org.csv4pojoparser.utils;
 
 import org.csv4pojoparser.annotation.FieldType;
 import org.csv4pojoparser.annotation.Type;
@@ -11,11 +11,13 @@ import java.util.List;
 /**
  * @author Kazi Tanvir Azad
  */
-public class CSV4PojoUtils {
+public final class CSV4PojoUtils {
+
+    private CSV4PojoUtils() {}
 
     /**
-     * Return count of the fields annotated with {@link FieldType} of
-     * the parent class, and it's annotated with {@link FieldType} nested class
+     * Return count of the fields of the class annotated with {@link FieldType} annotation
+     * and include all the annotated fields of composition class  with {@link FieldType} nested class
      *
      * @param clazz {@link Class<?>}
      * @return count of {@link FieldType} annotated fields

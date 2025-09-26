@@ -1,12 +1,19 @@
-package org.csv4pojoparser.util.impl;
+package org.csv4pojoparser.api.impl;
 
 import org.csv4pojoparser.annotation.FieldType;
+import org.csv4pojoparser.api.CSV4PojoUtils;
+import org.csv4pojoparser.api.CSVReader;
 import org.csv4pojoparser.exception.CSVParsingException;
 import org.csv4pojoparser.exception.FieldNotMatchedException;
 import org.csv4pojoparser.exception.InputOutputStreamException;
 import org.csv4pojoparser.exception.MisConfiguredClassFieldException;
-import org.csv4pojoparser.util.CSV4PojoUtils;
-import org.csv4pojoparser.util.CSVReader;
+
+import static org.csv4pojoparser.api.CSV4PojoUtils.charBufferSize;
+import static org.csv4pojoparser.api.CommonConstants.EMPTY_STRING;
+import static org.csv4pojoparser.api.CommonConstants.ONE_DOUBLE_QUOTES;
+import static org.csv4pojoparser.api.CommonConstants.SPLIT_REGEX;
+import static org.csv4pojoparser.api.CommonConstants.TWO_DOUBLE_QUOTES;
+import static org.csv4pojoparser.api.CommonConstants.UTF8_BOM;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -25,13 +32,6 @@ import java.util.Spliterator;
 import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
-
-import static org.csv4pojoparser.util.CSV4PojoUtils.charBufferSize;
-import static org.csv4pojoparser.util.CommonConstants.EMPTY_STRING;
-import static org.csv4pojoparser.util.CommonConstants.ONE_DOUBLE_QUOTES;
-import static org.csv4pojoparser.util.CommonConstants.SPLIT_REGEX;
-import static org.csv4pojoparser.util.CommonConstants.TWO_DOUBLE_QUOTES;
-import static org.csv4pojoparser.util.CommonConstants.UTF8_BOM;
 
 /**
  * @author Kazi Tanvir Azad

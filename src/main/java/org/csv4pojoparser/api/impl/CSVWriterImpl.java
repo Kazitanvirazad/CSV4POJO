@@ -1,10 +1,16 @@
-package org.csv4pojoparser.util.impl;
+package org.csv4pojoparser.api.impl;
 
 import org.csv4pojoparser.annotation.FieldType;
+import org.csv4pojoparser.api.CSV4PojoUtils;
+import org.csv4pojoparser.api.CSVWriter;
 import org.csv4pojoparser.exception.CSVParsingException;
 import org.csv4pojoparser.exception.InputOutputStreamException;
-import org.csv4pojoparser.util.CSV4PojoUtils;
-import org.csv4pojoparser.util.CSVWriter;
+
+import static org.csv4pojoparser.api.CSV4PojoUtils.charBufferSize;
+import static org.csv4pojoparser.api.CommonConstants.COMMA;
+import static org.csv4pojoparser.api.CommonConstants.EMPTY_STRING;
+import static org.csv4pojoparser.api.CommonConstants.ONE_DOUBLE_QUOTES;
+import static org.csv4pojoparser.api.CommonConstants.TWO_DOUBLE_QUOTES;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -14,12 +20,6 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
-
-import static org.csv4pojoparser.util.CSV4PojoUtils.charBufferSize;
-import static org.csv4pojoparser.util.CommonConstants.COMMA;
-import static org.csv4pojoparser.util.CommonConstants.EMPTY_STRING;
-import static org.csv4pojoparser.util.CommonConstants.ONE_DOUBLE_QUOTES;
-import static org.csv4pojoparser.util.CommonConstants.TWO_DOUBLE_QUOTES;
 
 /**
  * @author Kazi Tanvir Azad

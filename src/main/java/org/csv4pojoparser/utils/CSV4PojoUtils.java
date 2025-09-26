@@ -22,7 +22,7 @@ public final class CSV4PojoUtils {
      * @param clazz {@link Class<?>}
      * @return count of {@link FieldType} annotated fields
      */
-    public static int getAnnotatedFieldCount(Class<?> clazz) {
+    protected static int getAnnotatedFieldCount(Class<?> clazz) {
         int count = 0;
         for (Field field : clazz.getDeclaredFields()) {
             if (field.isAnnotationPresent(FieldType.class)) {
@@ -42,7 +42,7 @@ public final class CSV4PojoUtils {
      * @param clazz {@link Class<T>}
      * @return {@link List<Field>}
      */
-    public static <T> List<Field> getAnnotatedClassFieldList(Class<T> clazz) {
+    protected static <T> List<Field> getAnnotatedClassFieldList(Class<T> clazz) {
         List<Field> fields = new ArrayList<>();
         try {
             for (Field field : clazz.getDeclaredFields()) {
@@ -63,7 +63,7 @@ public final class CSV4PojoUtils {
      * @param clazz {@link Class<T>}
      * @return {@link List<String>}
      */
-    public static <T> List<String> getAnnotatedClassFieldNames(Class<T> clazz) {
+    protected static <T> List<String> getAnnotatedClassFieldNames(Class<T> clazz) {
         List<String> fieldNames = new ArrayList<>();
         try {
             for (Field field : clazz.getDeclaredFields()) {
@@ -90,7 +90,7 @@ public final class CSV4PojoUtils {
      * @param field {@link Field}
      * @return {@link String}
      */
-    public static String getAnnotatedFieldName(Field field) {
+    protected static String getAnnotatedFieldName(Field field) {
         return !field.getDeclaredAnnotation(FieldType.class).csvColumnName().isEmpty() ?
                 field.getDeclaredAnnotation(FieldType.class).csvColumnName() : field.getName();
     }
@@ -102,7 +102,7 @@ public final class CSV4PojoUtils {
      *
      * @return buffer size
      */
-    public static int charBufferSize() {
+    protected static int charBufferSize() {
         String charBufferSize = System.getenv("CHAR_BUFFER_SIZE");
         int fallbackCharBufferSize = 8192;
         if (charBufferSize != null) {

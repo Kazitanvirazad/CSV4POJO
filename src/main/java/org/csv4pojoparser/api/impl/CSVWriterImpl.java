@@ -1,16 +1,16 @@
 package org.csv4pojoparser.api.impl;
 
 import org.csv4pojoparser.annotation.FieldType;
-import org.csv4pojoparser.api.CSV4PojoUtils;
+import org.csv4pojoparser.utils.CSV4PojoUtils;
 import org.csv4pojoparser.api.CSVWriter;
 import org.csv4pojoparser.exception.CSVParsingException;
-import org.csv4pojoparser.exception.InputOutputStreamException;
+import org.csv4pojoparser.exception.StreamException;
 
-import static org.csv4pojoparser.api.CSV4PojoUtils.charBufferSize;
-import static org.csv4pojoparser.api.CommonConstants.COMMA;
-import static org.csv4pojoparser.api.CommonConstants.EMPTY_STRING;
-import static org.csv4pojoparser.api.CommonConstants.ONE_DOUBLE_QUOTES;
-import static org.csv4pojoparser.api.CommonConstants.TWO_DOUBLE_QUOTES;
+import static org.csv4pojoparser.utils.CSV4PojoUtils.charBufferSize;
+import static org.csv4pojoparser.common.CommonConstants.COMMA;
+import static org.csv4pojoparser.common.CommonConstants.EMPTY_STRING;
+import static org.csv4pojoparser.common.CommonConstants.ONE_DOUBLE_QUOTES;
+import static org.csv4pojoparser.common.CommonConstants.TWO_DOUBLE_QUOTES;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -35,7 +35,7 @@ public class CSVWriterImpl implements CSVWriter {
      * @param outputStream {@link OutputStream}
      */
     @Override
-    public <T> void writeCSVOutputStreamFromPojoList(Class<T> clazz, List<T> pojoList, OutputStream outputStream) {
+    public <T> void writeCSVOutputStream(Class<T> clazz, List<T> pojoList, OutputStream outputStream) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream), charBufferSize())) {
             // Writing the header elements to the OutputStream
             writeHeaderToOutputStream(clazz, writer);
@@ -70,7 +70,7 @@ public class CSVWriterImpl implements CSVWriter {
      * @param outputStream {@link OutputStream}
      */
     @Override
-    public <T> void writeCSVOutputStreamFromPojoStream(Class<T> clazz, Stream<T> pojoStream, OutputStream outputStream) {
+    public <T> void writeCSVOutputStream(Class<T> clazz, Stream<T> pojoStream, OutputStream outputStream) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream), charBufferSize())) {
             // Writing the header elements to the OutputStream
             writeHeaderToOutputStream(clazz, writer);
@@ -108,7 +108,7 @@ public class CSVWriterImpl implements CSVWriter {
      * @param outputStream {@link OutputStream}
      */
     @Override
-    public <T> void writeEmptyCSVOutputStreamFromClass(Class<T> clazz, OutputStream outputStream) {
+    public <T> void writeCSVOutputStream(Class<T> clazz, OutputStream outputStream) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
             // Writing the header elements to the OutputStream
             writeHeaderToOutputStream(clazz, writer);

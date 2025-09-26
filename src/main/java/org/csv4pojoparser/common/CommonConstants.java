@@ -4,7 +4,7 @@ package org.csv4pojoparser.common;
  * @author Kazi Tanvir Azad
  */
 public final class CommonConstants {
-    public static final String SPLIT_REGEX = ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)";
+    StreamException static final String SPLIT_REGEX = ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)";
     public static final String ONE_DOUBLE_QUOTES = "\"";
     public static final String TWO_DOUBLE_QUOTES = "\"\"";
     public static final String COMMA = ",";

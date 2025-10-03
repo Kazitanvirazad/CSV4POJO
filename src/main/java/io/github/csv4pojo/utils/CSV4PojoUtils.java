@@ -6,14 +6,17 @@ import io.github.csv4pojo.exception.MisConfiguredClassFieldException;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author Kazi Tanvir Azad
  */
 public final class CSV4PojoUtils {
 
-    private CSV4PojoUtils() {}
+    private CSV4PojoUtils() {
+    }
 
     /**
      * Return count of the fields of the class annotated with {@link FieldType} annotation
@@ -23,17 +26,17 @@ public final class CSV4PojoUtils {
      * @return count of {@link FieldType} annotated fields
      */
     public static int getAnnotatedFieldCount(Class<?> clazz) {
-        int count = 0;
-        for (Field field : clazz.getDeclaredFields()) {
-            if (field.isAnnotationPresent(FieldType.class)) {
-                if (field.getDeclaredAnnotation(FieldType.class).dataType() == Type.CLASSTYPE) {
-                    count += getAnnotatedFieldCount(field.getType());
-                } else {
-                    count++;
-                }
-            }
-        }
-        return count;
+        AtomicInteger count = new AtomicInteger();
+        Arrays.stream(clazz.getDeclaredFields())
+                .filter(field -> field.isAnnotationPresent(FieldType.class))
+                .forEach(field -> {
+                    if (field.getDeclaredAnnotation(FieldType.class).dataType() == Type.CLASSTYPE) {
+                        count.addAndGet(getAnnotatedFieldCount(field.getType()));
+                    } else {
+                        count.incrementAndGet();
+                    }
+                });
+        return count.get();
     }
 
     /**
@@ -43,14 +46,12 @@ public final class CSV4PojoUtils {
      * @return {@link List<Field>}
      */
     public static <T> List<Field> getAnnotatedClassFieldList(Class<T> clazz) {
-        List<Field> fields = new ArrayList<>();
+        final List<Field> fields = new ArrayList<>();
         try {
-            for (Field field : clazz.getDeclaredFields()) {
-                field.setAccessible(true);
-                if (field.isAnnotationPresent(FieldType.class)) {
-                    fields.add(field);
-                }
-            }
+            Arrays.stream(clazz.getDeclaredFields())
+                    .peek(field -> field.setAccessible(true))
+                    .filter(field -> field.isAnnotationPresent(FieldType.class))
+                    .forEach(fields::add);
         } catch (RuntimeException exception) {
             throw new MisConfiguredClassFieldException("CSV4Pojo FieldType Annotations not properly set: ", exception);
         }
@@ -64,19 +65,19 @@ public final class CSV4PojoUtils {
      * @return {@link List<String>}
      */
     public static <T> List<String> getAnnotatedClassFieldNames(Class<T> clazz) {
-        List<String> fieldNames = new ArrayList<>();
+        final List<String> fieldNames = new ArrayList<>();
         try {
-            for (Field field : clazz.getDeclaredFields()) {
-                field.setAccessible(true);
-                if (field.isAnnotationPresent(FieldType.class)) {
-                    if (field.getDeclaredAnnotation(FieldType.class).dataType() == Type.CLASSTYPE) {
-                        fieldNames.addAll(getAnnotatedClassFieldNames(field.getType()));
-                    } else {
-                        String fieldName = getAnnotatedFieldName(field);
-                        fieldNames.add(fieldName);
-                    }
-                }
-            }
+            Arrays.stream(clazz.getDeclaredFields())
+                    .peek(field -> field.setAccessible(true))
+                    .filter(field -> field.isAnnotationPresent(FieldType.class))
+                    .forEach(field -> {
+                        if (field.getDeclaredAnnotation(FieldType.class).dataType() == Type.CLASSTYPE) {
+                            fieldNames.addAll(getAnnotatedClassFieldNames(field.getType()));
+                        } else {
+                            String fieldName = getAnnotatedFieldName(field);
+                            fieldNames.add(fieldName);
+                        }
+                    });
         } catch (RuntimeException exception) {
             throw new MisConfiguredClassFieldException("CSV4Pojo FieldType Annotations not properly set: ", exception);
         }

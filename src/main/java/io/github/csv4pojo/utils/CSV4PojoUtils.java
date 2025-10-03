@@ -1,8 +1,8 @@
-package io.csv4pojo.utils;
+package io.github.csv4pojo.utils;
 
-import io.csv4pojo.annotation.FieldType;
-import io.csv4pojo.annotation.Type;
-import io.csv4pojo.exception.MisConfiguredClassFieldException;
+import io.github.csv4pojo.annotation.FieldType;
+import io.github.csv4pojo.annotation.Type;
+import io.github.csv4pojo.exception.MisConfiguredClassFieldException;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

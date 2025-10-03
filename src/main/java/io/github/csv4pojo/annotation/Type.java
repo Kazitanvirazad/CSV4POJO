@@ -1,4 +1,4 @@
-package io.csv4pojo.annotation;
+package io.github.csv4pojo.annotation;
 
 /**
  * @author Kazi Tanvir Azad

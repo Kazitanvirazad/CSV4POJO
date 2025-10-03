@@ -1,4 +1,4 @@
-package io.csv4pojo.exception;
+package io.github.csv4pojo.exception;
 
 /**
  * @author Kazi Tanvir Azad

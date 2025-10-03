@@ -136,50 +136,50 @@ CSVWriter csvWriter = new CSVWriterImpl();
 <li><span>Product.java</span>
 
 ```java
-import io.csv4pojo.annotation.FieldType;
-import io.csv4pojo.annotation.Type;
+import io.github.csv4pojo.annotation.FieldType;
+import io.github.csv4pojo.annotation.Type;
 
 public class Product {
-	@FieldType(dataType = Type.STRING, csvColumnName = "product_name")
-	private String name;
+    @FieldType(dataType = Type.STRING, csvColumnName = "product_name")
+    private String name;
 
-	@FieldType(dataType = Type.STRING, csvColumnName = "product_color")
-	private String color;
+    @FieldType(dataType = Type.STRING, csvColumnName = "product_color")
+    private String color;
 
-	@FieldType(dataType = Type.CLASSTYPE)
-	private Inventory inventory;
+    @FieldType(dataType = Type.CLASSTYPE)
+    private Inventory inventory;
 
-	@FieldType(dataType = Type.FLOAT)
-	private Float price;
+    @FieldType(dataType = Type.FLOAT)
+    private Float price;
 
-	private Float taxRate;
+    private Float taxRate;
 
-	@FieldType(dataType = Type.CLASSTYPE)
-	private Category category;
+    @FieldType(dataType = Type.CLASSTYPE)
+    private Category category;
 
-	public Product() {
-	}
+    public Product() {
+    }
 
-	public Product(String name, String color, Inventory inventory, Float price, Float taxRate, Category category) {
-		this.name = name;
-		this.color = color;
-		this.inventory = inventory;
-		this.price = price;
-		this.taxRate = taxRate;
-		this.category = category;
-	}
+    public Product(String name, String color, Inventory inventory, Float price, Float taxRate, Category category) {
+        this.name = name;
+        this.color = color;
+        this.inventory = inventory;
+        this.price = price;
+        this.taxRate = taxRate;
+        this.category = category;
+    }
 
-	@Override
-	public String toString() {
-		return "Product{" +
-				"name='" + name + '\'' +
-				", color='" + color + '\'' +
-				", inventory=" + inventory +
-				", price=" + price +
-				", taxRate=" + taxRate +
-				", category=" + category +
-				'}';
-	}
+    @Override
+    public String toString() {
+        return "Product{" +
+                "name='" + name + '\'' +
+                ", color='" + color + '\'' +
+                ", inventory=" + inventory +
+                ", price=" + price +
+                ", taxRate=" + taxRate +
+                ", category=" + category +
+                '}';
+    }
 
 }
 ```
@@ -188,41 +188,41 @@ public class Product {
 <li><span>Inventory.java</span>
 
 ```java
-import io.csv4pojo.annotation.FieldType;
-import io.csv4pojo.annotation.Type;
+import io.github.csv4pojo.annotation.FieldType;
+import io.github.csv4pojo.annotation.Type;
 
 public class Inventory {
-	@FieldType(dataType = Type.INTEGER, csvColumnName = "inventory_id")
-	private Integer inventoryId;
+    @FieldType(dataType = Type.INTEGER, csvColumnName = "inventory_id")
+    private Integer inventoryId;
 
-	@FieldType(dataType = Type.STRING)
-	private String location;
+    @FieldType(dataType = Type.STRING)
+    private String location;
 
-	@FieldType(dataType = Type.INTEGER, csvColumnName = "items_count")
-	private Integer itemsCount;
+    @FieldType(dataType = Type.INTEGER, csvColumnName = "items_count")
+    private Integer itemsCount;
 
-	@FieldType(dataType = Type.INTEGER_ARRAY, csvColumnName = "skus")
-	private Integer[] skus;
+    @FieldType(dataType = Type.INTEGER_ARRAY, csvColumnName = "skus")
+    private Integer[] skus;
 
-	public Inventory() {
-	}
+    public Inventory() {
+    }
 
-	public Inventory(Integer inventoryId, String location, Integer itemsCount, Integer[] skus) {
-		this.inventoryId = inventoryId;
-		this.location = location;
-		this.itemsCount = itemsCount;
-		this.skus = skus;
-	}
+    public Inventory(Integer inventoryId, String location, Integer itemsCount, Integer[] skus) {
+        this.inventoryId = inventoryId;
+        this.location = location;
+        this.itemsCount = itemsCount;
+        this.skus = skus;
+    }
 
-	@Override
-	public String toString() {
-		return "Inventory{" +
-				"inventoryId=" + inventoryId +
-				", location='" + location + '\'' +
-				", itemsCount=" + itemsCount +
-				", skus=" + Arrays.toString(skus) +
-				'}';
-	}
+    @Override
+    public String toString() {
+        return "Inventory{" +
+                "inventoryId=" + inventoryId +
+                ", location='" + location + '\'' +
+                ", itemsCount=" + itemsCount +
+                ", skus=" + Arrays.toString(skus) +
+                '}';
+    }
 }
 ```
 
@@ -230,37 +230,37 @@ public class Inventory {
 <li><span>Category.java</span>
 
 ```java
-import io.csv4pojo.annotation.FieldType;
-import io.csv4pojo.annotation.Type;
+import io.github.csv4pojo.annotation.FieldType;
+import io.github.csv4pojo.annotation.Type;
 
 public class Category {
 
-	@FieldType(dataType = Type.STRING, csvColumnName = "category_name")
-	private String categoryName;
+    @FieldType(dataType = Type.STRING, csvColumnName = "category_name")
+    private String categoryName;
 
-	@FieldType(dataType = Type.STRING_ARRAY)
-	private String[] tags;
+    @FieldType(dataType = Type.STRING_ARRAY)
+    private String[] tags;
 
-	@FieldType(dataType = Type.CLASSTYPE)
-	private Variant variant;
+    @FieldType(dataType = Type.CLASSTYPE)
+    private Variant variant;
 
-	public Category(String categoryName, String[] tags, Variant variant) {
-		this.categoryName = categoryName;
-		this.tags = tags;
-		this.variant = variant;
-	}
+    public Category(String categoryName, String[] tags, Variant variant) {
+        this.categoryName = categoryName;
+        this.tags = tags;
+        this.variant = variant;
+    }
 
-	public Category() {
-	}
+    public Category() {
+    }
 
-	@Override
-	public String toString() {
-		return "Category{" +
-				"categoryName='" + categoryName + '\'' +
-				", tags=" + Arrays.toString(tags) +
-				", variant=" + variant +
-				'}';
-	}
+    @Override
+    public String toString() {
+        return "Category{" +
+                "categoryName='" + categoryName + '\'' +
+                ", tags=" + Arrays.toString(tags) +
+                ", variant=" + variant +
+                '}';
+    }
 
 }
 ```
@@ -268,31 +268,31 @@ public class Category {
 <li><span>Variant.java</span>
 
 ```java
-import io.csv4pojo.annotation.FieldType;
-import io.csv4pojo.annotation.Type;
+import io.github.csv4pojo.annotation.FieldType;
+import io.github.csv4pojo.annotation.Type;
 
 public class Variant {
 
-	@FieldType(dataType = Type.STRING, csvColumnName = "variant_name")
-	private String variantName;
-	@FieldType(dataType = Type.STRING, csvColumnName = "variant_type")
-	private String variantType;
+    @FieldType(dataType = Type.STRING, csvColumnName = "variant_name")
+    private String variantName;
+    @FieldType(dataType = Type.STRING, csvColumnName = "variant_type")
+    private String variantType;
 
-	public Variant() {
-	}
+    public Variant() {
+    }
 
-	public Variant(String variantName, String variantType) {
-		this.variantName = variantName;
-		this.variantType = variantType;
-	}
+    public Variant(String variantName, String variantType) {
+        this.variantName = variantName;
+        this.variantType = variantType;
+    }
 
-	@Override
-	public String toString() {
-		return "Variant{" +
-				"variantName='" + variantName + '\'' +
-				", variantType='" + variantType + '\'' +
-				'}';
-	}
+    @Override
+    public String toString() {
+        return "Variant{" +
+                "variantName='" + variantName + '\'' +
+                ", variantType='" + variantType + '\'' +
+                '}';
+    }
 
 }
 ```

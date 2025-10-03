@@ -1,16 +1,10 @@
-package io.csv4pojo.api.impl;
+package io.github.csv4pojo.api.impl;
 
-import io.csv4pojo.annotation.FieldType;
-import io.csv4pojo.exception.StreamException;
-import io.csv4pojo.utils.CSV4PojoUtils;
-import io.csv4pojo.api.CSVWriter;
-import io.csv4pojo.exception.CSVParsingException;
-
-import static io.csv4pojo.utils.CSV4PojoUtils.charBufferSize;
-import static io.csv4pojo.common.CommonConstants.COMMA;
-import static io.csv4pojo.common.CommonConstants.EMPTY_STRING;
-import static io.csv4pojo.common.CommonConstants.ONE_DOUBLE_QUOTES;
-import static io.csv4pojo.common.CommonConstants.TWO_DOUBLE_QUOTES;
+import io.github.csv4pojo.annotation.FieldType;
+import io.github.csv4pojo.api.CSVWriter;
+import io.github.csv4pojo.exception.CSVParsingException;
+import io.github.csv4pojo.exception.StreamException;
+import io.github.csv4pojo.utils.CSV4PojoUtils;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -19,7 +13,14 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
+
+import static io.github.csv4pojo.common.CommonConstants.COMMA;
+import static io.github.csv4pojo.common.CommonConstants.EMPTY_STRING;
+import static io.github.csv4pojo.common.CommonConstants.ONE_DOUBLE_QUOTES;
+import static io.github.csv4pojo.common.CommonConstants.TWO_DOUBLE_QUOTES;
+import static io.github.csv4pojo.utils.CSV4PojoUtils.charBufferSize;
 
 /**
  * @author Kazi Tanvir Azad
@@ -50,22 +51,8 @@ public class CSVWriterImpl implements CSVWriter {
             // Writing the header elements to the OutputStream
             writeHeaderToOutputStream(clazz, writer);
             // Reading each object from List and execute logic to create line elements and write in to the BufferedWriter
-            for (T pojo : pojoList) {
-                // Skipping null objects from the list
-                if (pojo != null) {
-                    // Reading the annotated with @FieldType annotation field data from java object and putting it in to a List
-                    List<String> lineElements = getAnnotatedFieldValuesFromPojo(pojo, pojo.getClass());
-
-                    // Converting the List of line elements to a CSV row format
-                    String formattedLineElement = getFormattedLineElements(lineElements);
-
-                    // Writing the csv formatted row in to the BufferedWriter
-                    writer.write(formattedLineElement);
-
-                    // Appending a line in to the BufferedWriter
-                    writer.newLine();
-                }
-            }
+            Consumer<T> writeCsvOutputStreamConsumer = new WriteCsvOutputStreamConsumer<>(writer);
+            pojoList.forEach(writeCsvOutputStreamConsumer);
         } catch (IOException exception) {
             throw new StreamException("OutputStream is invalid or null: ", exception);
         }
@@ -85,26 +72,8 @@ public class CSVWriterImpl implements CSVWriter {
             // Writing the header elements to the OutputStream
             writeHeaderToOutputStream(clazz, writer);
             // Reading each object from Stream and execute logic to create line elements and write in to the BufferedWriter
-            pojoStream.forEach((pojo) -> {
-                // Skipping null objects from the Stream
-                if (pojo != null) {
-                    // Reading the annotated with @FieldType annotation field data from java object and putting it in to a List
-                    List<String> lineElements = getAnnotatedFieldValuesFromPojo(pojo, pojo.getClass());
-
-                    // Converting the List of line elements to a CSV row format
-                    String formattedLineElement = getFormattedLineElements(lineElements);
-
-                    try {
-                        // Writing the csv formatted row in to the BufferedWriter
-                        writer.write(formattedLineElement);
-
-                        // Appending a line in to the BufferedWriter
-                        writer.newLine();
-                    } catch (IOException exception) {
-                        throw new StreamException("OutputStream is invalid or null: ", exception);
-                    }
-                }
-            });
+            Consumer<T> writeCsvOutputStreamConsumer = new WriteCsvOutputStreamConsumer<>(writer);
+            pojoStream.forEach(writeCsvOutputStreamConsumer);
         } catch (IOException exception) {
             throw new StreamException("OutputStream is invalid or null: ", exception);
         }
@@ -326,5 +295,35 @@ public class CSVWriterImpl implements CSVWriter {
      */
     private String wrapToFormatElement(String element) {
         return ONE_DOUBLE_QUOTES + element + ONE_DOUBLE_QUOTES;
+    }
+
+    private class WriteCsvOutputStreamConsumer<T> implements Consumer<T> {
+        private final BufferedWriter writer;
+
+        public WriteCsvOutputStreamConsumer(BufferedWriter writer) {
+            this.writer = writer;
+        }
+
+        @Override
+        public void accept(T pojo) {
+            // Skipping null objects
+            if (pojo != null) {
+                // Reading the value of fields annotated with @FieldType annotation from java object and putting it in to a List
+                List<String> lineElements = getAnnotatedFieldValuesFromPojo(pojo, pojo.getClass());
+
+                // Converting the List of line elements to a CSV row format
+                String formattedLineElement = getFormattedLineElements(lineElements);
+
+                try {
+                    // Writing the csv formatted row in to the BufferedWriter
+                    writer.write(formattedLineElement);
+
+                    // Appending a line in to the BufferedWriter
+                    writer.newLine();
+                } catch (IOException exception) {
+                    throw new StreamException("OutputStream is invalid or null: ", exception);
+                }
+            }
+        }
     }
 }

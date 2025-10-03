@@ -1,4 +1,4 @@
-package io.csv4pojo.common;
+package io.github.csv4pojo.common;
 
 /**
  * @author Kazi Tanvir Azad

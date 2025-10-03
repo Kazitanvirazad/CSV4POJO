@@ -1,6 +1,6 @@
-package io.csv4pojo.api;
+package io.github.csv4pojo.api;
 
-import io.csv4pojo.annotation.FieldType;
+import io.github.csv4pojo.annotation.FieldType;
 
 import java.io.InputStream;
 import java.util.stream.Stream;

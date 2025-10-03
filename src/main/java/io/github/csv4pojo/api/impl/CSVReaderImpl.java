@@ -1,12 +1,12 @@
-package io.csv4pojo.api.impl;
+package io.github.csv4pojo.api.impl;
 
-import io.csv4pojo.annotation.FieldType;
-import io.csv4pojo.api.CSVReader;
-import io.csv4pojo.exception.CSVParsingException;
-import io.csv4pojo.exception.FieldNotMatchedException;
-import io.csv4pojo.exception.MisConfiguredClassFieldException;
-import io.csv4pojo.exception.StreamException;
-import io.csv4pojo.utils.CSV4PojoUtils;
+import io.github.csv4pojo.annotation.FieldType;
+import io.github.csv4pojo.api.CSVReader;
+import io.github.csv4pojo.exception.CSVParsingException;
+import io.github.csv4pojo.exception.FieldNotMatchedException;
+import io.github.csv4pojo.exception.MisConfiguredClassFieldException;
+import io.github.csv4pojo.exception.StreamException;
+import io.github.csv4pojo.utils.CSV4PojoUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -26,12 +26,12 @@ import java.util.Spliterators;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
-import static io.csv4pojo.common.CommonConstants.EMPTY_STRING;
-import static io.csv4pojo.common.CommonConstants.ONE_DOUBLE_QUOTES;
-import static io.csv4pojo.common.CommonConstants.SPLIT_REGEX;
-import static io.csv4pojo.common.CommonConstants.TWO_DOUBLE_QUOTES;
-import static io.csv4pojo.common.CommonConstants.UTF8_BOM;
-import static io.csv4pojo.utils.CSV4PojoUtils.charBufferSize;
+import static io.github.csv4pojo.common.CommonConstants.EMPTY_STRING;
+import static io.github.csv4pojo.common.CommonConstants.ONE_DOUBLE_QUOTES;
+import static io.github.csv4pojo.common.CommonConstants.SPLIT_REGEX;
+import static io.github.csv4pojo.common.CommonConstants.TWO_DOUBLE_QUOTES;
+import static io.github.csv4pojo.common.CommonConstants.UTF8_BOM;
+import static io.github.csv4pojo.utils.CSV4PojoUtils.charBufferSize;
 
 /**
  * @author Kazi Tanvir Azad

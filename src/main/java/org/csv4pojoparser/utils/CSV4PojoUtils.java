@@ -1,4 +1,4 @@
-package org.csv4pojoparser.util;
+package org.csv4pojoparser.utils;
 
 import org.csv4pojoparser.annotation.FieldType;
 import org.csv4pojoparser.annotation.Type;
@@ -11,16 +11,18 @@ import java.util.List;
 /**
  * @author Kazi Tanvir Azad
  */
-public class CSV4PojoUtils implements CommonConstants {
+public final class CSV4PojoUtils {
+
+    private CSV4PojoUtils() {}
 
     /**
-     * Return count of the fields annotated with {@link FieldType} of
-     * the parent class, and it's annotated with {@link FieldType} nested class
+     * Return count of the fields of the class annotated with {@link FieldType} annotation
+     * and include all the annotated fields of composition class  with {@link FieldType} nested class
      *
      * @param clazz {@link Class<?>}
      * @return count of {@link FieldType} annotated fields
      */
-    public static int getAnnotatedFieldCount(Class<?> clazz) {
+    protected static int getAnnotatedFieldCount(Class<?> clazz) {
         int count = 0;
         for (Field field : clazz.getDeclaredFields()) {
             if (field.isAnnotationPresent(FieldType.class)) {
@@ -40,7 +42,7 @@ public class CSV4PojoUtils implements CommonConstants {
      * @param clazz {@link Class<T>}
      * @return {@link List<Field>}
      */
-    public static <T> List<Field> getAnnotatedClassFieldList(Class<T> clazz) {
+    protected static <T> List<Field> getAnnotatedClassFieldList(Class<T> clazz) {
         List<Field> fields = new ArrayList<>();
         try {
             for (Field field : clazz.getDeclaredFields()) {
@@ -61,7 +63,7 @@ public class CSV4PojoUtils implements CommonConstants {
      * @param clazz {@link Class<T>}
      * @return {@link List<String>}
      */
-    public static <T> List<String> getAnnotatedClassFieldNames(Class<T> clazz) {
+    protected static <T> List<String> getAnnotatedClassFieldNames(Class<T> clazz) {
         List<String> fieldNames = new ArrayList<>();
         try {
             for (Field field : clazz.getDeclaredFields()) {
@@ -88,8 +90,27 @@ public class CSV4PojoUtils implements CommonConstants {
      * @param field {@link Field}
      * @return {@link String}
      */
-    public static String getAnnotatedFieldName(Field field) {
+    protected static String getAnnotatedFieldName(Field field) {
         return !field.getDeclaredAnnotation(FieldType.class).csvColumnName().isEmpty() ?
                 field.getDeclaredAnnotation(FieldType.class).csvColumnName() : field.getName();
+    }
+
+    /**
+     * Returns buffer size to be used by {@link java.io.BufferedWriter} and {@link java.io.BufferedReader}.
+     * First priority goes to environment variable CHAR_BUFFER_SIZE, if this fails then it defaults to
+     * fallback size i.e. 8192
+     *
+     * @return buffer size
+     */
+    protected static int charBufferSize() {
+        String charBufferSize = System.getenv("CHAR_BUFFER_SIZE");
+        int fallbackCharBufferSize = 8192;
+        if (charBufferSize != null) {
+            try {
+                fallbackCharBufferSize = Integer.parseInt(charBufferSize);
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return fallbackCharBufferSize;
     }
 }

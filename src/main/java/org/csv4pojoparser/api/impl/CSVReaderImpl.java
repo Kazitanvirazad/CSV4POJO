@@ -1,13 +1,19 @@
-package org.csv4pojoparser.util.impl;
+package org.csv4pojoparser.api.impl;
 
 import org.csv4pojoparser.annotation.FieldType;
+import org.csv4pojoparser.common.CSV4PojoUtils;
+import org.csv4pojoparser.api.CSVReader;
 import org.csv4pojoparser.exception.CSVParsingException;
 import org.csv4pojoparser.exception.FieldNotMatchedException;
-import org.csv4pojoparser.exception.InputOutputStreamException;
+import org.csv4pojoparser.exception.StreamException;
 import org.csv4pojoparser.exception.MisConfiguredClassFieldException;
-import org.csv4pojoparser.util.CSV4PojoUtils;
-import org.csv4pojoparser.util.CSVReader;
-import org.csv4pojoparser.util.CommonConstants;
+
+import static org.csv4pojoparser.utils.CSV4PojoUtils.charBufferSize;
+import static org.csv4pojoparser.common.CommonConstants.EMPTY_STRING;
+import static org.csv4pojoparser.common.CommonConstants.ONE_DOUBLE_QUOTES;
+import static org.csv4pojoparser.common.CommonConstants.SPLIT_REGEX;
+import static org.csv4pojoparser.common.CommonConstants.TWO_DOUBLE_QUOTES;
+import static org.csv4pojoparser.common.CommonConstants.UTF8_BOM;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,7 +36,7 @@ import java.util.stream.StreamSupport;
 /**
  * @author Kazi Tanvir Azad
  */
-public class CSVReaderImpl implements CSVReader, CommonConstants {
+public class CSVReaderImpl implements CSVReader {
 
     /**
      * Creates and returns Stream of Java objects mapped with {@link FieldType} annotation from CSV InputStream
@@ -40,10 +46,10 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
      * @return Stream<T> {@link Stream<T>}
      */
     @Override
-    public <T> Stream<T> createPojoStreamFromCSVInputStream(Class<T> clazz, InputStream inputStream) {
+    public <T> Stream<T> createCSVPojoStream(Class<T> clazz, InputStream inputStream) {
 
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream), CHAR_BUFFER_SIZE());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream), charBufferSize());
             // Getting the class field names with @FieldType annotation
             List<String> annotatedClassFields = CSV4PojoUtils.getAnnotatedClassFieldNames(clazz);
 
@@ -85,7 +91,7 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
                             return true;
                         }
                     } catch (IOException exception) {
-                        throw new InputOutputStreamException("InputStream is invalid or null: ", exception);
+                        throw new StreamException("InputStream is invalid or null: ", exception);
                     }
                 }
 
@@ -113,7 +119,7 @@ public class CSVReaderImpl implements CSVReader, CommonConstants {
                             iterator, Spliterator.ORDERED | Spliterator.NONNULL), false)
                     .filter(Objects::nonNull);
         } catch (IOException exception) {
-            throw new InputOutputStreamException("InputStream is invalid or null: ", exception);
+            throw new StreamException("InputStream is invalid or null: ", exception);
         }
     }
 

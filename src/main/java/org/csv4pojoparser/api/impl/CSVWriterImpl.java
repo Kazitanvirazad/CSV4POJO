@@ -1,11 +1,16 @@
-package org.csv4pojoparser.util.impl;
+package org.csv4pojoparser.api.impl;
 
 import org.csv4pojoparser.annotation.FieldType;
+import org.csv4pojoparser.utils.CSV4PojoUtils;
+import org.csv4pojoparser.api.CSVWriter;
 import org.csv4pojoparser.exception.CSVParsingException;
-import org.csv4pojoparser.exception.InputOutputStreamException;
-import org.csv4pojoparser.util.CSV4PojoUtils;
-import org.csv4pojoparser.util.CSVWriter;
-import org.csv4pojoparser.util.CommonConstants;
+import org.csv4pojoparser.exception.StreamException;
+
+import static org.csv4pojoparser.utils.CSV4PojoUtils.charBufferSize;
+import static org.csv4pojoparser.common.CommonConstants.COMMA;
+import static org.csv4pojoparser.common.CommonConstants.EMPTY_STRING;
+import static org.csv4pojoparser.common.CommonConstants.ONE_DOUBLE_QUOTES;
+import static org.csv4pojoparser.common.CommonConstants.TWO_DOUBLE_QUOTES;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -19,7 +24,7 @@ import java.util.stream.Stream;
 /**
  * @author Kazi Tanvir Azad
  */
-public class CSVWriterImpl implements CSVWriter, CommonConstants {
+public class CSVWriterImpl implements CSVWriter {
 
     /**
      * Writes List of Java object mapped with the given java class annotated with {@link FieldType} annotation field
@@ -30,8 +35,8 @@ public class CSVWriterImpl implements CSVWriter, CommonConstants {
      * @param outputStream {@link OutputStream}
      */
     @Override
-    public <T> void writeCSVOutputStreamFromPojoList(Class<T> clazz, List<T> pojoList, OutputStream outputStream) {
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream), CHAR_BUFFER_SIZE())) {
+    public <T> void writeCSVOutputStream(Class<T> clazz, List<T> pojoList, OutputStream outputStream) {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream), charBufferSize())) {
             // Writing the header elements to the OutputStream
             writeHeaderToOutputStream(clazz, writer);
             // Reading each object from List and execute logic to create line elements and write in to the BufferedWriter
@@ -65,8 +70,8 @@ public class CSVWriterImpl implements CSVWriter, CommonConstants {
      * @param outputStream {@link OutputStream}
      */
     @Override
-    public <T> void writeCSVOutputStreamFromPojoStream(Class<T> clazz, Stream<T> pojoStream, OutputStream outputStream) {
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream), CHAR_BUFFER_SIZE())) {
+    public <T> void writeCSVOutputStream(Class<T> clazz, Stream<T> pojoStream, OutputStream outputStream) {
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream), charBufferSize())) {
             // Writing the header elements to the OutputStream
             writeHeaderToOutputStream(clazz, writer);
             // Reading each object from Stream and execute logic to create line elements and write in to the BufferedWriter
@@ -90,8 +95,7 @@ public class CSVWriterImpl implements CSVWriter, CommonConstants {
                     }
                 }
             });
-        } catch (
-                IOException exception) {
+        } catch (IOException exception) {
             throw new InputOutputStreamException("OutputStream is invalid or null: ", exception);
         }
     }
@@ -104,7 +108,7 @@ public class CSVWriterImpl implements CSVWriter, CommonConstants {
      * @param outputStream {@link OutputStream}
      */
     @Override
-    public <T> void writeEmptyCSVOutputStreamFromClass(Class<T> clazz, OutputStream outputStream) {
+    public <T> void writeCSVOutputStream(Class<T> clazz, OutputStream outputStream) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
             // Writing the header elements to the OutputStream
             writeHeaderToOutputStream(clazz, writer);

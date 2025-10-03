@@ -1,4 +1,4 @@
-package org.csv4pojoparser.util;
+package org.csv4pojoparser.api;
 
 import org.csv4pojoparser.annotation.FieldType;
 
@@ -17,5 +17,5 @@ public interface CSVReader {
      * @param inputStream {@link InputStream}
      * @return Stream<T> {@link Stream<T>}
      */
-    <T> Stream<T> createPojoStreamFromCSVInputStream(Class<T> clazz, InputStream inputStream);
+    <T> Stream<T> createCSVPojoStream(Class<T> clazz, InputStream inputStream);
 }

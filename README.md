@@ -136,8 +136,8 @@ CSVWriter csvWriter = new CSVWriterImpl();
 <li><span>Product.java</span>
 
 ```java
-import org.csv4pojoparser.annotation.FieldType;
-import org.csv4pojoparser.annotation.Type;
+import io.csv4pojo.annotation.FieldType;
+import io.csv4pojo.annotation.Type;
 
 public class Product {
 	@FieldType(dataType = Type.STRING, csvColumnName = "product_name")
@@ -188,8 +188,8 @@ public class Product {
 <li><span>Inventory.java</span>
 
 ```java
-import org.csv4pojoparser.annotation.FieldType;
-import org.csv4pojoparser.annotation.Type;
+import io.csv4pojo.annotation.FieldType;
+import io.csv4pojo.annotation.Type;
 
 public class Inventory {
 	@FieldType(dataType = Type.INTEGER, csvColumnName = "inventory_id")
@@ -230,8 +230,8 @@ public class Inventory {
 <li><span>Category.java</span>
 
 ```java
-import org.csv4pojoparser.annotation.FieldType;
-import org.csv4pojoparser.annotation.Type;
+import io.csv4pojo.annotation.FieldType;
+import io.csv4pojo.annotation.Type;
 
 public class Category {
 
@@ -268,8 +268,8 @@ public class Category {
 <li><span>Variant.java</span>
 
 ```java
-import org.csv4pojoparser.annotation.FieldType;
-import org.csv4pojoparser.annotation.Type;
+import io.csv4pojo.annotation.FieldType;
+import io.csv4pojo.annotation.Type;
 
 public class Variant {
 

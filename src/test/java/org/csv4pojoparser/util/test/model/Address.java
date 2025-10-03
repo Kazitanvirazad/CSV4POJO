@@ -1,7 +1,7 @@
 package org.csv4pojoparser.util.test.model;
 
-import org.csv4pojoparser.annotation.FieldType;
-import org.csv4pojoparser.annotation.Type;
+import io.csv4pojo.annotation.FieldType;
+import io.csv4pojo.annotation.Type;
 
 public class Address {
     @FieldType(dataType = Type.STRING)

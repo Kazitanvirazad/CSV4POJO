@@ -1,0 +1,116 @@
+package io.csv4pojo.utils;
+
+import io.csv4pojo.annotation.FieldType;
+import io.csv4pojo.annotation.Type;
+import io.csv4pojo.exception.MisConfiguredClassFieldException;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * @author Kazi Tanvir Azad
+ */
+public final class CSV4PojoUtils {
+
+    private CSV4PojoUtils() {}
+
+    /**
+     * Return count of the fields of the class annotated with {@link FieldType} annotation
+     * and include all the annotated fields of composition class  with {@link FieldType} nested class
+     *
+     * @param clazz {@link Class<?>}
+     * @return count of {@link FieldType} annotated fields
+     */
+    public static int getAnnotatedFieldCount(Class<?> clazz) {
+        int count = 0;
+        for (Field field : clazz.getDeclaredFields()) {
+            if (field.isAnnotationPresent(FieldType.class)) {
+                if (field.getDeclaredAnnotation(FieldType.class).dataType() == Type.CLASSTYPE) {
+                    count += getAnnotatedFieldCount(field.getType());
+                } else {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Returns list of Field which are annotated with {@link FieldType} annotation
+     *
+     * @param clazz {@link Class<T>}
+     * @return {@link List<Field>}
+     */
+    public static <T> List<Field> getAnnotatedClassFieldList(Class<T> clazz) {
+        List<Field> fields = new ArrayList<>();
+        try {
+            for (Field field : clazz.getDeclaredFields()) {
+                field.setAccessible(true);
+                if (field.isAnnotationPresent(FieldType.class)) {
+                    fields.add(field);
+                }
+            }
+        } catch (RuntimeException exception) {
+            throw new MisConfiguredClassFieldException("CSV4Pojo FieldType Annotations not properly set: ", exception);
+        }
+        return fields;
+    }
+
+    /**
+     * Returns list of class field names which are annotated with {@link FieldType} annotation
+     *
+     * @param clazz {@link Class<T>}
+     * @return {@link List<String>}
+     */
+    public static <T> List<String> getAnnotatedClassFieldNames(Class<T> clazz) {
+        List<String> fieldNames = new ArrayList<>();
+        try {
+            for (Field field : clazz.getDeclaredFields()) {
+                field.setAccessible(true);
+                if (field.isAnnotationPresent(FieldType.class)) {
+                    if (field.getDeclaredAnnotation(FieldType.class).dataType() == Type.CLASSTYPE) {
+                        fieldNames.addAll(getAnnotatedClassFieldNames(field.getType()));
+                    } else {
+                        String fieldName = getAnnotatedFieldName(field);
+                        fieldNames.add(fieldName);
+                    }
+                }
+            }
+        } catch (RuntimeException exception) {
+            throw new MisConfiguredClassFieldException("CSV4Pojo FieldType Annotations not properly set: ", exception);
+        }
+        return fieldNames;
+    }
+
+    /**
+     * Returns field name from csvColumnName attribute value if exists in {@link FieldType} annotation,
+     * else returns original field name
+     *
+     * @param field {@link Field}
+     * @return {@link String}
+     */
+    public static String getAnnotatedFieldName(Field field) {
+        return !field.getDeclaredAnnotation(FieldType.class).csvColumnName().isEmpty() ?
+                field.getDeclaredAnnotation(FieldType.class).csvColumnName() : field.getName();
+    }
+
+    /**
+     * Returns buffer size to be used by {@link java.io.BufferedWriter} and {@link java.io.BufferedReader}.
+     * First priority goes to environment variable CHAR_BUFFER_SIZE, if this fails then it defaults to
+     * fallback size i.e. 8192
+     *
+     * @return buffer size
+     */
+    public static int charBufferSize() {
+        String charBufferSize = System.getenv("CHAR_BUFFER_SIZE");
+        int fallbackCharBufferSize = 8192;
+        if (charBufferSize != null) {
+            try {
+                fallbackCharBufferSize = Integer.parseInt(charBufferSize);
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        return fallbackCharBufferSize;
+    }
+}

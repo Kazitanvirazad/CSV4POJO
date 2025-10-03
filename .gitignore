@@ -4,8 +4,6 @@ workspace/
 # Log file
 *.log
 
-io
-
 data/
 *Test*.java
 

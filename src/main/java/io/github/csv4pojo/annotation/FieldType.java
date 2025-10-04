@@ -13,5 +13,5 @@ import java.lang.annotation.Target;
 public @interface FieldType {
     Type dataType();
 
-    String csvColumnName() default "";
+    String csvColumnName();
 }

@@ -20,6 +20,7 @@ import static io.github.csv4pojo.common.CommonConstants.COMMA;
 import static io.github.csv4pojo.common.CommonConstants.EMPTY_STRING;
 import static io.github.csv4pojo.common.CommonConstants.ONE_DOUBLE_QUOTES;
 import static io.github.csv4pojo.common.CommonConstants.TWO_DOUBLE_QUOTES;
+import static io.github.csv4pojo.helper.CSVWriterValidationHelper.validateCSVOutputStream;
 import static io.github.csv4pojo.utils.CSV4PojoUtils.charBufferSize;
 
 /**
@@ -41,18 +42,45 @@ public class CSVWriterImpl implements CSVWriter {
      * Writes List of Java object mapped with the given java class annotated with {@link FieldType} annotation field
      * values in to the outputStream
      *
-     * @param clazz        {@link Class<T>}
-     * @param pojoList     {@link List<T>}
+     * @param clazz        {@code Class<T>}
+     * @param pojoList     {@code List<T>}
      * @param outputStream {@link OutputStream}
      */
     @Override
     public <T> void writeCSVOutputStream(Class<T> clazz, List<T> pojoList, OutputStream outputStream) {
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream), charBufferSize)) {
+        // performing validation of arguments
+        validateCSVOutputStream(clazz, pojoList, outputStream);
+        writeCSVOutputStream(pojoList.stream(), outputStream, clazz);
+    }
+
+    /**
+     * Writes Stream of Java object mapped with the given java class annotated with {@link FieldType} annotation field
+     * values in to the outputStream
+     *
+     * @param clazz        {@code Class<T>}
+     * @param pojoStream   {@code Stream <T>}
+     * @param outputStream {@link OutputStream}
+     */
+    @Override
+    public <T> void writeCSVOutputStream(Class<T> clazz, Stream<T> pojoStream, OutputStream outputStream) {
+        // performing validation of arguments
+        validateCSVOutputStream(clazz, pojoStream, outputStream);
+        writeCSVOutputStream(pojoStream, outputStream, clazz);
+    }
+
+    /**
+     * Writes an empty csv file in to the OutputStream with all the headers mapped with the given java class annotated
+     * with {@link FieldType} annotation field names
+     *
+     * @param clazz        {@code Class<T>}
+     * @param outputStream {@link OutputStream}
+     */
+    @Override
+    public <T> void writeCSVOutputStream(Class<T> clazz, OutputStream outputStream) {
+        validateCSVOutputStream(clazz, outputStream);
+        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
             // Writing the header elements to the OutputStream
             writeHeaderToOutputStream(clazz, writer);
-            // Reading each object from List and execute logic to create line elements and write in to the BufferedWriter
-            Consumer<T> writeCsvOutputStreamConsumer = new WriteCsvOutputStreamConsumer<>(writer);
-            pojoList.forEach(writeCsvOutputStreamConsumer);
         } catch (IOException exception) {
             throw new StreamException("OutputStream is invalid or null: ", exception);
         }
@@ -62,12 +90,11 @@ public class CSVWriterImpl implements CSVWriter {
      * Writes Stream of Java object mapped with the given java class annotated with {@link FieldType} annotation field
      * values in to the outputStream
      *
-     * @param clazz        {@link Class<T>}
-     * @param pojoStream   {@link Stream <T>}
+     * @param pojoStream   {@code Stream<T>}
      * @param outputStream {@link OutputStream}
+     * @param clazz        {@code Class<T>}
      */
-    @Override
-    public <T> void writeCSVOutputStream(Class<T> clazz, Stream<T> pojoStream, OutputStream outputStream) {
+    private <T> void writeCSVOutputStream(Stream<T> pojoStream, OutputStream outputStream, Class<T> clazz) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream), charBufferSize)) {
             // Writing the header elements to the OutputStream
             writeHeaderToOutputStream(clazz, writer);
@@ -80,28 +107,11 @@ public class CSVWriterImpl implements CSVWriter {
     }
 
     /**
-     * Writes an empty csv file in to the OutputStream with all the headers mapped with the given java class annotated
-     * with {@link FieldType} annotation field names
-     *
-     * @param clazz        {@link Class<T>}
-     * @param outputStream {@link OutputStream}
-     */
-    @Override
-    public <T> void writeCSVOutputStream(Class<T> clazz, OutputStream outputStream) {
-        try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
-            // Writing the header elements to the OutputStream
-            writeHeaderToOutputStream(clazz, writer);
-        } catch (IOException exception) {
-            throw new StreamException("OutputStream is invalid or null: ", exception);
-        }
-    }
-
-    /**
      * Read all the annotated with {@link FieldType} annotation fields of the Java object passed in the method
      * parameter and creates and returns a List of the values
      *
      * @param pojo {@link T}
-     * @return {@link  List<String>}
+     * @return {@code  List<String>}
      */
     private <T> List<String> getAnnotatedFieldValuesFromPojo(T pojo, Class<?> clazz) {
         List<String> fieldValues = new ArrayList<>();

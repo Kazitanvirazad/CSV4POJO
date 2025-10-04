@@ -74,26 +74,14 @@ public final class CSV4PojoUtils {
                         if (field.getDeclaredAnnotation(FieldType.class).dataType() == Type.CLASSTYPE) {
                             fieldNames.addAll(getAnnotatedClassFieldNames(field.getType()));
                         } else {
-                            String fieldName = getAnnotatedFieldName(field);
+                            String fieldName = field.getDeclaredAnnotation(FieldType.class).csvColumnName();
                             fieldNames.add(fieldName);
                         }
                     });
         } catch (RuntimeException exception) {
-            throw new MisConfiguredClassFieldException("CSV4Pojo FieldType Annotations not properly set: ", exception);
+            throw new MisConfiguredClassFieldException("CSV4Pojo FieldType Annotations are incorrectly set: ", exception);
         }
         return fieldNames;
-    }
-
-    /**
-     * Returns field name from csvColumnName attribute value if exists in {@link FieldType} annotation,
-     * else returns original field name
-     *
-     * @param field {@link Field}
-     * @return {@link String}
-     */
-    public static String getAnnotatedFieldName(Field field) {
-        return !field.getDeclaredAnnotation(FieldType.class).csvColumnName().isEmpty() ?
-                field.getDeclaredAnnotation(FieldType.class).csvColumnName() : field.getName();
     }
 
     /**

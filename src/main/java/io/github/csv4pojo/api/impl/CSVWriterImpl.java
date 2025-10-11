@@ -31,9 +31,14 @@ public class CSVWriterImpl implements CSVWriter {
     private final int charBufferSize;
 
     public CSVWriterImpl() {
-        this.charBufferSize = charBufferSize();
+        this(charBufferSize());
     }
 
+    /**
+     * Construct CSVWriter with preferred Output-buffer
+     *
+     * @param charBufferSize Output-buffer size, a positive integer
+     */
     public CSVWriterImpl(int charBufferSize) {
         this.charBufferSize = charBufferSize;
     }

@@ -3,7 +3,7 @@ package io.github.csv4pojo.exception;
 /**
  * @author Kazi Tanvir Azad
  */
-public class CSVParsingException extends RuntimeException {
+public class CsvParsingException extends RuntimeException {
 
     private static final long serialVersionUID = 4911628100785175704L;
 
@@ -12,7 +12,7 @@ public class CSVParsingException extends RuntimeException {
      * detail message.  The cause is not initialized, and may subsequently be
      * initialized by a call to {@link #initCause}.
      */
-    public CSVParsingException() {
+    public CsvParsingException() {
     }
 
     /**
@@ -23,7 +23,7 @@ public class CSVParsingException extends RuntimeException {
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public CSVParsingException(String message) {
+    public CsvParsingException(String message) {
         super(message);
     }
 
@@ -41,7 +41,7 @@ public class CSVParsingException extends RuntimeException {
      *                unknown.)
      * @since 1.4
      */
-    public CSVParsingException(String message, Throwable cause) {
+    public CsvParsingException(String message, Throwable cause) {
         super(message, cause);
     }
 
@@ -58,7 +58,7 @@ public class CSVParsingException extends RuntimeException {
      *              unknown.)
      * @since 1.4
      */
-    public CSVParsingException(Throwable cause) {
+    public CsvParsingException(Throwable cause) {
         super(cause);
     }
 
@@ -76,7 +76,7 @@ public class CSVParsingException extends RuntimeException {
      *                           be writable
      * @since 1.7
      */
-    public CSVParsingException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public CsvParsingException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

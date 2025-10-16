@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 /**
  * @author Kazi Tanvir Azad
  */
-public class CSVWriterValidationHelper {
+public class CsvWriterValidationHelper {
     public static <T> void validateCSVOutputStream(Class<T> clazz, Stream<T> pojoStream, OutputStream outputStream) {
         validateOutputStream(outputStream);
         validateClass(clazz);

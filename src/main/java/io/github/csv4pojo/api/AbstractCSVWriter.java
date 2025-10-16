@@ -7,7 +7,7 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static io.github.csv4pojo.helper.CSVWriterValidationHelper.validateCSVOutputStream;
+import static io.github.csv4pojo.helper.CsvWriterValidationHelper.validateCSVOutputStream;
 
 /**
  * @author Kazi Tanvir Azad

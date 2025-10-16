@@ -2,7 +2,7 @@ package io.github.csv4pojo.api.impl;
 
 import io.github.csv4pojo.annotation.FieldType;
 import io.github.csv4pojo.api.AbstractCSVWriter;
-import io.github.csv4pojo.exception.CSVParsingException;
+import io.github.csv4pojo.exception.CsvParsingException;
 import io.github.csv4pojo.exception.StreamException;
 import io.github.csv4pojo.utils.CSV4PojoUtils;
 
@@ -259,7 +259,7 @@ public class CSVWriterImpl extends AbstractCSVWriter {
                 }
             } catch (IllegalAccessException | IllegalArgumentException | NullPointerException |
                      ExceptionInInitializerError exception) {
-                throw new CSVParsingException("Exception in " + field.getName() + " : " + exception.getMessage(), exception);
+                throw new CsvParsingException("Exception in " + field.getName() + " : " + exception.getMessage(), exception);
             }
             index++;
         }

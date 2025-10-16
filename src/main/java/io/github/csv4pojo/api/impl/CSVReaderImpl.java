@@ -2,7 +2,7 @@ package io.github.csv4pojo.api.impl;
 
 import io.github.csv4pojo.annotation.FieldType;
 import io.github.csv4pojo.api.CSVReader;
-import io.github.csv4pojo.exception.CSVParsingException;
+import io.github.csv4pojo.exception.CsvParsingException;
 import io.github.csv4pojo.exception.FieldNotMatchedException;
 import io.github.csv4pojo.exception.MisConfiguredClassFieldException;
 import io.github.csv4pojo.exception.StreamException;
@@ -66,7 +66,7 @@ public class CSVReaderImpl implements CSVReader {
             // Extracting the csv header elements from the first line of the CSV InputStream
             String csvHeader = reader.readLine();
             if (csvHeader == null) {
-                throw new CSVParsingException("CSV header elements does not exists!");
+                throw new CsvParsingException("CSV header elements does not exists!");
             }
 
             // Remove BOM (BYTE-ORDER MARK) if it's present in the line. For UTF-8 the BOM is: 0xEF, 0xBB, 0xBF
@@ -281,7 +281,7 @@ public class CSVReaderImpl implements CSVReader {
                 }
             } catch (IllegalAccessException | IllegalArgumentException | NullPointerException |
                      ExceptionInInitializerError exception) {
-                throw new CSVParsingException("Exception in " + field.getName() + " : " + exception.getMessage(), exception);
+                throw new CsvParsingException("Exception in " + field.getName() + " : " + exception.getMessage(), exception);
             }
             index++;
             lineIndex++;

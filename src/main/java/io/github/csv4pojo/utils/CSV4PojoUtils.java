@@ -3,6 +3,7 @@ package io.github.csv4pojo.utils;
 import io.github.csv4pojo.annotation.FieldType;
 import io.github.csv4pojo.annotation.FieldType.Type;
 import io.github.csv4pojo.exception.MisConfiguredClassFieldException;
+import io.github.csv4pojo.exception.ReflectiveException;
 import io.github.csv4pojo.model.CsvClassConfiguration;
 import io.github.csv4pojo.model.CsvClassField;
 
@@ -15,39 +16,78 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import static io.github.csv4pojo.common.CommonConstants.EMPTY_STRING;
+import static io.github.csv4pojo.common.CommonConstants.FIELD_PATH_REGEX;
+import static io.github.csv4pojo.common.CommonConstants.PIPE;
+
 /**
  * @author Kazi Tanvir Azad
  */
 public final class CSV4PojoUtils {
 
     private CSV4PojoUtils() {
+        throw new IllegalArgumentException("Object creation of this class is not allowed");
     }
 
     public static <T> CsvClassConfiguration getCsvClassConfiguration(final Class<T> clazz) {
-        final Map<String, CsvClassField> csvClassFields = getCsvClassFieldMap(clazz);
+        final Map<String, CsvClassField> csvClassFields = getCsvClassFieldMap(clazz, null);
         final List<String> csvHeaders = csvClassFields
                 .entrySet()
                 .stream()
                 .map(entry -> entry.getValue().getCsvFieldName())
                 .collect(Collectors.toList());
-        return new CsvClassConfiguration(csvClassFields, csvHeaders);
+        return new CsvClassConfiguration(csvClassFields, csvHeaders, clazz);
     }
 
-    public static <T> Map<String, CsvClassField> getCsvClassFieldMap(final Class<T> clazz) {
+    public static <T> Map<String, CsvClassField> getCsvClassFieldMap(final Class<T> clazz, final String path) {
         final Map<String, CsvClassField> csvClassFieldMap = new LinkedHashMap<>();
         Arrays.stream(clazz.getDeclaredFields())
                 .peek(field -> field.setAccessible(true))
                 .filter(field -> field.isAnnotationPresent(FieldType.class))
                 .forEach(field -> {
                     if (field.getDeclaredAnnotation(FieldType.class).dataType() == Type.CLASSTYPE) {
-                        csvClassFieldMap.putAll(getCsvClassFieldMap(field.getType()));
+                        csvClassFieldMap.putAll(getCsvClassFieldMap(field.getType(),
+                                null == path ? field.getName() : path + PIPE + field.getName()));
                     } else {
                         String csvFieldName = field.getDeclaredAnnotation(FieldType.class).csvColumnName().trim();
                         CsvClassField classField = new CsvClassField(field, csvFieldName);
+                        if (null != path) {
+                            classField.setFieldPath(path + PIPE + classField.getCsvField().getName());
+                        }
                         csvClassFieldMap.put(csvFieldName, classField);
                     }
                 });
         return csvClassFieldMap;
+    }
+
+    public static <T, C> String getDeclaredFieldValue(final String csvFieldPath, T pojo) throws ReflectiveException {
+        try {
+            String[] fieldPaths = csvFieldPath.split(FIELD_PATH_REGEX);
+            C object = (C) pojo;
+            Field field;
+            for (String path : fieldPaths) {
+                field = object.getClass().getDeclaredField(path);
+                field.setAccessible(true);
+                object = (C) field.get(object);
+            }
+            if (null != object)
+                return (String) object;
+        } catch (Exception exception) {
+            throw new ReflectiveException("Reflection operation error", exception);
+        }
+        return EMPTY_STRING;
+    }
+
+    public static <T> String getDeclaredFieldValue(Field csvField, T pojo) throws ReflectiveException {
+        try {
+            Object fieldValue = csvField.get(pojo);
+            if (null != fieldValue) {
+                return (String) fieldValue;
+            }
+        } catch (Exception exception) {
+            throw new ReflectiveException("Reflection operation error", exception);
+        }
+        return EMPTY_STRING;
     }
 
     /**

@@ -1,7 +1,7 @@
 package io.github.csv4pojo.api.impl;
 
 import io.github.csv4pojo.annotation.FieldType;
-import io.github.csv4pojo.api.CSVWriter;
+import io.github.csv4pojo.api.AbstractCSVWriter;
 import io.github.csv4pojo.exception.CSVParsingException;
 import io.github.csv4pojo.exception.StreamException;
 import io.github.csv4pojo.utils.CSV4PojoUtils;
@@ -20,27 +20,38 @@ import static io.github.csv4pojo.common.CommonConstants.COMMA;
 import static io.github.csv4pojo.common.CommonConstants.EMPTY_STRING;
 import static io.github.csv4pojo.common.CommonConstants.ONE_DOUBLE_QUOTES;
 import static io.github.csv4pojo.common.CommonConstants.TWO_DOUBLE_QUOTES;
-import static io.github.csv4pojo.helper.CSVWriterValidationHelper.validateCSVOutputStream;
 import static io.github.csv4pojo.utils.CSV4PojoUtils.charBufferSize;
 
 /**
  * @author Kazi Tanvir Azad
  */
-public class CSVWriterImpl implements CSVWriter {
+public class CSVWriterImpl extends AbstractCSVWriter {
 
     private final int charBufferSize;
 
-    public CSVWriterImpl() {
-        this(charBufferSize());
+    /**
+     * Construct CSVWriter with preferred Output-buffer and Class type
+     *
+     * @param <T>            the class of the value
+     * @param clazz          {@code Class<T>} Class type to be used for csv writer
+     * @param charBufferSize Output-buffer size, a positive integer
+     */
+    public <T> CSVWriterImpl(Class<T> clazz, int charBufferSize) {
+        super(clazz);
+        this.charBufferSize = charBufferSize;
     }
 
     /**
-     * Construct CSVWriter with preferred Output-buffer
+     * Construct CSVWriter default or preset in environment preferred Output-buffer and Class type.
+     * Setting CHAR_BUFFER_SIZE in environment will be taken as first preference, otherwise
+     * fallback value 8192 will be considered
      *
-     * @param charBufferSize Output-buffer size, a positive integer
+     * @param <T>   the class of the value
+     * @param clazz {@code Class<T>} Class type to be used for csv writer
      */
-    public CSVWriterImpl(int charBufferSize) {
-        this.charBufferSize = charBufferSize;
+    public <T> CSVWriterImpl(Class<T> clazz) {
+        super(clazz);
+        this.charBufferSize = charBufferSize();
     }
 
     /**
@@ -52,9 +63,7 @@ public class CSVWriterImpl implements CSVWriter {
      * @param outputStream {@link OutputStream}
      */
     @Override
-    public <T> void writeCSVOutputStream(Class<T> clazz, List<T> pojoList, OutputStream outputStream) {
-        // performing validation of arguments
-        validateCSVOutputStream(clazz, pojoList, outputStream);
+    protected <T> void abstractWriteCSVOutputStream(Class<T> clazz, List<T> pojoList, OutputStream outputStream) {
         writeCSVOutputStream(pojoList.stream(), outputStream, clazz);
     }
 
@@ -67,9 +76,7 @@ public class CSVWriterImpl implements CSVWriter {
      * @param outputStream {@link OutputStream}
      */
     @Override
-    public <T> void writeCSVOutputStream(Class<T> clazz, Stream<T> pojoStream, OutputStream outputStream) {
-        // performing validation of arguments
-        validateCSVOutputStream(clazz, pojoStream, outputStream);
+    protected <T> void abstractWriteCSVOutputStream(Class<T> clazz, Stream<T> pojoStream, OutputStream outputStream) {
         writeCSVOutputStream(pojoStream, outputStream, clazz);
     }
 
@@ -81,11 +88,10 @@ public class CSVWriterImpl implements CSVWriter {
      * @param outputStream {@link OutputStream}
      */
     @Override
-    public <T> void writeCSVOutputStream(Class<T> clazz, OutputStream outputStream) {
-        validateCSVOutputStream(clazz, outputStream);
+    protected <T> void abstractWriteCSVOutputStream(Class<T> clazz, OutputStream outputStream) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
             // Writing the header elements to the OutputStream
-            writeHeaderToOutputStream(clazz, writer);
+            writeHeaderToOutputStream(writer);
         } catch (IOException exception) {
             throw new StreamException("OutputStream is invalid or null: ", exception);
         }
@@ -102,7 +108,7 @@ public class CSVWriterImpl implements CSVWriter {
     private <T> void writeCSVOutputStream(Stream<T> pojoStream, OutputStream outputStream, Class<T> clazz) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream), charBufferSize)) {
             // Writing the header elements to the OutputStream
-            writeHeaderToOutputStream(clazz, writer);
+            writeHeaderToOutputStream(writer);
             // Reading each object from Stream and execute logic to create line elements and write in to the BufferedWriter
             Consumer<T> writeCsvOutputStreamConsumer = new WriteCsvOutputStreamConsumer<>(writer);
             pojoStream.forEach(writeCsvOutputStreamConsumer);
@@ -267,9 +273,8 @@ public class CSVWriterImpl implements CSVWriter {
      * @param writer {@link  BufferedWriter}
      * @throws IOException If an I/O error occurs
      */
-    private <T> void writeHeaderToOutputStream(Class<T> clazz, BufferedWriter writer) throws IOException {
-        List<String> annotatedHeaderNameListFromClass = CSV4PojoUtils.getAnnotatedClassFieldNames(clazz);
-        writer.write(getFormattedLineElements(annotatedHeaderNameListFromClass));
+    private <T> void writeHeaderToOutputStream(BufferedWriter writer) throws IOException {
+        writer.write(getFormattedLineElements(this.csvClassConfiguration.getCsvHeaders()));
         writer.newLine();
     }
 

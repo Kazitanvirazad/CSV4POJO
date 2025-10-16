@@ -6,6 +6,9 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.stream.Stream;
 
+/**
+ * @author Kazi Tanvir Azad
+ */
 public class CSVWriterValidationHelper {
     public static <T> void validateCSVOutputStream(Class<T> clazz, Stream<T> pojoStream, OutputStream outputStream) {
         validateOutputStream(outputStream);

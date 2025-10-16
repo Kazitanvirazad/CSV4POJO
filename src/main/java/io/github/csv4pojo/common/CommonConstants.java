@@ -5,11 +5,15 @@ package io.github.csv4pojo.common;
  */
 public final class CommonConstants {
     public static final String SPLIT_REGEX = ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)";
+    public static final String FIELD_PATH_REGEX = "\\|";
     public static final String ONE_DOUBLE_QUOTES = "\"";
     public static final String TWO_DOUBLE_QUOTES = "\"\"";
+    public static final String PIPE = "|";
     public static final String COMMA = ",";
     public static final String UTF8_BOM = "\uFEFF";
     public static final String EMPTY_STRING = "";
 
-    private CommonConstants() { }
+    private CommonConstants() {
+        throw new IllegalArgumentException("Object creation of this class is not allowed");
+    }
 }

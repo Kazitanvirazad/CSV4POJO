@@ -1,6 +1,6 @@
 package io.github.csv4pojo.model;
 
-import io.github.csv4pojo.exception.MisConfiguredClassFieldException;
+import io.github.csv4pojo.exception.MisConfiguredClassException;
 
 import java.util.List;
 import java.util.Map;
@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * @author Kazi Tanvir Azad
  */
-public class CsvClassConfiguration {
+public class CsvClassConfiguration<T> {
     private int csvFieldCount;
     private Map<String, CsvClassField> csvClassFieldMap;
     private List<String> csvHeaders;
@@ -18,12 +18,12 @@ public class CsvClassConfiguration {
         if (null != csvClassFieldMap && !csvClassFieldMap.isEmpty())
             this.csvFieldCount = csvClassFieldMap.size();
         else
-            throw new MisConfiguredClassFieldException("Annotate fields with FieldType annotation for field to csv mapping");
+            throw new MisConfiguredClassException("Annotate fields with FieldType annotation for field to csv mapping");
     }
 
-    public <T> CsvClassConfiguration(final Map<String, CsvClassField> csvClassFieldMap,
-                                     final List<String> csvHeaders,
-                                     final Class<T> clazz) {
+    public CsvClassConfiguration(final Map<String, CsvClassField> csvClassFieldMap,
+                                 final List<String> csvHeaders,
+                                 final Class<T> clazz) {
         this(csvClassFieldMap);
         this.csvClassFieldMap = csvClassFieldMap;
         this.csvHeaders = csvHeaders;
@@ -58,7 +58,7 @@ public class CsvClassConfiguration {
         return clazz;
     }
 
-    public void setClazz(Class<?> clazz) {
+    public void setClazz(Class<T> clazz) {
         this.clazz = clazz;
     }
 }

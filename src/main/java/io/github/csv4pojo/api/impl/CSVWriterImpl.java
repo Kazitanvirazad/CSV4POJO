@@ -3,7 +3,9 @@ package io.github.csv4pojo.api.impl;
 import io.github.csv4pojo.annotation.FieldType;
 import io.github.csv4pojo.api.AbstractCSVWriter;
 import io.github.csv4pojo.exception.CsvParsingException;
+import io.github.csv4pojo.exception.MisConfiguredClassFieldException;
 import io.github.csv4pojo.exception.StreamException;
+import io.github.csv4pojo.model.CsvClassField;
 import io.github.csv4pojo.utils.CSV4PojoUtils;
 
 import java.io.BufferedWriter;
@@ -13,6 +15,7 @@ import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -63,8 +66,8 @@ public class CSVWriterImpl extends AbstractCSVWriter {
      * @param outputStream {@link OutputStream}
      */
     @Override
-    protected <T> void abstractWriteCSVOutputStream(Class<T> clazz, List<T> pojoList, OutputStream outputStream) {
-        writeCSVOutputStream(pojoList.stream(), outputStream, clazz);
+    protected void abstractWriteCSVOutputStream(List<?> pojoList, OutputStream outputStream) {
+        writeToCSVOutputStream(pojoList.stream(), outputStream);
     }
 
     /**
@@ -76,8 +79,8 @@ public class CSVWriterImpl extends AbstractCSVWriter {
      * @param outputStream {@link OutputStream}
      */
     @Override
-    protected <T> void abstractWriteCSVOutputStream(Class<T> clazz, Stream<T> pojoStream, OutputStream outputStream) {
-        writeCSVOutputStream(pojoStream, outputStream, clazz);
+    protected void abstractWriteCSVOutputStream(Stream<?> pojoStream, OutputStream outputStream) {
+        writeToCSVOutputStream(pojoStream, outputStream);
     }
 
     /**
@@ -88,7 +91,7 @@ public class CSVWriterImpl extends AbstractCSVWriter {
      * @param outputStream {@link OutputStream}
      */
     @Override
-    protected <T> void abstractWriteCSVOutputStream(Class<T> clazz, OutputStream outputStream) {
+    protected void abstractWriteCSVOutputStream(OutputStream outputStream) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream))) {
             // Writing the header elements to the OutputStream
             writeHeaderToOutputStream(writer);
@@ -103,9 +106,8 @@ public class CSVWriterImpl extends AbstractCSVWriter {
      *
      * @param pojoStream   {@code Stream<T>}
      * @param outputStream {@link OutputStream}
-     * @param clazz        {@code Class<T>}
      */
-    private <T> void writeCSVOutputStream(Stream<T> pojoStream, OutputStream outputStream, Class<T> clazz) {
+    private <T> void writeToCSVOutputStream(Stream<T> pojoStream, OutputStream outputStream) {
         try (BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(outputStream), charBufferSize)) {
             // Writing the header elements to the OutputStream
             writeHeaderToOutputStream(writer);
@@ -115,6 +117,21 @@ public class CSVWriterImpl extends AbstractCSVWriter {
         } catch (IOException exception) {
             throw new StreamException("OutputStream is invalid or null: ", exception);
         }
+    }
+
+    private <T> List<String> getAnnotatedFieldValuesFromPojo(T pojo) {
+        List<String> lineElements = new ArrayList<>();
+        List<String> headers = getCsvClassConfiguration().getCsvHeaders();
+        Map<String, CsvClassField> csvClassFieldMap = getCsvClassConfiguration().getCsvClassFieldMap();
+        for (String header : headers) {
+            CsvClassField classField = csvClassFieldMap.getOrDefault(header, null);
+            if (null == classField) {
+                throw new MisConfiguredClassFieldException("Improper class field mapping for : " + header);
+            }
+            // TODO: Implement type checking
+            lineElements.add(CSV4PojoUtils.getDeclaredFieldValue(classField.getFieldPath(), pojo));
+        }
+        return lineElements;
     }
 
     /**

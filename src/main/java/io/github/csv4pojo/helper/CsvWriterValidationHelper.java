@@ -1,5 +1,7 @@
 package io.github.csv4pojo.helper;
 
+import io.github.csv4pojo.exception.CsvParsingException;
+import io.github.csv4pojo.exception.MisConfiguredClassException;
 import io.github.csv4pojo.exception.StreamException;
 
 import java.io.OutputStream;
@@ -10,44 +12,44 @@ import java.util.stream.Stream;
  * @author Kazi Tanvir Azad
  */
 public class CsvWriterValidationHelper {
-    public static <T> void validateCSVOutputStream(Class<T> clazz, Stream<T> pojoStream, OutputStream outputStream) {
+    public static void validateCSVOutputStream(Class<?> clazz, Stream<?> pojoStream, OutputStream outputStream) {
         validateOutputStream(outputStream);
         validateClass(clazz);
         validatePojoStream(pojoStream);
     }
 
-    public static <T> void validateCSVOutputStream(Class<T> clazz, List<T> pojoList, OutputStream outputStream) {
+    public static void validateCSVOutputStream(Class<?> clazz, List<?> pojoList, OutputStream outputStream) {
         validateOutputStream(outputStream);
         validateClass(clazz);
         validatePojoList(pojoList);
     }
 
-    public static <T> void validateCSVOutputStream(Class<T> clazz, OutputStream outputStream) {
+    public static void validateCSVOutputStream(Class<?> clazz, OutputStream outputStream) {
         validateOutputStream(outputStream);
         validateClass(clazz);
     }
 
-    private static <T> void validatePojoList(List<T> pojoList) {
+    private static void validatePojoList(List<?> pojoList) {
         if (null == pojoList) {
-            throw new StreamException("Pojo list argument is invalid or null");
+            throw new CsvParsingException("Pojo list argument is invalid or null");
         }
     }
 
-    private static <T> void validatePojoStream(Stream<T> pojoStream) {
+    private static void validatePojoStream(Stream<?> pojoStream) {
         if (null == pojoStream) {
-            throw new StreamException("Pojo stream argument is invalid or null");
+            throw new CsvParsingException("Pojo stream argument is invalid or null");
         }
     }
 
-    private static <T> void validateOutputStream(OutputStream outputStream) {
+    private static void validateOutputStream(OutputStream outputStream) {
         if (null == outputStream) {
             throw new StreamException("OutputStream argument is invalid or null");
         }
     }
 
-    private static <T> void validateClass(Class<T> clazz) {
+    private static void validateClass(Class<?> clazz) {
         if (null == clazz) {
-            throw new StreamException("Class argument is invalid or null");
+            throw new MisConfiguredClassException("Class argument is invalid or null");
         }
     }
 }

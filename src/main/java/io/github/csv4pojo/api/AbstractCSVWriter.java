@@ -13,38 +13,42 @@ import static io.github.csv4pojo.helper.CsvWriterValidationHelper.validateCSVOut
  * @author Kazi Tanvir Azad
  */
 public abstract class AbstractCSVWriter implements CSVWriter {
-    protected final CsvClassConfiguration csvClassConfiguration;
+    protected final CsvClassConfiguration<?> csvClassConfiguration;
 
-    protected <T> AbstractCSVWriter(Class<T> clazz) {
+    protected AbstractCSVWriter(Class<?> clazz) {
         if (null == clazz)
             throw new IllegalArgumentException("Class parameter is required");
         this.csvClassConfiguration = CSV4PojoUtils.getCsvClassConfiguration(clazz);
     }
 
     @Override
-    public <T> void writeCSVOutputStream(Class<T> clazz, OutputStream outputStream) {
-        // performing validation of arguments
-        validateCSVOutputStream(clazz, outputStream);
-        abstractWriteCSVOutputStream(clazz, outputStream);
+    public void writeCSVOutputStream(OutputStream outputStream) {
+        // performing mandatory validation of arguments
+        validateCSVOutputStream(csvClassConfiguration.getClazz(), outputStream);
+        abstractWriteCSVOutputStream(outputStream);
     }
 
     @Override
-    public <T> void writeCSVOutputStream(Class<T> clazz, List<T> pojoList, OutputStream outputStream) {
-        // performing validation of arguments
-        validateCSVOutputStream(clazz, pojoList, outputStream);
-        abstractWriteCSVOutputStream(clazz, pojoList, outputStream);
+    public <T> void writeCSVOutputStream(List<T> pojoList, OutputStream outputStream) {
+        // performing mandatory validation of arguments
+        validateCSVOutputStream(csvClassConfiguration.getClazz(), pojoList, outputStream);
+        abstractWriteCSVOutputStream(pojoList, outputStream);
     }
 
     @Override
-    public <T> void writeCSVOutputStream(Class<T> clazz, Stream<T> pojoStream, OutputStream outputStream) {
-        // performing validation of arguments
-        validateCSVOutputStream(clazz, pojoStream, outputStream);
-        abstractWriteCSVOutputStream(clazz, pojoStream, outputStream);
+    public <T> void writeCSVOutputStream(Stream<T> pojoStream, OutputStream outputStream) {
+        // performing mandatory validation of arguments
+        validateCSVOutputStream(csvClassConfiguration.getClazz(), pojoStream, outputStream);
+        abstractWriteCSVOutputStream(pojoStream, outputStream);
     }
 
-    protected abstract <T> void abstractWriteCSVOutputStream(Class<T> clazz, OutputStream outputStream);
+    public CsvClassConfiguration<?> getCsvClassConfiguration() {
+        return csvClassConfiguration;
+    }
 
-    protected abstract <T> void abstractWriteCSVOutputStream(Class<T> clazz, List<T> pojoList, OutputStream outputStream);
+    protected abstract void abstractWriteCSVOutputStream(OutputStream outputStream);
 
-    protected abstract <T> void abstractWriteCSVOutputStream(Class<T> clazz, Stream<T> pojoStream, OutputStream outputStream);
+    protected abstract void abstractWriteCSVOutputStream(List<?> pojoList, OutputStream outputStream);
+
+    protected abstract void abstractWriteCSVOutputStream(Stream<?> pojoStream, OutputStream outputStream);
 }

@@ -29,51 +29,56 @@ public final class CSV4PojoUtils {
         throw new IllegalArgumentException("Object creation of this class is not allowed");
     }
 
-    public static <T> CsvClassConfiguration getCsvClassConfiguration(final Class<T> clazz) {
+    public static CsvClassConfiguration<?> getCsvClassConfiguration(final Class<?> clazz) {
         final Map<String, CsvClassField> csvClassFields = getCsvClassFieldMap(clazz, null);
         final List<String> csvHeaders = csvClassFields
-                .entrySet()
+                .values()
                 .stream()
-                .map(entry -> entry.getValue().getCsvFieldName())
+                .map(CsvClassField::getCsvFieldName)
                 .collect(Collectors.toList());
-        return new CsvClassConfiguration(csvClassFields, csvHeaders, clazz);
+        return new CsvClassConfiguration<>(csvClassFields, csvHeaders, clazz);
     }
 
-    public static <T> Map<String, CsvClassField> getCsvClassFieldMap(final Class<T> clazz, final String path) {
+    public static Map<String, CsvClassField> getCsvClassFieldMap(final Class<?> clazz, final String path) {
         final Map<String, CsvClassField> csvClassFieldMap = new LinkedHashMap<>();
         Arrays.stream(clazz.getDeclaredFields())
                 .peek(field -> field.setAccessible(true))
                 .filter(field -> field.isAnnotationPresent(FieldType.class))
                 .forEach(field -> {
-                    if (field.getDeclaredAnnotation(FieldType.class).dataType() == Type.CLASSTYPE) {
+                    Type type = field.getDeclaredAnnotation(FieldType.class).dataType();
+                    if (Type.CLASSTYPE == type) {
                         csvClassFieldMap.putAll(getCsvClassFieldMap(field.getType(),
                                 null == path ? field.getName() : path + PIPE + field.getName()));
                     } else {
                         String csvFieldName = field.getDeclaredAnnotation(FieldType.class).csvColumnName().trim();
-                        CsvClassField classField = new CsvClassField(field, csvFieldName);
-                        if (null != path) {
-                            classField.setFieldPath(path + PIPE + classField.getCsvField().getName());
+                        if (csvFieldName.isEmpty()) {
+                            throw new MisConfiguredClassFieldException("FieldType annotation's attribute csvColumnName must" +
+                                    " have non whitespace value for field: " + field.getName());
                         }
+                        CsvClassField classField = new CsvClassField(field, type, csvFieldName);
+                        classField.setFieldPath(null == path ? classField.getCsvField().getName()
+                                : path + PIPE + classField.getCsvField().getName());
                         csvClassFieldMap.put(csvFieldName, classField);
                     }
                 });
         return csvClassFieldMap;
     }
 
-    public static <T, C> String getDeclaredFieldValue(final String csvFieldPath, T pojo) throws ReflectiveException {
+    public static <T> String getDeclaredFieldValue(final String fieldPath, T pojo) {
+        Field field = null;
         try {
-            String[] fieldPaths = csvFieldPath.split(FIELD_PATH_REGEX);
-            C object = (C) pojo;
-            Field field;
+            String[] fieldPaths = fieldPath.split(FIELD_PATH_REGEX);
+            Object object = pojo;
             for (String path : fieldPaths) {
                 field = object.getClass().getDeclaredField(path);
                 field.setAccessible(true);
-                object = (C) field.get(object);
+                object = field.get(object);
             }
             if (null != object)
-                return (String) object;
+                return String.valueOf(object);
         } catch (Exception exception) {
-            throw new ReflectiveException("Reflection operation error", exception);
+            throw new MisConfiguredClassFieldException("Reflection operation error while reading the field "
+                    + (null != field ? field.getName() : ""), exception);
         }
         return EMPTY_STRING;
     }

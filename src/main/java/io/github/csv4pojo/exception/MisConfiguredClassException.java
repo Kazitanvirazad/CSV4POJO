@@ -1,17 +1,31 @@
 package io.github.csv4pojo.exception;
 
-/**
- * @author Kazi Tanvir Azad
- */
-public class MisConfiguredClassFieldException extends MisConfiguredClassException {
-    private static final long serialVersionUID = -3030041225634143353L;
+public class MisConfiguredClassException extends RuntimeException {
+    private static final long serialVersionUID = -8456407966884952959L;
 
     /**
      * Constructs a new runtime exception with {@code null} as its
      * detail message.  The cause is not initialized, and may subsequently be
      * initialized by a call to {@link #initCause}.
      */
-    public MisConfiguredClassFieldException() {
+    public MisConfiguredClassException() {
+    }
+
+    /**
+     * Constructs a new runtime exception with the specified cause and a
+     * detail message of <tt>(cause==null ? null : cause.toString())</tt>
+     * (which typically contains the class and detail message of
+     * <tt>cause</tt>).  This constructor is useful for runtime exceptions
+     * that are little more than wrappers for other throwables.
+     *
+     * @param cause the cause (which is saved for later retrieval by the
+     *              {@link #getCause()} method).  (A <tt>null</tt> value is
+     *              permitted, and indicates that the cause is nonexistent or
+     *              unknown.)
+     * @since 1.4
+     */
+    public MisConfiguredClassException(Throwable cause) {
+        super(cause);
     }
 
     /**
@@ -22,7 +36,7 @@ public class MisConfiguredClassFieldException extends MisConfiguredClassExceptio
      * @param message the detail message. The detail message is saved for
      *                later retrieval by the {@link #getMessage()} method.
      */
-    public MisConfiguredClassFieldException(String message) {
+    public MisConfiguredClassException(String message) {
         super(message);
     }
 
@@ -40,25 +54,8 @@ public class MisConfiguredClassFieldException extends MisConfiguredClassExceptio
      *                unknown.)
      * @since 1.4
      */
-    public MisConfiguredClassFieldException(String message, Throwable cause) {
+    public MisConfiguredClassException(String message, Throwable cause) {
         super(message, cause);
-    }
-
-    /**
-     * Constructs a new runtime exception with the specified cause and a
-     * detail message of <tt>(cause==null ? null : cause.toString())</tt>
-     * (which typically contains the class and detail message of
-     * <tt>cause</tt>).  This constructor is useful for runtime exceptions
-     * that are little more than wrappers for other throwables.
-     *
-     * @param cause the cause (which is saved for later retrieval by the
-     *              {@link #getCause()} method).  (A <tt>null</tt> value is
-     *              permitted, and indicates that the cause is nonexistent or
-     *              unknown.)
-     * @since 1.4
-     */
-    public MisConfiguredClassFieldException(Throwable cause) {
-        super(cause);
     }
 
     /**
@@ -75,7 +72,7 @@ public class MisConfiguredClassFieldException extends MisConfiguredClassExceptio
      *                           be writable
      * @since 1.7
      */
-    public MisConfiguredClassFieldException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+    public MisConfiguredClassException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 }

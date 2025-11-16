@@ -16,7 +16,6 @@ public @interface FieldType {
     String csvColumnName();
 
     enum Type {
-
         INTEGER,
         STRING,
         BOOLEAN,

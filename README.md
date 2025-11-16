@@ -12,7 +12,7 @@
 		<table>
 			<thead>
 				<tr>
-					<th>Type</th><th>Class name</th><th>Type</th><th>Class name</th>
+					<th>Type</th><th>Fully Qualified Class name</th><th>Type</th><th>Fully Qualified Class name</th>
 				</tr>
 			</thead>
 			<tbody>

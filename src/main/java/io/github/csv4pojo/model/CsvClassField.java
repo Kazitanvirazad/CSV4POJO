@@ -1,5 +1,7 @@
 package io.github.csv4pojo.model;
 
+import io.github.csv4pojo.annotation.FieldType.Type;
+
 import java.lang.reflect.Field;
 
 /**
@@ -9,15 +11,17 @@ public class CsvClassField {
     private Field csvField;
     private String csvFieldName;
     private String fieldPath;
+    private Type type;
 
-    public CsvClassField(Field csvField, String csvFieldName, String fieldPath) {
+    public CsvClassField(Field csvField, String csvFieldName, Type type, String fieldPath) {
         this.csvField = csvField;
         this.csvFieldName = csvFieldName;
         this.fieldPath = fieldPath;
+        this.type = type;
     }
 
-    public CsvClassField(Field csvField, String csvFieldName) {
-        this(csvField, csvFieldName, null);
+    public CsvClassField(Field csvField, Type type, String csvFieldName) {
+        this(csvField, csvFieldName, type, null);
     }
 
     public Field getCsvField() {
@@ -42,5 +46,13 @@ public class CsvClassField {
 
     public void setFieldPath(String fieldPath) {
         this.fieldPath = fieldPath;
+    }
+
+    public Type getType() {
+        return type;
+    }
+
+    public void setType(Type type) {
+        this.type = type;
     }
 }

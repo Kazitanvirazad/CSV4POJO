@@ -3,7 +3,6 @@ package io.github.csv4pojo.utils;
 import io.github.csv4pojo.annotation.FieldType;
 import io.github.csv4pojo.annotation.FieldType.Type;
 import io.github.csv4pojo.exception.MisConfiguredClassFieldException;
-import io.github.csv4pojo.exception.ReflectiveException;
 import io.github.csv4pojo.model.CsvClassConfiguration;
 import io.github.csv4pojo.model.CsvClassField;
 
@@ -16,8 +15,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
-import static io.github.csv4pojo.common.CommonConstants.EMPTY_STRING;
-import static io.github.csv4pojo.common.CommonConstants.FIELD_PATH_REGEX;
 import static io.github.csv4pojo.common.CommonConstants.PIPE;
 
 /**
@@ -64,35 +61,18 @@ public final class CSV4PojoUtils {
         return csvClassFieldMap;
     }
 
-    public static <T> String getDeclaredFieldValue(final String fieldPath, T pojo) {
-        Field field = null;
-        try {
-            String[] fieldPaths = fieldPath.split(FIELD_PATH_REGEX);
-            Object object = pojo;
-            for (String path : fieldPaths) {
-                field = object.getClass().getDeclaredField(path);
-                field.setAccessible(true);
-                object = field.get(object);
-            }
-            if (null != object)
-                return String.valueOf(object);
-        } catch (Exception exception) {
-            throw new MisConfiguredClassFieldException("Reflection operation error while reading the field "
-                    + (null != field ? field.getName() : ""), exception);
+    public static FieldReader getFieldReader(final CsvClassField csvClassField) {
+        Type type = csvClassField.getType();
+        if (Type.INTEGER_ARRAY == type ||
+                Type.STRING_ARRAY == type ||
+                Type.BOOLEAN_ARRAY == type ||
+                Type.FLOAT_ARRAY == type ||
+                Type.DOUBLE_ARRAY == type ||
+                Type.LONG_ARRAY == type ||
+                Type.CHARACTER_ARRAY == type) {
+            return new ArrayFieldReader();
         }
-        return EMPTY_STRING;
-    }
-
-    public static <T> String getDeclaredFieldValue(Field csvField, T pojo) throws ReflectiveException {
-        try {
-            Object fieldValue = csvField.get(pojo);
-            if (null != fieldValue) {
-                return (String) fieldValue;
-            }
-        } catch (Exception exception) {
-            throw new ReflectiveException("Reflection operation error", exception);
-        }
-        return EMPTY_STRING;
+        return new FallbackFieldReader();
     }
 
     /**

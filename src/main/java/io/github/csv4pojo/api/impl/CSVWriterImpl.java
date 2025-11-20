@@ -7,6 +7,7 @@ import io.github.csv4pojo.exception.MisConfiguredClassFieldException;
 import io.github.csv4pojo.exception.StreamException;
 import io.github.csv4pojo.model.CsvClassField;
 import io.github.csv4pojo.utils.CSV4PojoUtils;
+import io.github.csv4pojo.utils.FieldReader;
 
 import java.io.BufferedWriter;
 import java.io.IOException;
@@ -16,6 +17,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 
@@ -113,23 +115,24 @@ public class CSVWriterImpl extends AbstractCSVWriter {
             writeHeaderToOutputStream(writer);
             // Reading each object from Stream and execute logic to create line elements and write in to the BufferedWriter
             Consumer<T> writeCsvOutputStreamConsumer = new WriteCsvOutputStreamConsumer<>(writer);
-            pojoStream.forEach(writeCsvOutputStreamConsumer);
+            pojoStream.filter(Objects::nonNull).forEach(writeCsvOutputStreamConsumer);
         } catch (IOException exception) {
             throw new StreamException("OutputStream is invalid or null: ", exception);
         }
     }
 
-    private <T> List<String> getAnnotatedFieldValuesFromPojo(T pojo) {
+    private <T> List<String> readCsvFieldValuesFromPojo(final T pojo) {
         List<String> lineElements = new ArrayList<>();
         List<String> headers = getCsvClassConfiguration().getCsvHeaders();
         Map<String, CsvClassField> csvClassFieldMap = getCsvClassConfiguration().getCsvClassFieldMap();
         for (String header : headers) {
-            CsvClassField classField = csvClassFieldMap.getOrDefault(header, null);
-            if (null == classField) {
+            CsvClassField csvClassField = csvClassFieldMap.getOrDefault(header, null);
+            if (null == csvClassField) {
                 throw new MisConfiguredClassFieldException("Improper class field mapping for : " + header);
             }
-            // TODO: Implement type checking
-            lineElements.add(CSV4PojoUtils.getDeclaredFieldValue(classField.getFieldPath(), pojo));
+            FieldReader fieldReader = CSV4PojoUtils.getFieldReader(csvClassField);
+            String fieldValue = fieldReader.read(csvClassField, pojo);
+            lineElements.add(fieldValue);
         }
         return lineElements;
     }
@@ -291,7 +294,8 @@ public class CSVWriterImpl extends AbstractCSVWriter {
      * @throws IOException If an I/O error occurs
      */
     private <T> void writeHeaderToOutputStream(BufferedWriter writer) throws IOException {
-        writer.write(getFormattedLineElements(this.csvClassConfiguration.getCsvHeaders()));
+        String formattedHeaderElement = getFormattedLineElements(this.csvClassConfiguration.getCsvHeaders());
+        writer.write(formattedHeaderElement);
         writer.newLine();
     }
 
@@ -343,23 +347,20 @@ public class CSVWriterImpl extends AbstractCSVWriter {
 
         @Override
         public void accept(T pojo) {
-            // Skipping null objects
-            if (pojo != null) {
-                // Reading the value of fields annotated with @FieldType annotation from java object and putting it in to a List
-                List<String> lineElements = getAnnotatedFieldValuesFromPojo(pojo, pojo.getClass());
+            // Reading the value of fields annotated with @FieldType annotation from java object and putting it in to a List
+            List<String> lineElements = readCsvFieldValuesFromPojo(pojo);
 
-                // Converting the List of line elements to a CSV row format
-                String formattedLineElement = getFormattedLineElements(lineElements);
+            // Converting the List of line elements to a CSV row format
+            String formattedLineElement = getFormattedLineElements(lineElements);
 
-                try {
-                    // Writing the csv formatted row in to the BufferedWriter
-                    writer.write(formattedLineElement);
+            try {
+                // Writing the csv formatted row in to the BufferedWriter
+                writer.write(formattedLineElement);
 
-                    // Appending a line in to the BufferedWriter
-                    writer.newLine();
-                } catch (IOException exception) {
-                    throw new StreamException("OutputStream is invalid or null: ", exception);
-                }
+                // Appending a line in to the BufferedWriter
+                writer.newLine();
+            } catch (IOException exception) {
+                throw new StreamException("OutputStream is invalid or null: ", exception);
             }
         }
     }

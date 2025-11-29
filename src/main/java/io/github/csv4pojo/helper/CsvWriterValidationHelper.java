@@ -11,7 +11,11 @@ import java.util.stream.Stream;
 /**
  * @author Kazi Tanvir Azad
  */
-public class CsvWriterValidationHelper {
+public final class CsvWriterValidationHelper {
+    private CsvWriterValidationHelper() {
+        throw new AssertionError("Object creation of this class is not allowed");
+    }
+
     public static void validateCSVOutputStream(Class<?> clazz, Stream<?> pojoStream, OutputStream outputStream) {
         validateOutputStream(outputStream);
         validateClass(clazz);

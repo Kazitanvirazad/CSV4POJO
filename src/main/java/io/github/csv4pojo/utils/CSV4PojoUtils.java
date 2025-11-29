@@ -23,7 +23,7 @@ import static io.github.csv4pojo.common.CommonConstants.PIPE;
 public final class CSV4PojoUtils {
 
     private CSV4PojoUtils() {
-        throw new IllegalArgumentException("Object creation of this class is not allowed");
+        throw new AssertionError("Object creation of this class is not allowed");
     }
 
     public static CsvClassConfiguration<?> getCsvClassConfiguration(final Class<?> clazz) {
@@ -72,7 +72,7 @@ public final class CSV4PojoUtils {
                 Type.CHARACTER_ARRAY == type) {
             return new ArrayFieldReader();
         }
-        return new FallbackFieldReader();
+        return new DefaultFieldReader();
     }
 
     /**

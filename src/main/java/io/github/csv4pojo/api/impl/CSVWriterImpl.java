@@ -2,7 +2,6 @@ package io.github.csv4pojo.api.impl;
 
 import io.github.csv4pojo.annotation.FieldType;
 import io.github.csv4pojo.api.AbstractCSVWriter;
-import io.github.csv4pojo.exception.CsvParsingException;
 import io.github.csv4pojo.exception.MisConfiguredClassFieldException;
 import io.github.csv4pojo.exception.StreamException;
 import io.github.csv4pojo.model.CsvClassField;
@@ -13,7 +12,6 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +33,7 @@ public class CSVWriterImpl extends AbstractCSVWriter {
     private final int charBufferSize;
 
     /**
-     * Construct CSVWriter with preferred Output-buffer and Class type
+     * Constructs CSVWriter with preferred Output-buffer and Class type
      *
      * @param <T>            the class of the value
      * @param clazz          {@code Class<T>} Class type to be used for csv writer
@@ -47,7 +45,7 @@ public class CSVWriterImpl extends AbstractCSVWriter {
     }
 
     /**
-     * Construct CSVWriter default or preset in environment preferred Output-buffer and Class type.
+     * Constructs CSVWriter with default or preset in environment Output-buffer size and Class type.
      * Setting CHAR_BUFFER_SIZE in environment will be taken as first preference, otherwise
      * fallback value 8192 will be considered
      *
@@ -63,7 +61,6 @@ public class CSVWriterImpl extends AbstractCSVWriter {
      * Writes List of Java object mapped with the given java class annotated with {@link FieldType} annotation field
      * values in to the outputStream
      *
-     * @param clazz        {@code Class<T>}
      * @param pojoList     {@code List<T>}
      * @param outputStream {@link OutputStream}
      */
@@ -76,7 +73,6 @@ public class CSVWriterImpl extends AbstractCSVWriter {
      * Writes Stream of Java object mapped with the given java class annotated with {@link FieldType} annotation field
      * values in to the outputStream
      *
-     * @param clazz        {@code Class<T>}
      * @param pojoStream   {@code Stream <T>}
      * @param outputStream {@link OutputStream}
      */
@@ -89,7 +85,6 @@ public class CSVWriterImpl extends AbstractCSVWriter {
      * Writes an empty csv file in to the OutputStream with all the headers mapped with the given java class annotated
      * with {@link FieldType} annotation field names
      *
-     * @param clazz        {@code Class<T>}
      * @param outputStream {@link OutputStream}
      */
     @Override
@@ -121,10 +116,17 @@ public class CSVWriterImpl extends AbstractCSVWriter {
         }
     }
 
+    /**
+     * Reads all the fields annotated with {@link FieldType} annotation of the Java object passed in the method
+     * parameter and creates and returns a List of the values
+     *
+     * @param pojo {@link T}
+     * @return {@code  List<String>}
+     */
     private <T> List<String> readCsvFieldValuesFromPojo(final T pojo) {
         List<String> lineElements = new ArrayList<>();
-        List<String> headers = getCsvClassConfiguration().getCsvHeaders();
-        Map<String, CsvClassField> csvClassFieldMap = getCsvClassConfiguration().getCsvClassFieldMap();
+        List<String> headers = csvClassConfiguration.getCsvHeaders();
+        Map<String, CsvClassField> csvClassFieldMap = csvClassConfiguration.getCsvClassFieldMap();
         for (String header : headers) {
             CsvClassField csvClassField = csvClassFieldMap.getOrDefault(header, null);
             if (null == csvClassField) {
@@ -138,158 +140,8 @@ public class CSVWriterImpl extends AbstractCSVWriter {
     }
 
     /**
-     * Read all the annotated with {@link FieldType} annotation fields of the Java object passed in the method
-     * parameter and creates and returns a List of the values
+     * Writes csv header elements in to the BufferedWriter and adds a new line
      *
-     * @param pojo {@link T}
-     * @return {@code  List<String>}
-     */
-    private <T> List<String> getAnnotatedFieldValuesFromPojo(T pojo, Class<?> clazz) {
-        List<String> fieldValues = new ArrayList<>();
-
-        if (pojo == null) {
-            int fieldCount = CSV4PojoUtils.getAnnotatedFieldCount(clazz);
-            for (int i = 0; i < fieldCount; i++) {
-                fieldValues.add(EMPTY_STRING);
-            }
-            return fieldValues;
-        }
-
-        List<Field> fields = CSV4PojoUtils.getAnnotatedClassFieldList(clazz);
-
-        int index = 0;
-        while (index < fields.size()) {
-            Field field = fields.get(index);
-            StringBuilder stringBuilder = new StringBuilder();
-            try {
-                field.setAccessible(true);
-                FieldType fieldType = field.getAnnotation(FieldType.class);
-                if (fieldType != null) {
-                    switch (fieldType.dataType()) {
-                        case INTEGER_ARRAY:
-                            Integer[] integerArray = (Integer[]) field.get(pojo);
-                            if (integerArray == null) {
-                                fieldValues.add(EMPTY_STRING);
-                                break;
-                            }
-                            for (int i = 0; i < integerArray.length; i++) {
-                                stringBuilder.append(integerArray[i]);
-                                if (i < integerArray.length - 1) {
-                                    stringBuilder.append(COMMA);
-                                }
-                            }
-                            fieldValues.add(stringBuilder.toString());
-                            break;
-                        case STRING_ARRAY:
-                            String[] stringArray = (String[]) field.get(pojo);
-                            if (stringArray == null) {
-                                fieldValues.add(EMPTY_STRING);
-                                break;
-                            }
-                            for (int i = 0; i < stringArray.length; i++) {
-                                stringBuilder.append(stringArray[i]);
-                                if (i < stringArray.length - 1) {
-                                    stringBuilder.append(COMMA);
-                                }
-                            }
-                            fieldValues.add(stringBuilder.toString());
-                            break;
-                        case BOOLEAN_ARRAY:
-                            Boolean[] booleanArray = (Boolean[]) field.get(pojo);
-                            if (booleanArray == null) {
-                                fieldValues.add(EMPTY_STRING);
-                                break;
-                            }
-                            for (int i = 0; i < booleanArray.length; i++) {
-                                stringBuilder.append(booleanArray[i]);
-                                if (i < booleanArray.length - 1) {
-                                    stringBuilder.append(COMMA);
-                                }
-                            }
-                            fieldValues.add(stringBuilder.toString());
-                            break;
-                        case FLOAT_ARRAY:
-                            Float[] floatArray = (Float[]) field.get(pojo);
-                            if (floatArray == null) {
-                                fieldValues.add(EMPTY_STRING);
-                                break;
-                            }
-                            for (int i = 0; i < floatArray.length; i++) {
-                                stringBuilder.append(floatArray[i]);
-                                if (i < floatArray.length - 1) {
-                                    stringBuilder.append(COMMA);
-                                }
-                            }
-                            fieldValues.add(stringBuilder.toString());
-                            break;
-                        case DOUBLE_ARRAY:
-                            Double[] doubleArray = (Double[]) field.get(pojo);
-                            if (doubleArray == null) {
-                                fieldValues.add(EMPTY_STRING);
-                                break;
-                            }
-                            for (int i = 0; i < doubleArray.length; i++) {
-                                stringBuilder.append(doubleArray[i]);
-                                if (i < doubleArray.length - 1) {
-                                    stringBuilder.append(COMMA);
-                                }
-                            }
-                            fieldValues.add(stringBuilder.toString());
-                            break;
-                        case LONG_ARRAY:
-                            Long[] longArray = (Long[]) field.get(pojo);
-                            if (longArray == null) {
-                                fieldValues.add(EMPTY_STRING);
-                                break;
-                            }
-                            for (int i = 0; i < longArray.length; i++) {
-                                stringBuilder.append(longArray[i]);
-                                if (i < longArray.length - 1) {
-                                    stringBuilder.append(COMMA);
-                                }
-                            }
-                            fieldValues.add(stringBuilder.toString());
-                            break;
-                        case CHARACTER_ARRAY:
-                            Character[] characterArray = (Character[]) field.get(pojo);
-                            if (characterArray == null) {
-                                fieldValues.add(EMPTY_STRING);
-                                break;
-                            }
-                            for (int i = 0; i < characterArray.length; i++) {
-                                stringBuilder.append(characterArray[i]);
-                                if (i < characterArray.length - 1) {
-                                    stringBuilder.append(COMMA);
-                                }
-                            }
-                            fieldValues.add(stringBuilder.toString());
-                            break;
-                        case CLASSTYPE:
-                            fieldValues.addAll(getAnnotatedFieldValuesFromPojo(field.get(pojo), field.getType()));
-                            break;
-                        default:
-                            Object fieldVal = field.get(pojo);
-                            if (fieldVal == null) {
-                                fieldValues.add(EMPTY_STRING);
-                                break;
-                            }
-                            fieldValues.add(String.valueOf(fieldVal));
-                            break;
-                    }
-                }
-            } catch (IllegalAccessException | IllegalArgumentException | NullPointerException |
-                     ExceptionInInitializerError exception) {
-                throw new CsvParsingException("Exception in " + field.getName() + " : " + exception.getMessage(), exception);
-            }
-            index++;
-        }
-        return fieldValues;
-    }
-
-    /**
-     * Writes the csv header elements in to the BufferedWriter and a new line
-     *
-     * @param clazz  {@link  Class<T>}
      * @param writer {@link  BufferedWriter}
      * @throws IOException If an I/O error occurs
      */

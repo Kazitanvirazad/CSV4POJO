@@ -10,7 +10,7 @@ import static io.github.csv4pojo.common.CommonConstants.FIELD_PATH_REGEX;
 /**
  * @author Kazi Tanvir Azad
  */
-public class FallbackFieldReader implements FieldReader {
+public class DefaultFieldReader implements FieldReader {
 
     @Override
     public <T> String read(CsvClassField csvClassField, T pojo) {

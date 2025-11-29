@@ -14,6 +14,6 @@ public final class CommonConstants {
     public static final String EMPTY_STRING = "";
 
     private CommonConstants() {
-        throw new IllegalArgumentException("Object creation of this class is not allowed");
+        throw new AssertionError("Object creation of this class is not allowed");
     }
 }

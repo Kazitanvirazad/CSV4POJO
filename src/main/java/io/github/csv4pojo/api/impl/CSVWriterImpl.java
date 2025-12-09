@@ -4,6 +4,7 @@ import io.github.csv4pojo.annotation.FieldType;
 import io.github.csv4pojo.api.AbstractCSVWriter;
 import io.github.csv4pojo.exception.MisConfiguredClassFieldException;
 import io.github.csv4pojo.exception.StreamException;
+import io.github.csv4pojo.function.AbstractCSVOutputStreamWriterConsumer;
 import io.github.csv4pojo.model.CsvClassField;
 import io.github.csv4pojo.utils.CSV4PojoUtils;
 import io.github.csv4pojo.utils.FieldReader;
@@ -16,7 +17,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static io.github.csv4pojo.common.CommonConstants.COMMA;
@@ -109,7 +109,7 @@ public class CSVWriterImpl extends AbstractCSVWriter {
             // Writing the header elements to the OutputStream
             writeHeaderToOutputStream(writer);
             // Reading each object from Stream and execute logic to create line elements and write in to the BufferedWriter
-            Consumer<T> writeCsvOutputStreamConsumer = new WriteCsvOutputStreamConsumer<>(writer);
+            CSVOutputStreamWriterConsumer<T> writeCsvOutputStreamConsumer = new CSVOutputStreamWriterConsumer<>(writer);
             pojoStream.filter(Objects::nonNull).forEach(writeCsvOutputStreamConsumer);
         } catch (IOException exception) {
             throw new StreamException("OutputStream is invalid or null: ", exception);
@@ -190,11 +190,10 @@ public class CSVWriterImpl extends AbstractCSVWriter {
         return ONE_DOUBLE_QUOTES + element + ONE_DOUBLE_QUOTES;
     }
 
-    private class WriteCsvOutputStreamConsumer<T> implements Consumer<T> {
-        private final BufferedWriter writer;
+    private class CSVOutputStreamWriterConsumer<T> extends AbstractCSVOutputStreamWriterConsumer<T> {
 
-        public WriteCsvOutputStreamConsumer(BufferedWriter writer) {
-            this.writer = writer;
+        CSVOutputStreamWriterConsumer(BufferedWriter writer) {
+            super(writer);
         }
 
         @Override

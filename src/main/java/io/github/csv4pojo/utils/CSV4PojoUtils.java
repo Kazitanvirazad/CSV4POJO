@@ -16,6 +16,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static io.github.csv4pojo.common.CommonConstants.PIPE;
+import static io.github.csv4pojo.helper.CsvWriterValidationHelper.isValidFieldType;
 
 /**
  * @author Kazi Tanvir Azad
@@ -47,10 +48,14 @@ public final class CSV4PojoUtils {
                         csvClassFieldMap.putAll(getCsvClassFieldMap(field.getType(),
                                 null == path ? field.getName() : path + PIPE + field.getName()));
                     } else {
+                        if (!isValidFieldType(field, type)) {
+                            throw new MisConfiguredClassFieldException("FieldType annotation's dataType attribute mapping " +
+                                    "doesn't match with the actual type of the field: '" + field.getName() + "'");
+                        }
                         String csvFieldName = field.getDeclaredAnnotation(FieldType.class).csvColumnName().trim();
                         if (csvFieldName.isEmpty()) {
                             throw new MisConfiguredClassFieldException("FieldType annotation's attribute csvColumnName must" +
-                                    " have non whitespace value for field: " + field.getName());
+                                    " have non whitespace value for field: '" + field.getName() + "'");
                         }
                         CsvClassField classField = new CsvClassField(field, type, csvFieldName);
                         classField.setFieldPath(null == path ? classField.getCsvField().getName()

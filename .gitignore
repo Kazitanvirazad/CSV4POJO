@@ -6,9 +6,6 @@ workspace/
 
 TODO
 
-data/
-*Test*.java
-
 # Cached file
 .ehcache-diskstore.lock
 *.data
@@ -80,3 +77,6 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+### Test ###
+**/manual/*

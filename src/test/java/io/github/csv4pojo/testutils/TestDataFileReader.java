@@ -1,5 +1,7 @@
 package io.github.csv4pojo.testutils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,6 +17,8 @@ import java.util.stream.Stream;
 import static io.github.csv4pojo.common.CommonConstants.SPLIT_REGEX;
 
 public class TestDataFileReader {
+    private final static ObjectMapper mapper = new ObjectMapper();
+
     public static <T> Stream<T> readFile(String resourcePath, Function<String[], T> function) {
         try {
             InputStream inputStream = TestDataFileReader.class.getResourceAsStream(resourcePath);
@@ -25,6 +29,7 @@ public class TestDataFileReader {
                     .onClose(() -> {
                         try {
                             reader.close();
+                            inputStream.close();
                         } catch (IOException exception) {
                             Logger.getLogger(TestDataFileReader.class.getTypeName()).log(Level.SEVERE, exception.getMessage());
                         }
@@ -39,6 +44,14 @@ public class TestDataFileReader {
         if (null != fileDataStream) {
             return fileDataStream.collect(Collectors.toList());
         } else {
+            return new ArrayList<>();
+        }
+    }
+
+    public static <T> List<T> readJson(String resourcePath, Class<T> clazz) {
+        try (InputStream inputStream = TestDataFileReader.class.getResourceAsStream(resourcePath)) {
+            return mapper.readValue(inputStream, mapper.getTypeFactory().constructCollectionType(List.class, clazz));
+        } catch (Exception exception) {
             return new ArrayList<>();
         }
     }

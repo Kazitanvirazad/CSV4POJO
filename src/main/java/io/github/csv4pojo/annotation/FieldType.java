@@ -5,6 +5,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import static io.github.csv4pojo.common.CommonConstants.EMPTY_STRING;
+
 /**
  * @author Kazi Tanvir Azad
  */
@@ -13,7 +15,7 @@ import java.lang.annotation.Target;
 public @interface FieldType {
     Type dataType();
 
-    String csvColumnName();
+    String csvColumnName() default EMPTY_STRING;
 
     enum Type {
         INTEGER,

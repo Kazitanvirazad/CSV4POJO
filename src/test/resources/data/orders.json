@@ -1,0 +1,252 @@
+[
+  {
+    "orderId": "ORD-1001",
+    "orderDate": "2024-06-01",
+    "price": 4998,
+    "discount": 500,
+    "sellingPrice": 4498,
+    "customMessages": [
+      "Fast delivery",
+      "Gift wrap"
+    ],
+    "customer": {
+      "name": "Amit Sharma",
+      "creationDate": "2022-02-10",
+      "address": {
+        "street": "MG Road",
+        "pin": 560034,
+        "city": "Bangalore",
+        "state": "Karnataka",
+        "lastModificationDate": "2024-05-20"
+      }
+    },
+    "lineItem": {
+      "sku": "SKU-90123",
+      "name": "Wireless Mouse",
+      "price": 999.6,
+      "quantity": 5,
+      "stockInventoryIds": [
+        101,
+        102,
+        103
+      ]
+    }
+  },
+  {
+    "orderId": "ORD-1002",
+    "orderDate": "2024-06-02",
+    "price": 3598,
+    "discount": 300,
+    "sellingPrice": 3298,
+    "customMessages": [
+      "Handle with care"
+    ],
+    "customer": {
+      "name": "Neha Verma",
+      "creationDate": "2021-11-05",
+      "address": {
+        "street": "Park Street",
+        "pin": 700016,
+        "city": "Kolkata",
+        "state": "West Bengal",
+        "lastModificationDate": "2024-05-18"
+      }
+    },
+    "lineItem": {
+      "sku": "SKU-90124",
+      "name": "Bluetooth Speaker",
+      "price": 1799,
+      "quantity": 2,
+      "stockInventoryIds": [
+        104,
+        105
+      ]
+    }
+  },
+  {
+    "orderId": "ORD-1003",
+    "orderDate": "2024-06-03",
+    "price": 5999,
+    "discount": 600,
+    "sellingPrice": 5399,
+    "customMessages": [
+      "Premium customer"
+    ],
+    "customer": {
+      "name": "Rahul Mehta",
+      "creationDate": "2023-01-15",
+      "address": {
+        "street": "Link Road",
+        "pin": 400064,
+        "city": "Mumbai",
+        "state": "Maharashtra",
+        "lastModificationDate": "2024-05-22"
+      }
+    },
+    "lineItem": {
+      "sku": "SKU-90125",
+      "name": "Smart Watch",
+      "price": 5999,
+      "quantity": 1,
+      "stockInventoryIds": [
+        106,
+        107,
+        108
+      ]
+    }
+  },
+  {
+    "orderId": "ORD-1004",
+    "orderDate": "2024-06-04",
+    "price": 2997,
+    "discount": 200,
+    "sellingPrice": 2797,
+    "customMessages": [
+      "Office use"
+    ],
+    "customer": {
+      "name": "Sneha Iyer",
+      "creationDate": "2022-08-12",
+      "address": {
+        "street": "Anna Salai",
+        "pin": 600002,
+        "city": "Chennai",
+        "state": "Tamil Nadu",
+        "lastModificationDate": "2024-05-25"
+      }
+    },
+    "lineItem": {
+      "sku": "SKU-90126",
+      "name": "USB Keyboard",
+      "price": 999,
+      "quantity": 3,
+      "stockInventoryIds": [
+        109
+      ]
+    }
+  },
+  {
+    "orderId": "ORD-1005",
+    "orderDate": "2024-06-05",
+    "price": 7495,
+    "discount": 700,
+    "sellingPrice": 6795,
+    "customMessages": [
+      "Travel essential"
+    ],
+    "customer": {
+      "name": "Rohit Singh",
+      "creationDate": "2021-05-19",
+      "address": {
+        "street": "Ring Road",
+        "pin": 110085,
+        "city": "Delhi",
+        "state": "Delhi",
+        "lastModificationDate": "2024-05-26"
+      }
+    },
+    "lineItem": {
+      "sku": "SKU-90127",
+      "name": "Power Bank",
+      "price": 1499,
+      "quantity": 5,
+      "stockInventoryIds": [
+        110,
+        111
+      ]
+    }
+  },
+  {
+    "orderId": "ORD-1006",
+    "orderDate": "2024-06-06",
+    "price": 15998,
+    "discount": 1500,
+    "sellingPrice": 14498,
+    "customMessages": [
+      "Fragile",
+      "Do not bend"
+    ],
+    "customer": {
+      "name": "Ananya Bose",
+      "creationDate": "2020-12-01",
+      "address": {
+        "street": "College Street",
+        "pin": 700073,
+        "city": "Kolkata",
+        "state": "West Bengal",
+        "lastModificationDate": "2024-05-27"
+      }
+    },
+    "lineItem": {
+      "sku": "SKU-90128",
+      "name": "Laptop Stand",
+      "price": 7999,
+      "quantity": 2,
+      "stockInventoryIds": [
+        112,
+        113
+      ]
+    }
+  },
+  {
+    "orderId": "ORD-1007",
+    "orderDate": "2024-06-07",
+    "price": 11998,
+    "discount": 1000,
+    "sellingPrice": 10998,
+    "customMessages": [
+      "Express delivery"
+    ],
+    "customer": {
+      "name": "Vikas Gupta",
+      "creationDate": "2019-09-10",
+      "address": {
+        "street": "Station Road",
+        "pin": 302016,
+        "city": "Jaipur",
+        "state": "Rajasthan",
+        "lastModificationDate": "2024-05-28"
+      }
+    },
+    "lineItem": {
+      "sku": "SKU-90129",
+      "name": "Smart Watch",
+      "price": 5999,
+      "quantity": 2,
+      "stockInventoryIds": [
+        114,
+        115
+      ]
+    }
+  },
+  {
+    "orderId": "ORD-1008",
+    "orderDate": "2024-06-08",
+    "price": 4995,
+    "discount": 450,
+    "sellingPrice": 4545,
+    "customMessages": [
+      "Return eligible"
+    ],
+    "customer": {
+      "name": "Pooja Malhotra",
+      "creationDate": "2023-03-03",
+      "address": {
+        "street": "Link Road",
+        "pin": 122018,
+        "city": "Gurgaon",
+        "state": "Haryana",
+        "lastModificationDate": "2024-05-29"
+      }
+    },
+    "lineItem": {
+      "sku": "SKU-90130",
+      "name": "Wireless Mouse",
+      "price": 999,
+      "quantity": 5,
+      "stockInventoryIds": [
+        116
+      ]
+    }
+  }
+]

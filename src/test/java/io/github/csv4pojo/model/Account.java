@@ -26,6 +26,9 @@ public class Account {
     @FieldType(dataType = FieldType.Type.LONG, csvColumnName = "Transaction Count")
     private Long transactionCount;
 
+    public Account() {
+    }
+
     public Account(String accountHolderName, Double balance, String city, String country, String creationDate, Character gender,
                    Boolean isActive, String lastModifiedDate, Float limit, Integer pin, Long transactionCount) {
         this.accountHolderName = accountHolderName;

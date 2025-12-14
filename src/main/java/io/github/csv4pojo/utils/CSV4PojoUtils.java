@@ -45,8 +45,16 @@ public final class CSV4PojoUtils {
                 .forEach(field -> {
                     Type type = field.getDeclaredAnnotation(FieldType.class).dataType();
                     if (Type.CLASSTYPE == type) {
-                        csvClassFieldMap.putAll(getCsvClassFieldMap(field.getType(),
-                                null == path ? field.getName() : path + PIPE + field.getName()));
+                        Map<String, CsvClassField> compositeCsvClassFieldMap = getCsvClassFieldMap(field.getType(),
+                                null == path ? field.getName() : path + PIPE + field.getName());
+                        compositeCsvClassFieldMap.keySet().forEach(key -> {
+                            if (csvClassFieldMap.containsKey(key)) {
+                                throw new MisConfiguredClassFieldException("FieldType annotation's attribute csvColumnName should" +
+                                        " not have duplicate value for field: '" + field.getName() + "', column: '" + key + "'." +
+                                        " CSV column names must be unique.");
+                            }
+                        });
+                        csvClassFieldMap.putAll(compositeCsvClassFieldMap);
                     } else {
                         if (!isValidFieldType(field, type)) {
                             throw new MisConfiguredClassFieldException("FieldType annotation's dataType attribute mapping " +
@@ -60,6 +68,11 @@ public final class CSV4PojoUtils {
                         CsvClassField classField = new CsvClassField(field, type, csvFieldName);
                         classField.setFieldPath(null == path ? classField.getCsvField().getName()
                                 : path + PIPE + classField.getCsvField().getName());
+                        if (csvClassFieldMap.containsKey(csvFieldName)) {
+                            throw new MisConfiguredClassFieldException("FieldType annotation's attribute csvColumnName should" +
+                                    " not have duplicate value for field: '" + field.getName() + "', column: '" + csvFieldName + "'." +
+                                    " CSV column names must be unique.");
+                        }
                         csvClassFieldMap.put(csvFieldName, classField);
                     }
                 });
